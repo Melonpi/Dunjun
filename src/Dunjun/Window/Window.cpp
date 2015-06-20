@@ -83,31 +83,30 @@ void Window::create(VideoMode mode,
 		}
 	}
 
-	u32 windowFlags{generateFlags(style)};
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, settings.majorVersion);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, settings.minorVersion);
+	// NOTE(bill): 16 bits is usually the minimum on most systems
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,
+	                    settings.depthBits > 0 ? settings.depthBits : 16);
+	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, settings.stencilBits);
+	// NOTE(bill): This attribute will not affect deferred shading
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, settings.antialiasingLevel);
+	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+
 	m_impl = SDL_CreateWindow(title.c_str(),
 	                          SDL_WINDOWPOS_UNDEFINED,
 	                          SDL_WINDOWPOS_UNDEFINED,
 	                          mode.width,
 	                          mode.height,
-	                          windowFlags);
+	                          generateFlags(style));
 
 	m_glContext = SDL_GL_CreateContext(m_impl);
 
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, settings.majorVersion);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, settings.minorVersion);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,
-	                    settings.depthBits > 0 ? settings.depthBits : 16);
-	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, settings.stencilBits);
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, settings.antialiasingLevel);
-	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-
-	init();
-}
-
-void Window::init()
-{
-	setVisible(true);
-	setFramerateLimit(0);
+	// Initialization
+	{
+		setVisible(true);
+		setFramerateLimit(0);
+	}
 }
 
 void Window::close()
@@ -159,14 +158,14 @@ Window& Window::setSize(const Dimensions& size)
 	return *this;
 }
 
-const std::string& Window::getTitle() const
+const char* Window::getTitle() const
 {
-	return {SDL_GetWindowTitle(m_impl)};
+	return SDL_GetWindowTitle(m_impl);
 }
 
-Window& Window::setTitle(const std::string& title)
+Window& Window::setTitle(const char* title)
 {
-	SDL_SetWindowTitle(m_impl, title.c_str());
+	SDL_SetWindowTitle(m_impl, title);
 
 	return *this;
 }
@@ -243,6 +242,7 @@ void Window::makeGLContextCurrent() const
 
 INTERNAL Input::Key convertFromSDL_ScanCode(u32 code)
 {
+	// clang-format off
 	using namespace Input;
 	switch (code)
 	{
@@ -350,6 +350,7 @@ INTERNAL Input::Key convertFromSDL_ScanCode(u32 code)
 	case SDL_SCANCODE_PAUSE:        return Key::Pause;
 	}
 	return Key::Unknown; // Just in-case
+	// clang-format on
 }
 
 INTERNAL void convertEvent(SDL_Event& e, Event& event)

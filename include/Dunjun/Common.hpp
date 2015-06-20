@@ -66,6 +66,35 @@ inline T pseudo_cast(const U& x)
 	return to;
 }
 
+namespace Impl
+{
+template <typename Fn>
+struct Defer
+{
+	Defer(Fn&& fn)
+	: fn{std::forward<Fn>(fn)}
+	{
+	}
+	~Defer() { fn(); };
+	Fn fn;
+};
+
+template <typename Fn>
+Defer<Fn> deferFn(Fn&& fn) { return Defer<Fn>(std::forward<Fn>(fn)); }
+} // namespace Impl
+
+#define DEFER_1(x, y) x##y
+#define DEFER_2(x, y) DEFER_1(x, y)
+#define DEFER_3(x) DEFER_2(x, __COUNTER__)
+#define defer(code) auto DEFER_3(_defer_) = Impl::deferFn([&](){code;});
+
+/* Example for defer
+ * FILE* f{fopen("test.txt", "r"))};
+ * if (f == nullptr)
+ * 	return;
+ * defer(fclose(f));
+ */
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // Cross-platform version of sprintf that uses a local persist buffer
@@ -87,7 +116,10 @@ inline std::string stringFormat(const char* fmt, ...)
 	return {s_buf, strlen(s_buf)};
 }
 
-// TODO(bill): Change name of len(...)???
+////////////////////////////////////////////////////////////////////////////////
+// NOTE(bill): Helper functions for determining the length of a type and if that
+// type is empty or not
+
 template <typename T>
 inline usize len(const T& t)
 {
@@ -100,12 +132,25 @@ inline usize len(const T(&array)[N])
 	return N;
 }
 
+template <typename T>
+inline bool empty(const T& t)
+{
+	return t.empty();
+}
+
+template <typename T, usize N>
+inline bool empty(const T(&array)[N])
+{
+	return false;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
-// TODO(bill): Remove throwRuntimeError(...) from code eventually and use a log
+// TODO(bill): Remove panic(...) from code eventually and use a log
 // This is similar to an assert but not exactly. At the moment, it exit's the
 // application but later, it should not.
-inline void throwRuntimeError(const std::string& str)
+inline void panic(const std::string& str)
 {
 	std::cerr << str.c_str() << std::endl;
 	std::exit(EXIT_FAILURE);

@@ -48,7 +48,7 @@ INTERNAL std::string stringFromFile(const std::string& filename)
 
 	if (!file.is_open())
 	{
-		throwRuntimeError(std::string("Failed to open file : ") + filename);
+		panic(std::string("Failed to open file : ") + filename);
 	}
 	else
 	{
@@ -165,13 +165,14 @@ bool ShaderProgram::attachShaderFromMemory(ShaderType type,
 
 		s32 infoLogLength;
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
+
 		char* strInfoLog{new char[infoLogLength + 1]};
+		defer(delete[] strInfoLog);
+
 		glGetShaderInfoLog(shader, infoLogLength, nullptr, strInfoLog);
+
 		msg.append(strInfoLog);
-		delete[] strInfoLog;
-
 		msg.append("\n");
-
 		m_errorLog.append(msg);
 
 		glDeleteShader(shader);
@@ -207,7 +208,7 @@ void ShaderProgram::stopUsing() const
 void ShaderProgram::checkInUse() const
 {
 	if (!isInUse())
-		throwRuntimeError("ShaderProgram not is use.");
+		panic("ShaderProgram not is use.");
 }
 
 bool ShaderProgram::link()
@@ -227,11 +228,13 @@ bool ShaderProgram::link()
 
 			s32 infoLogLength;
 			glGetProgramiv(m_handle, GL_INFO_LOG_LENGTH, &infoLogLength);
-			char* strInfoLog{new char[infoLogLength + 1]};
-			glGetProgramInfoLog(m_handle, infoLogLength, nullptr, strInfoLog);
-			msg.append(strInfoLog);
-			delete[] strInfoLog;
 
+			char* strInfoLog{new char[infoLogLength + 1]};
+			defer(delete[] strInfoLog);
+
+			glGetProgramInfoLog(m_handle, infoLogLength, nullptr, strInfoLog);
+
+			msg.append(strInfoLog);
 			msg.append("\n");
 			m_errorLog.append(msg);
 

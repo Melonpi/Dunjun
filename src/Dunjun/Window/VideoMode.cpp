@@ -25,7 +25,7 @@ VideoMode VideoMode::getDesktopMode()
 	if (SDL_GetDesktopDisplayMode(0, &dm) != 0)
 		return {};
 
-	return {(u32)dm.w, (u32)dm.h, SDL_BYTESPERPIXEL(dm.format)};
+	return {(u32)dm.w, (u32)dm.h, SDL_BITSPERPIXEL(dm.format)};
 }
 
 const std::vector<VideoMode>& VideoMode::getFullscreenModes()

@@ -79,7 +79,7 @@ SceneRenderer& SceneRenderer::setCamera(const Camera& camera)
 void SceneRenderer::render()
 {
 	reset().clearAll();
-	
+
 	addSceneGraph(m_world.m_sceneGraph).setCamera(*m_world.m_currentCamera);
 
 	m_gBuffer.create(m_fbWidth, m_fbHeight);
@@ -106,7 +106,7 @@ SceneRenderer& SceneRenderer::geometryPass()
 		          return false;
 		      });
 
-	auto& shaders = g_shaderHolder.get("deferredGeometryPass");
+	auto& shaders = g_shaderHolder.get("geometryPass");
 
 	GBuffer::bind(&m_gBuffer);
 	{
@@ -128,9 +128,7 @@ SceneRenderer& SceneRenderer::geometryPass()
 				                   inst.meshRenderer->material->diffuseColor);
 				shaders.setUniform("u_material.specularColor",
 				                   inst.meshRenderer->material->specularColor);
-				shaders.setUniform(
-				    "u_material.specularExponent",
-				    inst.meshRenderer->material->specularExponent);
+				shaders.setUniform("u_material.specularExponent", inst.meshRenderer->material->specularExponent);
 			}
 			setTexture(inst.meshRenderer->material->diffuseMap, 0);
 
@@ -148,17 +146,17 @@ SceneRenderer& SceneRenderer::geometryPass()
 
 SceneRenderer& SceneRenderer::lightPass()
 {
-	m_lightingTexture.create(m_gBuffer.getWidth(), m_gBuffer.getHeight(), RenderTexture::Lighting);
+	m_lBuffer.create(m_gBuffer.getWidth(), m_gBuffer.getHeight(), RenderTexture::Lighting);
 
 	Texture::bind(&m_gBuffer.getTexture(GBuffer::Diffuse),  0);
 	Texture::bind(&m_gBuffer.getTexture(GBuffer::Specular), 1);
 	Texture::bind(&m_gBuffer.getTexture(GBuffer::Normal),   2);
 	Texture::bind(&m_gBuffer.getTexture(GBuffer::Depth),    3);
 
-	RenderTexture::bind(&m_lightingTexture);
+	RenderTexture::bind(&m_lBuffer);
 	{
 		glClearColor(0, 0, 0, 0);
-		glViewport(0, 0, m_lightingTexture.getWidth(), m_lightingTexture.getHeight());
+		glViewport(0, 0, m_lBuffer.getWidth(), m_lBuffer.getHeight());
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glDepthMask(false);
@@ -167,10 +165,10 @@ SceneRenderer& SceneRenderer::lightPass()
 
 		// Ambient Light
 		{
-			auto& shaders = g_shaderHolder.get("deferredAmbientLight");
+			auto& shaders = g_shaderHolder.get("ambientLight");
 
 			shaders.use();
-			
+
 			Vector3 intensities{};
 			intensities.r = m_ambientColor.r * m_ambientIntensity;
 			intensities.g = m_ambientColor.g * m_ambientIntensity;
@@ -185,7 +183,7 @@ SceneRenderer& SceneRenderer::lightPass()
 		}
 		// Directional Lights
 		{
-			auto& shaders = g_shaderHolder.get("deferredDirectionalLight");
+			auto& shaders = g_shaderHolder.get("directionalLight");
 
 			shaders.use();
 			shaders.setUniform("u_specular", 1);
@@ -209,7 +207,7 @@ SceneRenderer& SceneRenderer::lightPass()
 		}
 		// Point Lights
 		{
-			auto& shaders = g_shaderHolder.get("deferredPointLight");
+			auto& shaders = g_shaderHolder.get("pointLight");
 
 			shaders.use();
 			shaders.setUniform("u_diffuse", 0);
@@ -249,7 +247,7 @@ SceneRenderer& SceneRenderer::lightPass()
 		}
 		// Spot Lights
 		{
-			auto& shaders = g_shaderHolder.get("deferredSpotLight");
+			auto& shaders = g_shaderHolder.get("spotLight");
 
 			shaders.use();
 			shaders.setUniform("u_diffuse", 0);
@@ -304,7 +302,7 @@ SceneRenderer& SceneRenderer::outPass()
 	m_outTexture.create(m_gBuffer.getWidth(), m_gBuffer.getHeight(), RenderTexture::Color);
 
 	Texture::bind(&m_gBuffer.getTexture(GBuffer::Diffuse), 0);
-	Texture::bind(&m_lightingTexture.colorTexture, 1);
+	Texture::bind(&m_lBuffer.colorTexture, 1);
 
 	RenderTexture::bind(&m_outTexture);
 	{
@@ -312,7 +310,7 @@ SceneRenderer& SceneRenderer::outPass()
 		glViewport(0, 0, m_outTexture.getWidth(), m_outTexture.getHeight());
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		auto& shaders = g_shaderHolder.get("deferredOut");
+		auto& shaders = g_shaderHolder.get("out");
 
 		shaders.use();
 		shaders.setUniform("u_diffuse", 0);

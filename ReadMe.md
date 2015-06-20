@@ -1,4 +1,4 @@
-# Dunjun #
+# Dunjun
 This project will be documenting and demonstrating the development of making a game from scratch<sup>1</sup>! Every step of the game development process and every line of code will be explained thoroughly.
 
 The game will be a 3D based game. More will be revealed about the game as the project persists.
@@ -9,7 +9,7 @@ GitHub: [Dunjun GitHub](https://github.com/gingerBill/Dunjun)
 
 <sup>1</sup>*With minimal libraries such as GLEW, GLFW (Pre Day 73), SDL2 (Post Day 73), and the STB libraries.*
 
-## YouTube Playlists ##
+## YouTube Playlists
 
 * [Dunjun Playlist](https://www.youtube.com/playlist?list=PL93bFkoCMJslJJb15oQddnmABNUl6iz8e)
 * [Bare Bones](https://www.youtube.com/playlist?list=PL93bFkoCMJsnFFCfFZ8iwzwnobALHoarE)
@@ -22,13 +22,13 @@ GitHub: [Dunjun GitHub](https://github.com/gingerBill/Dunjun)
 * [Scene Graphs and Component Based Design](https://www.youtube.com/playlist?list=PL93bFkoCMJslkX7gQb56j4phER1FmTRCV)
 * Lighting and Deferred Rendering
 
-## Episode List ##
+## Episode List
 
-### Introduction ###
+### Introduction
 
 * [000 - Introduction](https://www.youtube.com/watch?v=fRUYl6_5m3o&index=1&list=PL93bFkoCMJslJJb15oQddnmABNUl6iz8e)
 
-### [Bare Bones](https://www.youtube.com/playlist?list=PL93bFkoCMJsnFFCfFZ8iwzwnobALHoarE) ###
+### [Bare Bones](https://www.youtube.com/playlist?list=PL93bFkoCMJsnFFCfFZ8iwzwnobALHoarE)
 
 * [001 - Project Setup (Visual Studio)](https://www.youtube.com/watch?v=Vzve8VOn8qA&index=2&list=PL93bFkoCMJslJJb15oQddnmABNUl6iz8e)
 * [002 - Creating a Window (GLFW3)](https://www.youtube.com/watch?v=LNxpDcRs8Zg&list=PL93bFkoCMJslJJb15oQddnmABNUl6iz8e&index=3)
@@ -39,7 +39,7 @@ GitHub: [Dunjun GitHub](https://github.com/gingerBill/Dunjun)
 * [007 - Texture Wrapper](https://www.youtube.com/watch?v=2i2jX4yb8sI)
 * [008 - Error Handling & Code Tidying](https://www.youtube.com/watch?v=jUUGEFV7rk0)
 
-### [Vectors and Matrices](https://www.youtube.com/playlist?list=PL93bFkoCMJskms6yv5FXx61C7Tai7amrT) ###
+### [Vectors and Matrices](https://www.youtube.com/playlist?list=PL93bFkoCMJskms6yv5FXx61C7Tai7amrT)
 
 * [009 - Introduction to Transformations with Matrices](https://www.youtube.com/watch?v=imjaU0gO1vY)
 * [010 - Implement Basic Vector Types](https://www.youtube.com/watch?v=MSHeE7kAqbA)
@@ -49,11 +49,11 @@ GitHub: [Dunjun GitHub](https://github.com/gingerBill/Dunjun)
 * [014 - View & Projection Matrices & Angles](https://www.youtube.com/watch?v=QAIbGN_oXdo)
 * [015 - Constants, Code Tidying & GLSL Convention](https://www.youtube.com/watch?v=hQw7_DWjQtg)
 
-### [Model Assets and Model Instances](https://www.youtube.com/playlist?list=PL93bFkoCMJsksaZto9IK1jbjhWw0glUDs) ###
+### [Model Assets and Model Instances](https://www.youtube.com/playlist?list=PL93bFkoCMJsksaZto9IK1jbjhWw0glUDs)
 
 * [016 - ModelAssets & ModelInstances](https://www.youtube.com/watch?v=oDwALlxMa4k)
 
-### [Quaternions and Rotations in 3D](https://www.youtube.com/playlist?list=PL93bFkoCMJsmLfAhNyeXzhH-POMvBAn6y) ###
+### [Quaternions and Rotations in 3D](https://www.youtube.com/playlist?list=PL93bFkoCMJsmLfAhNyeXzhH-POMvBAn6y)
 
 * [017 - Introduction to Complex Numbers](https://www.youtube.com/watch?v=NpkoqTOWn4E)
 * [018 - Introduction to Quaternions](https://www.youtube.com/watch?v=Vhtw7EvLuQQ)
@@ -62,7 +62,7 @@ GitHub: [Dunjun GitHub](https://github.com/gingerBill/Dunjun)
 * [021 - Quaternion Functions](https://www.youtube.com/watch?v=8pUqEspcS8w)
 * [022 - Transform Type](https://www.youtube.com/watch?v=XVkJkczl6tM)
 
-### [Camera and Input](https://www.youtube.com/playlist?list=PL93bFkoCMJslgYPipJ-6k7jwRxlO6fyha) ###
+### [Camera and Input](https://www.youtube.com/playlist?list=PL93bFkoCMJslgYPipJ-6k7jwRxlO6fyha)
 
 * [023 - Fixed Time Step & Code Tidying](https://www.youtube.com/watch?v=t5mZi9bJX3A)
 * [024 - ReadOnly Types & Camera Type](https://www.youtube.com/watch?v=l-DFRShm5wE)
@@ -74,14 +74,14 @@ GitHub: [Dunjun GitHub](https://github.com/gingerBill/Dunjun)
 * [030 - Mouse Buttons and Scroll Input](https://www.youtube.com/watch?v=oJmDEtCX9a0)
 * [030.5 - Input Enums & Camera Transform Fix](https://www.youtube.com/watch?v=rrMtsh2GZ0Y)
 
-### [Mesh Creation](https://www.youtube.com/playlist?list=PL93bFkoCMJskXMQcGKayIfx50sIAepgz8) ###
+### [Mesh Creation](https://www.youtube.com/playlist?list=PL93bFkoCMJskXMQcGKayIfx50sIAepgz8)
 
 * [031 - Plans for Game](https://www.youtube.com/watch?v=s0-Ru3rIPeU)
 * [032 - Basic Level and Billboards](https://www.youtube.com/watch?v=OtvRnrakTkU)
 * [033 - Finish Billboards and Start Mesh](https://www.youtube.com/watch?v=6MNVfDS59m0)
 * [034 - Materials and Meshes](https://www.youtube.com/watch?v=Fkl4qeuHT2A)
 
-### [Model Generation](https://www.youtube.com/playlist?list=PL93bFkoCMJskkGve-UUx9l7_adMAI9Vni) ###
+### [Model Generation](https://www.youtube.com/playlist?list=PL93bFkoCMJskkGve-UUx9l7_adMAI9Vni)
 
 * [035 - Textured Tiled Room](https://www.youtube.com/watch?v=TMr1hDw6BoE)
 * [036 - Add Tile Surfaces and Random Tile Sets](https://www.youtube.com/watch?v=DhDtvNRFLkA)
@@ -94,7 +94,7 @@ GitHub: [Dunjun GitHub](https://github.com/gingerBill/Dunjun)
 * [043 - Non-Overlapping Rooms](https://www.youtube.com/watch?v=qUskLwsedAo)
 * [044 - Code Review](https://www.youtube.com/watch?v=ChGR0LVsF2g)
 
-### [Scene Graphs and Component Based Design](https://www.youtube.com/playlist?list=PL93bFkoCMJslkX7gQb56j4phER1FmTRCV) ###
+### [Scene Graphs and Component Based Design](https://www.youtube.com/playlist?list=PL93bFkoCMJslkX7gQb56j4phER1FmTRCV)
 
 * [045 - Scene Graphs and SceneNodes](https://www.youtube.com/watch?v=nC34SQ3X_JY)
 * [046 - Component Based Design and NodeComponent](https://www.youtube.com/watch?v=uvu4Z2ntyO8)
@@ -110,7 +110,7 @@ GitHub: [Dunjun GitHub](https://github.com/gingerBill/Dunjun)
 * [054 - Distance Culling and Cone Culling](https://www.youtube.com/watch?v=CNWzlDofqJc)
 * [055 - Batch Rendering - Sorting by Material](https://www.youtube.com/watch?v=2xJXXbacL_8)
 
-### Lighting and Deferred Rendering ###
+### Lighting and Deferred Rendering
 
 * [056 - Diffuse Point Lighting](https://www.youtube.com/watch?v=vdRyBV4E4QY)
 * [057 - Point Light Implementation](https://www.youtube.com/watch?v=47lrKz_hAsE)
@@ -122,41 +122,62 @@ GitHub: [Dunjun GitHub](https://github.com/gingerBill/Dunjun)
 * [063 - Deferred Geometry Pass](https://www.youtube.com/watch?v=2kx5Arna9B8)
 * [064 - Deferred Point Lighting](https://www.youtube.com/watch?v=8FlYkWhQKpI)
 * [065 - Resource Holder](https://www.youtube.com/watch?v=pqDYmvEzhIE)
-* 066 - Specialized Holders and glGen* placement
-* 067 - More Holders & Lighting RenderTexture
-* 068 - Directional Lights
-* 069 - #include for GLSL
-* 070 - Time Class & sleep(Time)
+* [066 - Specialized Holders and glGen* placement](https://www.youtube.com/watch?v=1j6lV_-PEXw)
+* [067 - More Holders & Lighting RenderTexture](https://www.youtube.com/watch?v=Wq4Xa8Q15gM)
+* [068 - Directional Lights](https://www.youtube.com/watch?v=UiJDWvXzI6c)
+* [069 - #include for GLSL](https://www.youtube.com/watch?v=Dx8H1ItkVzk)
+* [070 - Time Class & sleep(Time)](https://www.youtube.com/watch?v=1tpi3ooVO-0)
+* [071 - ReadOnly Removal & C++11 Consistency](https://www.youtube.com/watch?v=6m1T469EyZ8)
+* [072 - SpotLights & Diffuse Textures w/ Lighting](https://www.youtube.com/watch?v=nR9PtXDqgcc)
+
+### GLFW3 to SDL2 Migration
+
+* [073 - SDL - Start Window Class](https://www.youtube.com/watch?v=cO8BxGRw9Nk)
+* [074 - SDL - Realtime Keyboard & Mouse Input](https://www.youtube.com/watch?v=xyMRNZ7DH6Y)
+* [075 - SDL - Event System](https://www.youtube.com/watch?v=qveI-vsNwkw)
+* [076 - SDL - Controllers & Remove OS Specifics](https://www.youtube.com/watch?v=brkeagnndLU)
+* [077 - SDL - Controller Events](https://www.youtube.com/watch?v=4LfufpIDXnU)
+* [078 - SDL - VideoModes and ContextSettings](https://www.youtube.com/watch?v=6bVZkrdYAHU)
+* [079 - SDL - Project Folder Organization](https://www.youtube.com/watch?v=hfXP_5p6qpQ)
+
+### Scene/World Architecture
+
+* [080 - handleEvent(...), World, GameContext](https://www.youtube.com/watch?v=VST5OImUhM4)
+* [081 - World::init(..)](https://www.youtube.com/watch?v=tsTlDJg7Wck)
+* [082 - SceneRenderer{World&}; Try Rumble w/ SDL2](https://www.youtube.com/watch?v=I1TTT3M7q6s)
+* [083 - Class Function Changes; Helper Functions](https://www.youtube.com/watch?v=9YBgDJLcyeE)
 
 
-## Contact ##
+
+
+## Contact
 
 * YouTube: [GingerGames](https://youtube.com/c/GingerGames)
 * Email: dunjun@gingerBill.org
 * GitHub: [Dunjun GitHub](https://github.com/gingerBill/Dunjun)
 
-## FAQ ##
+## FAQ
 
-### Will this be a simple game, for teaching purposes? ###
+### Will this be a simple game, for teaching purposes?
 
 No! In fact, the game design has been made to require *complex concepts* which exist in more than most game designs.
 
-### Are the accompanying videos just recordings of someone programming? ###
+### Are the accompanying videos just recordings of someone programming?
 
 No! 99%<sup>1</sup> of the programming for the game is recorded in the videos; every step of the game development process and every line of code will be explained thoroughly.
 
 <sup>1</sup>*Some of the code will not programmed in the videos but this will mostly be bug fixes or minor changes to the code that can be explained quickly.*
 
-### What platforms will this game support? ###
+### What platforms will this game support?
 
 This game will support Windows<sup>1</sup>, Mac OS X<sup>2</sup>, and Linux<sup>3</sup><sup>4</sup>.
 
 <sup>1</sup>*XP and Above*
-<sup>2</sup>*OS X 10.8+.*
+<sup>2</sup>*OS X 10.8+. Maybe higher*
 <sup>3</sup>*Including Steam OS.*
 <sup>4</sup>*Most likely Debian based systems only.*
 
-### I have a problem with X... ###
+### I have a problem with X...
 
 Please feel free to contact with any problem:
 
@@ -164,7 +185,7 @@ Please feel free to contact with any problem:
 * Email: dunjun@gingerBill.org
 * GitHub: [Dunjun GitHub](https://github.com/gingerBill/Dunjun)
 
-## Prerequisites ##
+## Prerequisites
 
 Before we can begin, you need to make sure you have all the things you will need.
 
@@ -178,14 +199,14 @@ Before we can begin, you need to make sure you have all the things you will need
 	- GLEW - To use new OpenGL functions
 	- SDL2 - For creating the context, window, and handling input (Post Day 73)
 
-## Building ##
+## Building
 
 At the moment, only Windows is supported through the Visual Studio solution. Mac OS X and Linux will implemented later when needed/wanted.
 
 Most of the code should compile on Mac OS X and Linux with probably only a few minor changes.
 
 
-## Supported Platforms ##
+## Supported Platforms
 
 Graphics APIs:
 
@@ -197,39 +218,40 @@ Platforms:
 * *OS X* (To be added)
 * *Linux* (To be added)
 
-## Dependencies ##
+## Dependencies
 
-### Tools ###
+### Tools
 
 * C++ compiler with decent C++11 support
 	- If Visual Studio, please use *at least* MSVC 12.
 	- Clang is preferred to GCC on other platforms but not necessary.
 
-### Libraries ###
+### Libraries
 
-* OpenGL (Rendering)
-* GLFW 3.1 (Window, Input and, Context Handling)
+* OpenGL 2.1 (Rendering)
+* GLFW 3.1 (Window, Input and, Context Handling) (Pre Day 73)
+* SDL 2  (Window, Input and, Context Handling) (Post Day 73)
 * GLEW (OpenGL Extension Wrangler Library)
 * STB Libraries (Image and Font Loading)
 
-## Conventions ##
+## Conventions
 
-* See clang-format-style.yaml for formatting style
+* See .clang-format for formatting style
 * Allman Indenting
 * CamelCase
 * Tabs for indentation
 * Spaces for alignment
 * More below!
 
-### Classes ###
+### Classes
 
 PascalCase (Upper CamelCase) (e.g. ShaderProgram)
 
-### Functions, Methods, and Variables ###
+### Functions, Methods, and Variables
 
 camelCase (e.g. loadFromFile)
 
-### Namespaces ###
+### Namespaces
 
 PascalCase (e.g. Dunjun::)
 
@@ -247,7 +269,7 @@ namespace Inner
 } // namespace Dunjun
 ```
 
-### Using and Typedef ###
+### Using and Typedef
 
 In C++11, `using` is a superset of `typedef`. `using` is preferred in this style guide.
 
@@ -258,19 +280,19 @@ using FooBar = std::pair<Foo, Bar>;
 typedef std::pair<Foo, Bar> FooBar;
 ```
 
-### Comments ###
+### Comments
 
 C++ style comments `//` are preferred but C-style comments `/**/` can be used. The reasoning is that C-style comments cannot be nested and most IDEs/Editors can comments whole blocks in the C++ style which can allow for uncommenting a single line easily.
 
-### Arrays and Vectors ###
+### Arrays and Vectors
 
-When an collection of data is needed, use a `std::vector` unless it is fixed at runtime. If it is fixed at runtime use a classic C array or `std::array`. `std::array` is preferred as it is more C++ but they are exactly the same as it is just a class version of the classic C array.
+When an collection of data is needed, use a `std::vector` unless it is fixed at runtime. If it is a fixed array, use a classic C array or `std::array`.
 
 The vector's elements are guaranteed to be contiguous, so you can pass `&v[0]` to any function expecting a pointer to an array; e.g., C library routines, OpenGL. Also, `std::vector<char> buffer(2048);` is a brilliant way to allocate a local buffer.
 
-Use `std::vector` **unless** the profiler says that there is a problem **and** the array is tiny.
+Prefer `std::vector` **unless** the profiler says that there is a problem **and** the array is tiny.
 
-### Pointers ###
+### Pointers
 
 Raw pointers (e.g. Bar*) can be used, but if a smart pointer can be used, please do so.
 
@@ -299,11 +321,11 @@ public:
 
 If a class/etc. does not need a certain smart pointer, do not give a shorthand.
 
-### Variables ###
+### Variables
 
 camelCase (e.g. temp, m\_world, s\_time)
 
-### Variable Prefixes ###
+### Variable Prefixes
 
 * m_ for protected/private member variables
 * s_ for static/local persist variables
@@ -320,7 +342,7 @@ class Foo
 {
 	void func()
 	{
-		LOCAL\_PERSIST u64 s_localVar;
+		LOCAL_PERSIST u64 s_localVar;
 
 		...
 	}
@@ -330,7 +352,7 @@ private:
 };
 ```
 
-### Enums ###
+### Enums
 
 All enum items should use PascalCase (e.g. `CursorMode`).
 
@@ -354,14 +376,14 @@ Example (made up):
 ```c++
 enum Flag : u32
 {
-	Flag_1 = (1 << 0),
-	Flag_2 = (1 << 1),
-	Flag_3 = (1 << 2),
-	Flag_4 = (1 << 3),
-	Flag_5 = (1 << 4),
-	Flag_6 = (1 << 5),
-	Flag_7 = (1 << 6),
-	Flag_8 = (1 << 7),
+	Flag_1 = 1,
+	Flag_2 = 2,
+	Flag_3 = 4,
+	Flag_4 = 8,
+	Flag_5 = 16,
+	Flag_6 = 32,
+	Flag_7 = 64,
+	Flag_8 = 128,
 
 	Flag_A = Flag_1,
 	Flag_B = Flag_2,
@@ -369,7 +391,7 @@ enum Flag : u32
 };
 ```
 
-### Static Defines ###
+### Static Defines
 
 In `Dunjun/Common.hpp`, there are some defines for static:
 
@@ -388,13 +410,13 @@ GLOBAL int g_thingy;
 
 INTERNAL void doSomething()
 {
-	LOCAL\_PERSIST char s\_buffer[10];
+	LOCAL_PERSIST char s_buffer[10];
 
 	...
 }
 ```
 
-### Annotations ###
+### Annotations
 
 * TODO      - todo
 * NOTE      - note to reader (can be used in conjunction with TODO)
@@ -406,7 +428,6 @@ Example:
 
 ```c++
 // TODO(fred) IMPORTANT(fred): This is some example text for a todo that is
-//     important. It also spans multiple lines. This annotation was written
-//     by `fred` as indicated next to the annotation.
-
+// important. It also spans multiple lines. This annotation was written by
+// `fred` as indicated next to the annotation.
 ```

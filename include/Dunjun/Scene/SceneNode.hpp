@@ -112,7 +112,7 @@ public:
 	const Id id;
 	std::string name;
 	Transform transform{};
-	bool visible{true};
+	bool visible{true}; // TODO(bill): change to enabled (stop updates and drawing)
 
 protected:
 	friend class SceneRenderer;

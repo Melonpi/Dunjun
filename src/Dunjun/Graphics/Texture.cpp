@@ -21,7 +21,7 @@ INTERNAL GLenum getInteralFormat(ImageFormat format, bool srgb)
 
 	default:
 	case ImageFormat::None:
-		throwRuntimeError("Non-valid ImageFormat.");
+		panic("Non-valid ImageFormat.");
 		return 0;
 	}
 }
@@ -41,7 +41,7 @@ Texture::Texture(const Image& image,
 , m_height{(s32)image.getHeight()}
 {
 	if (!loadFromImage(image, minMagFilter, wrapMode))
-		throwRuntimeError("Could not create texture from image.");
+		panic("Could not create texture from image.");
 }
 
 bool Texture::loadFromFile(const std::string& filename,

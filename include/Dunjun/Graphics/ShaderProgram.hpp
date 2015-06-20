@@ -10,7 +10,7 @@
 #include <Dunjun/Graphics/Transform.hpp>
 #include <Dunjun/Graphics/Color.hpp>
 
-#include <map>
+#include <unordered_map>
 #include <string>
 
 namespace Dunjun
@@ -62,14 +62,13 @@ public:
 	void setUniform(const std::string& name, const Transform& t) const;
 	void setUniform(const std::string& name, const Color& c) const;
 
-
 private:
 	u32 m_handle;
 	bool m_isLinked;
 	std::string m_errorLog;
 
-	mutable std::map<std::string, s32> m_attribLocations;
-	mutable std::map<std::string, s32> m_uniformLocations;
+	mutable std::unordered_map<std::string, s32> m_attribLocations;
+	mutable std::unordered_map<std::string, s32> m_uniformLocations;
 };
 } // namespace Dunjun
 

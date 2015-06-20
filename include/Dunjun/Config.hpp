@@ -1,7 +1,7 @@
 #ifndef DUNJUN_CONFIG_HPP
 #define DUNJUN_CONFIG_HPP
 
-// IMPORTANT(bill): Please DO NOT clang-format this code!
+// clang-format off
 
 ///////////////
 // System OS //
@@ -78,5 +78,7 @@
 
 
 #include <Dunjun/System/Types.hpp>
+
+// clang-format on
 
 #endif

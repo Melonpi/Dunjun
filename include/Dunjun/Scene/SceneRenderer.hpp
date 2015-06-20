@@ -59,7 +59,7 @@ public:
 	SceneRenderer& setAmbientLight(const Color& color, f32 intensity);
 
 	const GBuffer& getGBuffer() const { return m_gBuffer; }
-	const Texture& getFinalTexture() const { return m_outTexture.colorTexture; }	
+	const Texture& getFinalTexture() const { return m_outTexture.colorTexture; }
 
 private:
 	bool setShaders(const ShaderProgram* shaders);
@@ -71,8 +71,8 @@ private:
 	u32 m_fbHeight{512};
 
 	GBuffer m_gBuffer;
+	RenderTexture m_lBuffer;
 
-	RenderTexture m_lightingTexture;
 	RenderTexture m_outTexture;
 
 	Color m_ambientColor{222, 227, 234};

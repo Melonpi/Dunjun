@@ -14,7 +14,9 @@ GBuffer::~GBuffer()
 
 const Texture& GBuffer::getTexture(TextureType type) const
 {
-	// TODO(bill): Test for out of bounds?
+	if (type < 0 || type >= TextureType::Count) // If out of range
+		return m_textures[Diffuse];
+
 	return m_textures[type];
 }
 
@@ -45,8 +47,8 @@ bool GBuffer::create(u32 w, u32 h)
 		glTexImage2D(GL_TEXTURE_2D,
 		             0,
 		             internalFormat,
-		             (GLsizei)w,
-		             (GLsizei)h,
+		             (s32)w,
+		             (s32)h,
 		             0,
 		             format,
 		             type,

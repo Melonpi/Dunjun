@@ -344,6 +344,15 @@
     <ClInclude Include="include\Dunjun\Window\GLContextSettings.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="external\glew-1.12.0\include\GL\glew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glew-1.12.0\include\GL\glxew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glew-1.12.0\include\GL\wglew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -382,5 +391,69 @@
     <None Include="data\shaders\Material.head.glsl" />
     <None Include="data\shaders\Lighting.head.glsl" />
     <None Include="data\shaders\common.head.glsl" />
+    <None Include="external\SDL2-2.0.3\lib\x64\SDL2.dll" />
+    <None Include="external\SDL2-2.0.3\lib\x86\SDL2.dll" />
+    <None Include="Changes.md" />
+    <None Include="external\glew-1.12.0\doc\advanced.html" />
+    <None Include="external\glew-1.12.0\doc\basic.html" />
+    <None Include="external\glew-1.12.0\doc\build.html" />
+    <None Include="external\glew-1.12.0\doc\credits.html" />
+    <None Include="external\glew-1.12.0\doc\github.xcf" />
+    <None Include="external\glew-1.12.0\doc\glew.css" />
+    <None Include="external\glew-1.12.0\doc\glew.html" />
+    <None Include="external\glew-1.12.0\doc\glxew.html" />
+    <None Include="external\glew-1.12.0\doc\index.html" />
+    <None Include="external\glew-1.12.0\doc\install.html" />
+    <None Include="external\glew-1.12.0\doc\log.html" />
+    <None Include="external\glew-1.12.0\doc\wglew.html" />
+    <None Include="external\glew-1.12.0\bin\Release\Win32\glew32.dll" />
+    <None Include="external\glew-1.12.0\bin\Release\Win32\glewinfo.exe" />
+    <None Include="external\glew-1.12.0\bin\Release\Win32\visualinfo.exe" />
+    <None Include="external\glew-1.12.0\bin\Release\x64\glew32.dll" />
+    <None Include="external\glew-1.12.0\bin\Release\x64\glewinfo.exe" />
+    <None Include="external\glew-1.12.0\bin\Release\x64\visualinfo.exe" />
+    <None Include="external\glew-1.12.0\bin\Release MX\Win32\glew32mx.dll" />
+    <None Include="external\glew-1.12.0\bin\Release MX\x64\glew32mx.dll" />
+    <None Include="todo\Todo - Engine.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="external\SDL2-2.0.3\lib\x64\SDL2.lib" />
+    <Library Include="external\SDL2-2.0.3\lib\x64\SDL2main.lib" />
+    <Library Include="external\SDL2-2.0.3\lib\x64\SDL2test.lib" />
+    <Library Include="external\SDL2-2.0.3\lib\x86\SDL2.lib" />
+    <Library Include="external\SDL2-2.0.3\lib\x86\SDL2main.lib" />
+    <Library Include="external\SDL2-2.0.3\lib\x86\SDL2test.lib" />
+    <Library Include="external\glew-1.12.0\lib\Release\Win32\glew32.lib" />
+    <Library Include="external\glew-1.12.0\lib\Release\Win32\glew32s.lib" />
+    <Library Include="external\glew-1.12.0\lib\Release\x64\glew32.lib" />
+    <Library Include="external\glew-1.12.0\lib\Release\x64\glew32s.lib" />
+    <Library Include="external\glew-1.12.0\lib\Release MX\Win32\glew32mx.lib" />
+    <Library Include="external\glew-1.12.0\lib\Release MX\Win32\glew32mxs.lib" />
+    <Library Include="external\glew-1.12.0\lib\Release MX\x64\glew32mx.lib" />
+    <Library Include="external\glew-1.12.0\lib\Release MX\x64\glew32mxs.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="external\glew-1.12.0\CMakeLists.txt" />
+    <Text Include="external\glew-1.12.0\LICENSE.txt" />
+    <Text Include="external\glew-1.12.0\README.txt" />
+    <Text Include="external\glew-1.12.0\TODO.txt" />
+    <Text Include="external\glew-1.12.0\doc\glew.txt" />
+    <Text Include="external\glew-1.12.0\doc\gpl.txt" />
+    <Text Include="external\glew-1.12.0\doc\khronos.txt" />
+    <Text Include="external\glew-1.12.0\doc\mesa.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="external\glew-1.12.0\doc\github.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="external\glew-1.12.0\doc\glew.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="external\glew-1.12.0\doc\new.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="external\glew-1.12.0\doc\ogl_sm.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -25,7 +25,9 @@ void setup()
 			continue;
 		if (controllerIndex >= MaximumControllers)
 			break;
-		g_controllerHandles[controllerIndex] = SDL_GameControllerOpen(joystickIndex);
+
+		g_controllerHandles[controllerIndex] =
+		    SDL_GameControllerOpen(joystickIndex);
 		controllerIndex++;
 	}
 
@@ -78,11 +80,12 @@ void setStickyMouseButtons(bool sticky)
 // Keyboard
 bool isKeyPressed(Key key)
 {
+	// clang-format off
+
 	int code{0};
 
 	switch (key)
 	{
-	// NOTE(bill): DO NOT REFORMAT!
 	default:               code = 0;                         break;
 	case Key::A:           code = SDL_SCANCODE_A;            break;
 	case Key::B:           code = SDL_SCANCODE_B;            break;
@@ -193,6 +196,8 @@ bool isKeyPressed(Key key)
 	const u8* state{SDL_GetKeyboardState(nullptr)};
 
 	return state[code] != 0;
+
+	// clang-format on
 }
 
 // Cursor
@@ -238,7 +243,8 @@ bool isControllerButtonPressed(u32 controllerIndex, ControllerButton button)
 {
 	SDL_GameController* gc{g_controllerHandles[controllerIndex]};
 	if (gc && SDL_GameControllerGetAttached(gc))
-		return SDL_GameControllerGetButton(gc, (SDL_GameControllerButton)button) != 0;
+		return SDL_GameControllerGetButton(
+		           gc, (SDL_GameControllerButton)button) != 0;
 
 	return false;
 }
@@ -288,15 +294,9 @@ void setControllerVibration(u32 controllerIndex, f32 amount, Time duration)
 }
 
 // Clipboard
-bool hasClipboardString()
-{
-	return SDL_HasClipboardText() == SDL_TRUE;
-}
+bool hasClipboardString() { return SDL_HasClipboardText() == SDL_TRUE; }
 
-std::string getClipboardString()
-{
-	return {SDL_GetClipboardText()};
-}
+std::string getClipboardString() { return {SDL_GetClipboardText()}; }
 
 void setClipboardString(const std::string& str)
 {

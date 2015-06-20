@@ -1,4 +1,5 @@
 #include <Dunjun/Graphics/Image.hpp>
+#include <Dunjun/Common.hpp>
 
 #define STBI_FAILURE_USERMSG
 #define STB_IMAGE_IMPLEMENTATION
@@ -123,6 +124,7 @@ void Image::flipVertically()
 	usize pitch{m_width * (usize)m_format};
 	u32 halfRows{m_height / 2};
 	u8* rowBuffer{new u8[pitch]};
+	defer(delete[] rowBuffer);
 
 	for (u32 i{0}; i < halfRows; i++)
 	{
@@ -135,7 +137,6 @@ void Image::flipVertically()
 		std::memcpy(oppositeRow, rowBuffer, pitch);
 	}
 
-	delete[] rowBuffer;
 }
 
 ImageFormat Image::getFormat() const { return m_format; }

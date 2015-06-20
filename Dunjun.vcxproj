@@ -5,9 +5,17 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -23,7 +31,21 @@
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>false</CLRSupport>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <CLRSupport>false</CLRSupport>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
@@ -36,7 +58,13 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -48,10 +76,17 @@
     <SourcePath>$(VC_SourcePath);</SourcePath>
     <ExcludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x86);</ExcludePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <SourcePath>$(VC_SourcePath);</SourcePath>
+    <ExcludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x86);</ExcludePath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>\</OutDir>
     <IntDir>bin\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -77,7 +112,48 @@
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)/external/glew-1.12.0/include;$(ProjectDir)/external/SDL2-2.0.3/include;$(ProjectDir)/external/stb-master/include;$(ProjectDir)/include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>GLEW_STATIC;_CRT_SECURE_NO_DEPRECATE;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)\%(RelativeDir)\%(Filename).obj</ObjectFileName>
+      <AssemblerListingLocation>$(IntDir)\</AssemblerListingLocation>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <DisableSpecificWarnings>4244;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <StringPooling>false</StringPooling>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)/external/glew;$(ProjectDir)/external/SDL2-2.0.3/lib/x86;$(ProjectDir)/external/glew-1.12.0/lib/Release/Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32s.lib;opengl32.lib;SDL2.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <StringPooling>false</StringPooling>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
@@ -130,6 +206,9 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="external\glew-1.12.0\include\GL\glew.h" />
+    <ClInclude Include="external\glew-1.12.0\include\GL\glxew.h" />
+    <ClInclude Include="external\glew-1.12.0\include\GL\wglew.h" />
     <ClInclude Include="external\stb-master\include\stb\stb.h" />
     <ClInclude Include="external\stb-master\include\stb\stb_c_lexer.h" />
     <ClInclude Include="external\stb-master\include\stb\stb_divide.h" />
@@ -210,6 +289,7 @@
     <None Include=".clang-format" />
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
+    <None Include="Changes.md" />
     <None Include="data\shaders\common.head.glsl" />
     <None Include="data\shaders\deferredAmbientLight.frag.glsl" />
     <None Include="data\shaders\deferredDirectionalLight.frag.glsl" />
@@ -221,6 +301,28 @@
     <None Include="data\shaders\Material.head.glsl" />
     <None Include="data\shaders\texPass.frag.glsl" />
     <None Include="data\shaders\texPass.vert.glsl" />
+    <None Include="external\glew-1.12.0\bin\Release MX\Win32\glew32mx.dll" />
+    <None Include="external\glew-1.12.0\bin\Release MX\x64\glew32mx.dll" />
+    <None Include="external\glew-1.12.0\bin\Release\Win32\glew32.dll" />
+    <None Include="external\glew-1.12.0\bin\Release\Win32\glewinfo.exe" />
+    <None Include="external\glew-1.12.0\bin\Release\Win32\visualinfo.exe" />
+    <None Include="external\glew-1.12.0\bin\Release\x64\glew32.dll" />
+    <None Include="external\glew-1.12.0\bin\Release\x64\glewinfo.exe" />
+    <None Include="external\glew-1.12.0\bin\Release\x64\visualinfo.exe" />
+    <None Include="external\glew-1.12.0\doc\advanced.html" />
+    <None Include="external\glew-1.12.0\doc\basic.html" />
+    <None Include="external\glew-1.12.0\doc\build.html" />
+    <None Include="external\glew-1.12.0\doc\credits.html" />
+    <None Include="external\glew-1.12.0\doc\github.xcf" />
+    <None Include="external\glew-1.12.0\doc\glew.css" />
+    <None Include="external\glew-1.12.0\doc\glew.html" />
+    <None Include="external\glew-1.12.0\doc\glxew.html" />
+    <None Include="external\glew-1.12.0\doc\index.html" />
+    <None Include="external\glew-1.12.0\doc\install.html" />
+    <None Include="external\glew-1.12.0\doc\log.html" />
+    <None Include="external\glew-1.12.0\doc\wglew.html" />
+    <None Include="external\SDL2-2.0.3\lib\x64\SDL2.dll" />
+    <None Include="external\SDL2-2.0.3\lib\x86\SDL2.dll" />
     <None Include="external\stb-master\README.md" />
     <None Include="License.md" />
     <None Include="Makefile_OSX" />
@@ -233,6 +335,39 @@
     <None Include="ReadMe.md" />
     <None Include="ReadMe_OSX.md" />
     <None Include="TODO.md" />
+    <None Include="todo\Todo - Engine.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="external\glew-1.12.0\lib\Release MX\Win32\glew32mx.lib" />
+    <Library Include="external\glew-1.12.0\lib\Release MX\Win32\glew32mxs.lib" />
+    <Library Include="external\glew-1.12.0\lib\Release MX\x64\glew32mx.lib" />
+    <Library Include="external\glew-1.12.0\lib\Release MX\x64\glew32mxs.lib" />
+    <Library Include="external\glew-1.12.0\lib\Release\Win32\glew32.lib" />
+    <Library Include="external\glew-1.12.0\lib\Release\Win32\glew32s.lib" />
+    <Library Include="external\glew-1.12.0\lib\Release\x64\glew32.lib" />
+    <Library Include="external\glew-1.12.0\lib\Release\x64\glew32s.lib" />
+    <Library Include="external\SDL2-2.0.3\lib\x64\SDL2.lib" />
+    <Library Include="external\SDL2-2.0.3\lib\x64\SDL2main.lib" />
+    <Library Include="external\SDL2-2.0.3\lib\x64\SDL2test.lib" />
+    <Library Include="external\SDL2-2.0.3\lib\x86\SDL2.lib" />
+    <Library Include="external\SDL2-2.0.3\lib\x86\SDL2main.lib" />
+    <Library Include="external\SDL2-2.0.3\lib\x86\SDL2test.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="external\glew-1.12.0\CMakeLists.txt" />
+    <Text Include="external\glew-1.12.0\doc\glew.txt" />
+    <Text Include="external\glew-1.12.0\doc\gpl.txt" />
+    <Text Include="external\glew-1.12.0\doc\khronos.txt" />
+    <Text Include="external\glew-1.12.0\doc\mesa.txt" />
+    <Text Include="external\glew-1.12.0\LICENSE.txt" />
+    <Text Include="external\glew-1.12.0\README.txt" />
+    <Text Include="external\glew-1.12.0\TODO.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="external\glew-1.12.0\doc\github.png" />
+    <Image Include="external\glew-1.12.0\doc\glew.png" />
+    <Image Include="external\glew-1.12.0\doc\new.png" />
+    <Image Include="external\glew-1.12.0\doc\ogl_sm.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -79,8 +79,9 @@ public:
 	Dimensions getSize() const;
 	Window& setSize(const Dimensions& size);
 
-	const std::string& getTitle() const;
-	Window& setTitle(const std::string& title);
+	/// UTF-8 Strings
+	const char* getTitle() const;
+	Window& setTitle(const char* title);
 
 	Window& setVisible(bool visible);
 	Window& setVerticalSyncEnabled(bool enabled);
@@ -99,8 +100,6 @@ public:
 	SDL_Window* getSDLHandle() const { return m_impl; }
 
 private:
-	void init();
-
 	SDL_Window* m_impl;
 	SDL_GLContext m_glContext;
 	Clock m_clock;

@@ -15,7 +15,7 @@ Dunjun is provided "as is", without warranty of any kind, express or implied, in
 External Libraries Used by Dunjun
 ---------------------------------
 
-* stb\_image and stb\_image\_write are public domain
-* GLFW is licensed under the zlib/libpng license (BSD-like)
+* stb (Sean Barrett) libraries are public domain
+* SDL 2.0 is licensed under the zlib license
 * GLEW is under the modified BSD License, the Mesa 3-D License (MIT License), and the Khronos License (MIT License)
 

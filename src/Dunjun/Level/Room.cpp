@@ -4,7 +4,6 @@
 
 namespace Dunjun
 {
-
 Room::Room(Random& random, const Room::Size& size)
 : SceneNode{}
 , size{size}
