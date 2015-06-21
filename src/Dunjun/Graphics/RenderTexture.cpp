@@ -4,20 +4,10 @@
 
 namespace Dunjun
 {
-RenderTexture::RenderTexture()
-: colorTexture{}
-, depthTexture{}
-, m_width{0}
-, m_height{0}
-, m_type{TextureType::Color}
-, m_fbo{0}
-{
-}
-
 RenderTexture::~RenderTexture()
 {
-	if (m_fbo)
-		glDeleteFramebuffersEXT(1, &m_fbo);
+	if (fbo)
+		glDeleteFramebuffersEXT(1, &fbo);
 }
 
 bool RenderTexture::create(u32 w,
@@ -26,24 +16,24 @@ bool RenderTexture::create(u32 w,
                            TextureFilter minMagFilter,
                            TextureWrapMode wrapMode)
 {
-	if (w == m_width && h == m_height && t == m_type)
+	if (w == width && h == height && t == type)
 		return true;
 
-	m_type = t;
-	m_width = w;
-	m_height = h;
+	type = t;
+	width = w;
+	height = h;
 
-	if (!m_fbo)
-		glGenFramebuffersEXT(1, &m_fbo);
+	if (!fbo)
+		glGenFramebuffersEXT(1, &fbo);
 
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
 
-	if (m_type & TextureType::Color)
+	if (type & TextureType::Color)
 	{
-		if (!colorTexture.m_handle)
-			glGenTextures(1, &colorTexture.m_handle);
-		glBindTexture(GL_TEXTURE_2D, (u32)colorTexture.m_handle);
-		if (m_type & TextureType::Lighting)
+		if (!colorTexture.handle)
+			glGenTextures(1, &colorTexture.handle);
+		glBindTexture(GL_TEXTURE_2D, (u32)colorTexture.handle);
+		if (type & TextureType::Lighting)
 		{
 			glTexImage2D(GL_TEXTURE_2D,
 			             0,
@@ -51,8 +41,8 @@ bool RenderTexture::create(u32 w,
 			                          // resolution for each component
 			             // 8b/c too small
 			             // 32b/c too large
-			             (s32)m_width,
-			             (s32)m_height,
+			             (s32)width,
+			             (s32)height,
 			             0,
 			             GL_RGB,
 			             GL_FLOAT,
@@ -63,15 +53,15 @@ bool RenderTexture::create(u32 w,
 			glTexImage2D(GL_TEXTURE_2D,
 			             0,
 			             GL_RGB,
-			             (s32)m_width,
-			             (s32)m_height,
+			             (s32)width,
+			             (s32)height,
 			             0,
 			             GL_RGB,
 			             GL_UNSIGNED_BYTE,
 			             0);
 		}
-		colorTexture.m_width = m_width;
-		colorTexture.m_height = m_height;
+		colorTexture.width = width;
+		colorTexture.height = height;
 
 		glTexParameteri(
 		    GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLenum)minMagFilter);
@@ -82,26 +72,26 @@ bool RenderTexture::create(u32 w,
 
 		glFramebufferTextureEXT(GL_FRAMEBUFFER_EXT,
 		                        GL_COLOR_ATTACHMENT0_EXT,
-		                        colorTexture.m_handle,
+		                        colorTexture.handle,
 		                        0);
 	}
 
-	if (m_type & TextureType::Depth)
+	if (type & TextureType::Depth)
 	{
-		if (!depthTexture.m_handle)
-			glGenTextures(1, &depthTexture.m_handle);
-		glBindTexture(GL_TEXTURE_2D, (u32)depthTexture.m_handle);
+		if (!depthTexture.handle)
+			glGenTextures(1, &depthTexture.handle);
+		glBindTexture(GL_TEXTURE_2D, (u32)depthTexture.handle);
 		glTexImage2D(GL_TEXTURE_2D,
 		             0,
 		             GL_DEPTH_COMPONENT24,
-		             (s32)m_width,
-		             (s32)m_height,
+		             (s32)width,
+		             (s32)height,
 		             0,
 		             GL_DEPTH_COMPONENT,
 		             GL_FLOAT,
 		             0);
-		depthTexture.m_width = m_width;
-		depthTexture.m_height = m_height;
+		depthTexture.width = width;
+		depthTexture.height = height;
 
 		glTexParameteri(
 		    GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLenum)minMagFilter);
@@ -112,14 +102,14 @@ bool RenderTexture::create(u32 w,
 
 		glFramebufferTextureEXT(GL_FRAMEBUFFER_EXT,
 		                        GL_DEPTH_ATTACHMENT_EXT,
-		                        depthTexture.m_handle,
+		                        depthTexture.handle,
 		                        0);
 	}
 
 	std::vector<GLenum> drawBuffers;
-	if (m_type & TextureType::Color || m_type & TextureType::Lighting)
+	if (type & TextureType::Color || type & TextureType::Lighting)
 		drawBuffers.emplace_back(GL_COLOR_ATTACHMENT0_EXT);
-	if (m_type & TextureType::Depth)
+	if (type & TextureType::Depth)
 		drawBuffers.emplace_back(GL_DEPTH_ATTACHMENT);
 
 	glDrawBuffers(len(drawBuffers), &drawBuffers[0]);
@@ -141,14 +131,6 @@ void RenderTexture::bind(const RenderTexture* rt)
 {
 	if (!rt)
 		glFlush();
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, rt != nullptr ? rt->m_fbo : 0);
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, rt != nullptr ? rt->fbo : 0);
 }
-
-u32 RenderTexture::getWidth() const { return m_width; }
-
-u32 RenderTexture::getHeight() const { return m_height; }
-
-RenderTexture::TextureType RenderTexture::getType() const { return m_type; }
-
-u32 RenderTexture::getNativeHandle() const { return m_fbo; }
 } // namespace Dunjun

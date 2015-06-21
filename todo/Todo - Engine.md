@@ -66,7 +66,7 @@
 
 ## Optimization
 
-* [ ] Mutlithreaded
+* [ ] Multithreaded
 * [x] Cone Frustum Culling - To be replaced by below
 * [ ] Frustum Culling
 * [x] Deferred Rendering
@@ -97,6 +97,11 @@
 	* [x] f(16|32|64)
 	* [x] b(8|32)
 	* [ ] frac(8|16|32) - fractional type [0.0, 1.0]
+* [ ] Custom Collection Types - Reduce use of STL
+	* [ ] Custom Allocators
+	* [ ] Array (Dynamic)
+	* [ ] Hash
+* [N] Use POD types where ever possible
 * [x] Windows
 * [~] OS X
 * [ ] Linux

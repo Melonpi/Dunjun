@@ -7,7 +7,7 @@
 
 namespace Dunjun
 {
-class GBuffer
+struct GBuffer
 {
 public:
 	enum TextureType
@@ -20,27 +20,18 @@ public:
 		Count,
 	};
 
-	GBuffer();
+	u32 width;
+	u32 height;
+
+	u32 fbo;
+
+	Texture textures[TextureType::Count];
+
 	virtual ~GBuffer();
 
 	bool create(u32 width, u32 height);
 
 	GLOBAL void bind(const GBuffer* b);
-
-	u32 getWidth() const;
-	u32 getHeight() const;
-
-	u32 getNativeHandle() const;
-
-	const Texture& getTexture(TextureType type) const;
-
-private:
-	u32 m_width;
-	u32 m_height;
-
-	u32 m_fbo;
-
-	Texture m_textures[TextureType::Count];
 };
 } // namespace Dunjun
 

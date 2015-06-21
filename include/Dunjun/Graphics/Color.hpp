@@ -7,6 +7,15 @@ namespace Dunjun
 {
 struct Color
 {
+	union
+	{
+		u8 data[4];
+		struct
+		{
+			u8 r, g, b, a;
+		};
+	};
+
 	GLOBAL const u32 Depth{256};
 
 	explicit Color(u8 r, u8 g, u8 b, u8 a = (u8)0xFF)
@@ -24,15 +33,6 @@ struct Color
 		b = (rgba >> 8)  & 0xFF;
 		a = (rgba >> 0)  & 0xFF;
 	}
-
-	union
-	{
-		u8 data[4];
-		struct
-		{
-			u8 r, g, b, a;
-		};
-	};
 };
 }
 

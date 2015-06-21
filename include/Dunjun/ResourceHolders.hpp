@@ -47,14 +47,14 @@ public:
 		std::unique_ptr<ShaderProgram> shaders{make_unique<ShaderProgram>()};
 		if (!shaders->attachShaderFromFile(ShaderType::Vertex, vertexFilename))
 		{
-			std::cerr << shaders->getErrorLog() << std::endl;
+			std::cerr << shaders->errorLog << std::endl;
 
 			return false;
 		}
 		if (!shaders->attachShaderFromFile(ShaderType::Fragment,
 		                                   fragmentFilename))
 		{
-			std::cerr << shaders->getErrorLog() << std::endl;
+			std::cerr << shaders->errorLog << std::endl;
 
 			return false;
 		}
@@ -72,7 +72,7 @@ public:
 
 		if (!shaders->link())
 		{
-			std::cerr << shaders->getErrorLog() << std::endl;
+			std::cerr << shaders->errorLog << std::endl;
 
 			return false;
 		}

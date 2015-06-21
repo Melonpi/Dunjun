@@ -26,19 +26,12 @@ INTERNAL GLenum getInteralFormat(ImageFormat format, bool srgb)
 	}
 }
 
-Texture::Texture()
-: m_handle{0}
-, m_width{0}
-, m_height{0}
-{
-}
-
 Texture::Texture(const Image& image,
                  TextureFilter minMagFilter,
                  TextureWrapMode wrapMode)
-: m_handle{0}
-, m_width{(s32)image.getWidth()}
-, m_height{(s32)image.getHeight()}
+: handle{0}
+, width{(s32)image.width}
+, height{(s32)image.height}
 {
 	if (!loadFromImage(image, minMagFilter, wrapMode))
 		panic("Could not create texture from image.");
@@ -60,16 +53,16 @@ bool Texture::loadFromImage(const Image& image,
                             TextureFilter minMagFilter,
                             TextureWrapMode wrapMode)
 {
-	if (image.getFormat() == ImageFormat::None)
+	if (image.format == ImageFormat::None)
 		return false;
 
-	m_width = image.getWidth();
-	m_height = image.getHeight();
+	width = image.width;
+	height = image.height;
 
-	if (!m_handle)
-		glGenTextures(1, &m_handle);
+	if (!handle)
+		glGenTextures(1, &handle);
 
-	glBindTexture(GL_TEXTURE_2D, m_handle);
+	glBindTexture(GL_TEXTURE_2D, handle);
 	glTexParameteri(GL_TEXTURE_2D,
 	                GL_TEXTURE_WRAP_S,
 	                static_cast<s32>(wrapMode));
@@ -85,13 +78,13 @@ bool Texture::loadFromImage(const Image& image,
 
 	glTexImage2D(GL_TEXTURE_2D,
 	             0,
-	             getInteralFormat(image.getFormat(), true),
-	             m_width,
-	             m_height,
+	             getInteralFormat(image.format, true),
+	             width,
+	             height,
 	             0,
-	             getInteralFormat(image.getFormat(), false),
+	             getInteralFormat(image.format, false),
 	             GL_UNSIGNED_BYTE,
-	             image.getPixels());
+	             image.pixels);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -100,8 +93,8 @@ bool Texture::loadFromImage(const Image& image,
 
 Texture::~Texture()
 {
-	if (m_handle)
-		glDeleteTextures(1, &m_handle);
+	if (handle)
+		glDeleteTextures(1, &handle);
 }
 
 void Texture::bind(const Texture* tex, u32 position)
@@ -117,13 +110,7 @@ void Texture::bind(const Texture* tex, u32 position)
 	glClientActiveTexture(GL_TEXTURE0 + position);
 
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, (tex && tex->m_handle) ? tex->m_handle : 0);
+	glBindTexture(GL_TEXTURE_2D, (tex && tex->handle) ? tex->handle : 0);
 	glDisable(GL_TEXTURE_2D);
 }
-
-s32 Texture::getWidth() const { return m_width; }
-
-s32 Texture::getHeight() const { return m_height; }
-
-u32 Texture::getNativeHandle() const { return m_handle; }
 } // namespace Dunjun

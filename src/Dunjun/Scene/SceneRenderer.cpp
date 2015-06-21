@@ -110,7 +110,7 @@ SceneRenderer& SceneRenderer::geometryPass()
 
 	GBuffer::bind(&m_gBuffer);
 	{
-		glViewport(0, 0, m_gBuffer.getWidth(), m_gBuffer.getHeight());
+		glViewport(0, 0, m_gBuffer.width, m_gBuffer.height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		shaders.use();
@@ -146,17 +146,17 @@ SceneRenderer& SceneRenderer::geometryPass()
 
 SceneRenderer& SceneRenderer::lightPass()
 {
-	m_lBuffer.create(m_gBuffer.getWidth(), m_gBuffer.getHeight(), RenderTexture::Lighting);
+	m_lBuffer.create(m_gBuffer.width, m_gBuffer.height, RenderTexture::Lighting);
 
-	Texture::bind(&m_gBuffer.getTexture(GBuffer::Diffuse),  0);
-	Texture::bind(&m_gBuffer.getTexture(GBuffer::Specular), 1);
-	Texture::bind(&m_gBuffer.getTexture(GBuffer::Normal),   2);
-	Texture::bind(&m_gBuffer.getTexture(GBuffer::Depth),    3);
+	Texture::bind(&m_gBuffer.textures[GBuffer::Diffuse],  0);
+	Texture::bind(&m_gBuffer.textures[GBuffer::Specular], 1);
+	Texture::bind(&m_gBuffer.textures[GBuffer::Normal],   2);
+	Texture::bind(&m_gBuffer.textures[GBuffer::Depth],    3);
 
 	RenderTexture::bind(&m_lBuffer);
 	{
 		glClearColor(0, 0, 0, 0);
-		glViewport(0, 0, m_lBuffer.getWidth(), m_lBuffer.getHeight());
+		glViewport(0, 0, m_lBuffer.width, m_lBuffer.height);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glDepthMask(false);
@@ -299,15 +299,15 @@ SceneRenderer& SceneRenderer::lightPass()
 
 SceneRenderer& SceneRenderer::outPass()
 {
-	m_outTexture.create(m_gBuffer.getWidth(), m_gBuffer.getHeight(), RenderTexture::Color);
+	m_outTexture.create(m_gBuffer.width, m_gBuffer.height, RenderTexture::Color);
 
-	Texture::bind(&m_gBuffer.getTexture(GBuffer::Diffuse), 0);
+	Texture::bind(&m_gBuffer.textures[GBuffer::Diffuse], 0);
 	Texture::bind(&m_lBuffer.colorTexture, 1);
 
 	RenderTexture::bind(&m_outTexture);
 	{
 		glClearColor(1, 1, 1, 1);
-		glViewport(0, 0, m_outTexture.getWidth(), m_outTexture.getHeight());
+		glViewport(0, 0, m_outTexture.width, m_outTexture.height);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		auto& shaders = g_shaderHolder.get("out");

@@ -4,34 +4,24 @@
 
 namespace Dunjun
 {
-GBuffer::GBuffer() {}
-
 GBuffer::~GBuffer()
 {
-	if (m_fbo)
-		glDeleteFramebuffersEXT(1, &m_fbo);
-}
-
-const Texture& GBuffer::getTexture(TextureType type) const
-{
-	if (type < 0 || type >= TextureType::Count) // If out of range
-		return m_textures[Diffuse];
-
-	return m_textures[type];
+	if (fbo)
+		glDeleteFramebuffersEXT(1, &fbo);
 }
 
 bool GBuffer::create(u32 w, u32 h)
 {
-	if (w == m_width && h == m_height) // GBuffer already exists
+	if (w == width && h == height) // GBuffer already exists
 		return true;
 
-	m_width = w;
-	m_height = h;
+	width = w;
+	height = h;
 
-	if (!m_fbo)
-		glGenFramebuffersEXT(1, &m_fbo);
+	if (!fbo)
+		glGenFramebuffersEXT(1, &fbo);
 
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
 
 	std::vector<GLenum> drawBuffers;
 
@@ -41,9 +31,9 @@ bool GBuffer::create(u32 w, u32 h)
 	                                  GLenum format,
 	                                  GLenum type)
 	{
-		if (!tex.m_handle)
-			glGenTextures(1, &tex.m_handle);
-		glBindTexture(GL_TEXTURE_2D, tex.m_handle);
+		if (!tex.handle)
+			glGenTextures(1, &tex.handle);
+		glBindTexture(GL_TEXTURE_2D, tex.handle);
 		glTexImage2D(GL_TEXTURE_2D,
 		             0,
 		             internalFormat,
@@ -53,8 +43,8 @@ bool GBuffer::create(u32 w, u32 h)
 		             format,
 		             type,
 		             nullptr);
-		tex.m_width = w;
-		tex.m_height = h;
+		tex.width = w;
+		tex.height = h;
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -62,28 +52,28 @@ bool GBuffer::create(u32 w, u32 h)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 		glFramebufferTextureEXT(
-		    GL_FRAMEBUFFER_EXT, attachment, tex.m_handle, 0);
+		    GL_FRAMEBUFFER_EXT, attachment, tex.handle, 0);
 
 		if (attachment != GL_DEPTH_ATTACHMENT_EXT)
 			drawBuffers.emplace_back(attachment);
 	};
 
-	addRT(m_textures[Diffuse],
+	addRT(textures[Diffuse],
 	      GL_COLOR_ATTACHMENT0_EXT,
 	      GL_RGB8,
 	      GL_RGB,
 	      GL_UNSIGNED_BYTE);
-	addRT(m_textures[Specular],
+	addRT(textures[Specular],
 	      GL_COLOR_ATTACHMENT1_EXT,
 	      GL_RGBA8,
 	      GL_RGBA,
 	      GL_UNSIGNED_BYTE);
-	addRT(m_textures[Normal],
+	addRT(textures[Normal],
 	      GL_COLOR_ATTACHMENT2_EXT,
 	      GL_RGB10_A2,
 	      GL_RGBA,
 	      GL_FLOAT);
-	addRT(m_textures[Depth],
+	addRT(textures[Depth],
 	      GL_DEPTH_ATTACHMENT_EXT,
 	      GL_DEPTH_COMPONENT24,
 	      GL_DEPTH_COMPONENT,
@@ -108,11 +98,6 @@ void GBuffer::bind(const GBuffer* b)
 {
 	if (!b)
 		glFlush();
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, b != nullptr ? b->m_fbo : 0);
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, b != nullptr ? b->fbo : 0);
 }
-
-u32 GBuffer::getWidth() const { return m_width; }
-u32 GBuffer::getHeight() const { return m_height; }
-
-u32 GBuffer::getNativeHandle() const { return m_fbo; }
 } // namespace Dunjun

@@ -23,10 +23,13 @@ enum class TextureWrapMode : s32
 	MirroredRepeat = GL_MIRRORED_REPEAT,
 };
 
-class Texture : private NonCopyable
+struct Texture : private NonCopyable
 {
-public:
-	Texture();
+	u32 handle{0};
+	s32 width{0};
+	s32 height{0};
+
+	Texture() = default;
 	Texture(const Image& image,
 	        TextureFilter minMagFilter = TextureFilter::Linear,
 	        TextureWrapMode wrapMode = TextureWrapMode::ClampToEdge);
@@ -41,20 +44,6 @@ public:
 	virtual ~Texture();
 
 	GLOBAL void bind(const Texture* tex, u32 position);
-
-	s32 getWidth() const;
-	s32 getHeight() const;
-
-	u32 getNativeHandle() const;
-
-private:
-	friend class RenderTexture;
-	friend class GBuffer;
-
-	s32 m_width{0};
-	s32 m_height{0};
-
-	u32 m_handle{0};
 };
 } // namespace Dunjun
 

@@ -30,9 +30,8 @@ enum class DrawType : s32
 	// Quads      = GL_QUADS, // Disabled by default
 };
 
-class Mesh
+struct Mesh
 {
-public:
 	struct Data
 	{
 		DrawType drawType{DrawType::Triangles};
@@ -61,6 +60,18 @@ public:
 		void generateNormals();
 	};
 
+	Data data;
+	// NOTE(bill): These mutables are a little bit of a hack but it works and
+	// is semi-const correct
+
+	mutable u32 vbo{0};
+	mutable u32 ibo{0};
+
+	mutable bool generated{false};
+
+	DrawType drawType{DrawType::Triangles};
+	s32 drawCount{0};
+
 	Mesh();
 	Mesh(const Data& data);
 
@@ -70,33 +81,16 @@ public:
 
 	void generate() const;
 
-private:
-	// NOTE(bill): Only Renderers can draw a mesh
-	friend class SceneRenderer;
+	void draw() const;
 
 	inline void destroy() const
 	{
-		if (m_vbo)
-			glDeleteBuffers(1, &m_vbo);
-		if (m_ibo)
-			glDeleteBuffers(1, &m_ibo);
+		if (vbo)
+			glDeleteBuffers(1, &vbo);
+		if (ibo)
+			glDeleteBuffers(1, &ibo);
 	}
 
-
-	void draw() const;
-
-	Data m_data;
-
-	// NOTE(bill): These mutables are a little bit of a hack but it works and
-	// is semi-const correct
-
-	mutable u32 m_vbo{0};
-	mutable u32 m_ibo{0};
-
-	mutable bool m_generated{false};
-
-	DrawType m_drawType{DrawType::Triangles};
-	s32 m_drawCount{0};
 };
 } // namespace Dunjun
 

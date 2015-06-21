@@ -24,7 +24,7 @@ enum class ShaderType
 class ShaderProgram : public NonCopyable
 {
 public:
-	ShaderProgram();
+	ShaderProgram() = default;
 	virtual ~ShaderProgram();
 
 	bool attachShaderFromFile(ShaderType type, const std::string& filename);
@@ -36,11 +36,6 @@ public:
 	void checkInUse() const;
 
 	bool link();
-	bool isLinked() const;
-
-	const std::string& getErrorLog() const;
-
-	u32 getNativeHandle() const;
 
 	void bindAttribLocation(u32 location, const std::string& name);
 
@@ -62,11 +57,11 @@ public:
 	void setUniform(const std::string& name, const Transform& t) const;
 	void setUniform(const std::string& name, const Color& c) const;
 
-private:
-	u32 m_handle;
-	bool m_isLinked;
-	std::string m_errorLog;
+	u32 handle{0};
+	bool isLinked{false};
+	std::string errorLog{};
 
+private:
 	mutable std::unordered_map<std::string, s32> m_attribLocations;
 	mutable std::unordered_map<std::string, s32> m_uniformLocations;
 };

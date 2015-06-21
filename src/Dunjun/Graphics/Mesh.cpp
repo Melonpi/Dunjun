@@ -25,65 +25,65 @@ void Mesh::Data::generateNormals()
 }
 
 Mesh::Mesh()
-: m_data{}
-, m_generated{false}
-, m_vbo{0}
-, m_ibo{0}
-, m_drawType{DrawType::Triangles}
-, m_drawCount{0}
+: data{}
+, generated{false}
+, vbo{0}
+, ibo{0}
+, drawType{DrawType::Triangles}
+, drawCount{0}
 {
 }
 
 Mesh::Mesh(const Data& data)
-: m_data{data}
-, m_generated{false}
-, m_vbo{0}
-, m_ibo{0}
-, m_drawType{data.drawType}
-, m_drawCount{(s32)len(data.indices)}
+: data{data}
+, generated{false}
+, vbo{0}
+, ibo{0}
+, drawType{data.drawType}
+, drawCount{(s32)len(data.indices)}
 {
 	generate();
 }
 
-void Mesh::addData(const Data& data)
+void Mesh::addData(const Data& data_)
 {
-	m_data = data;
-	m_drawType = data.drawType;
-	m_drawCount = len(data.indices);
-	m_generated = false;
+	data = data_;
+	drawType = data.drawType;
+	drawCount = len(data.indices);
+	generated = false;
 }
 
 void Mesh::generate() const
 {
-	if (m_generated)
+	if (generated)
 		return;
 
-	if (!m_vbo)
-		glGenBuffers(1, &m_vbo);
-	if (!m_ibo)
-		glGenBuffers(1, &m_ibo);
+	if (!vbo)
+		glGenBuffers(1, &vbo);
+	if (!ibo)
+		glGenBuffers(1, &ibo);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER,
-	             sizeof(Vertex) * len(m_data.vertices),
-	             &m_data.vertices[0],
+	             sizeof(Vertex) * len(data.vertices),
+	             &data.vertices[0],
 	             GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-	             sizeof(u32) * len(m_data.indices),
-	             &m_data.indices[0],
+	             sizeof(u32) * len(data.indices),
+	             &data.indices[0],
 	             GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	m_generated = true;
+	generated = true;
 }
 
 void Mesh::draw() const
 {
-	if (!m_generated)
+	if (!generated)
 		generate();
 
 	glEnableVertexAttribArray((u32)AtrribLocation::Position);
@@ -91,8 +91,8 @@ void Mesh::draw() const
 	glEnableVertexAttribArray((u32)AtrribLocation::Color);
 	glEnableVertexAttribArray((u32)AtrribLocation::Normal);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
 	glVertexAttribPointer((u32)AtrribLocation::Position,
 	                      3,
@@ -123,7 +123,7 @@ void Mesh::draw() const
 	                      (const GLvoid*)(0 + sizeof(Vector3) +
 	                                      sizeof(Vector2) + sizeof(Color)));
 
-	glDrawElements((GLenum)m_drawType, (s32)m_drawCount, GL_UNSIGNED_INT, nullptr);
+	glDrawElements((GLenum)drawType, (s32)drawCount, GL_UNSIGNED_INT, nullptr);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

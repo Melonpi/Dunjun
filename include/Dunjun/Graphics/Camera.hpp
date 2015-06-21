@@ -15,7 +15,15 @@ enum class ProjectionType
 
 struct Camera
 {
-	Camera();
+	Transform transform{};
+	Radian fieldOfView{Degree{50}};
+	f32 orthoScale{1.0f};
+	f32 nearPlane{0.1f};
+	f32 farPlane{256.0f};
+	f32 viewportAspectRatio{4.0f / 3.0f};
+	ProjectionType projectionType{ProjectionType::Perspective};
+
+	Camera() = default;
 	Camera(const Camera& other) = default;
 
 	void lookAt(const Vector3& position, const Vector3& up = {0, 1, 0});
@@ -36,14 +44,6 @@ struct Camera
 	Matrix4 getMatrix() const;
 	Matrix4 getProjection() const;
 	Matrix4 getView() const;
-
-	Transform transform;
-	Radian fieldOfView;
-	f32 orthoScale;
-	f32 nearPlane;
-	f32 farPlane;
-	f32 viewportAspectRatio;
-	ProjectionType projectionType;
 };
 } // namespace Dunjun
 

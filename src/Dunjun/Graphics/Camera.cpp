@@ -4,17 +4,6 @@
 
 namespace Dunjun
 {
-Camera::Camera()
-: transform{}
-, fieldOfView{Degree{50}}
-, orthoScale{1.0f}
-, nearPlane{0.1f}
-, farPlane{256.0f}
-, viewportAspectRatio{4.0f / 3.0f}
-, projectionType{ProjectionType::Perspective}
-{
-}
-
 void Camera::lookAt(const Vector3& position, const Vector3& up)
 {
 	transform.orientation =

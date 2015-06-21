@@ -116,17 +116,10 @@ INTERNAL std::string stringFromFile(const std::string& filename)
 	return output;
 }
 
-ShaderProgram::ShaderProgram()
-: m_handle{0}
-, m_isLinked{false}
-, m_errorLog{}
-{
-}
-
 ShaderProgram::~ShaderProgram()
 {
-	if (m_handle)
-		glDeleteProgram(m_handle);
+	if (handle)
+		glDeleteProgram(handle);
 }
 
 bool ShaderProgram::attachShaderFromFile(ShaderType type,
@@ -139,8 +132,8 @@ bool ShaderProgram::attachShaderFromFile(ShaderType type,
 bool ShaderProgram::attachShaderFromMemory(ShaderType type,
                                            const std::string& source)
 {
-	if (!m_handle)
-		m_handle = glCreateProgram();
+	if (!handle)
+		handle = glCreateProgram();
 
 	const char* shaderSource{source.c_str()};
 
@@ -173,14 +166,14 @@ bool ShaderProgram::attachShaderFromMemory(ShaderType type,
 
 		msg.append(strInfoLog);
 		msg.append("\n");
-		m_errorLog.append(msg);
+		errorLog.append(msg);
 
 		glDeleteShader(shader);
 
 		return false;
 	}
 
-	glAttachShader(m_handle, shader);
+	glAttachShader(handle, shader);
 
 	return true;
 }
@@ -188,7 +181,7 @@ bool ShaderProgram::attachShaderFromMemory(ShaderType type,
 void ShaderProgram::use() const
 {
 	if (!isInUse())
-		glUseProgram(m_handle);
+		glUseProgram(handle);
 }
 
 bool ShaderProgram::isInUse() const
@@ -196,7 +189,7 @@ bool ShaderProgram::isInUse() const
 	s32 currentProgram{0};
 	glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
 
-	return (currentProgram == (s32)m_handle);
+	return (currentProgram == (s32)handle);
 }
 
 void ShaderProgram::stopUsing() const
@@ -213,53 +206,47 @@ void ShaderProgram::checkInUse() const
 
 bool ShaderProgram::link()
 {
-	if (!m_handle)
-		m_handle = glCreateProgram();
+	if (!handle)
+		handle = glCreateProgram();
 
-	if (!m_isLinked)
+	if (!isLinked)
 	{
-		glLinkProgram(m_handle);
+		glLinkProgram(handle);
 
 		s32 status;
-		glGetProgramiv(m_handle, GL_LINK_STATUS, &status);
+		glGetProgramiv(handle, GL_LINK_STATUS, &status);
 		if (!status)
 		{
 			std::string msg{"ShaderProgram linking failure: \n"};
 
 			s32 infoLogLength;
-			glGetProgramiv(m_handle, GL_INFO_LOG_LENGTH, &infoLogLength);
+			glGetProgramiv(handle, GL_INFO_LOG_LENGTH, &infoLogLength);
 
 			char* strInfoLog{new char[infoLogLength + 1]};
 			defer(delete[] strInfoLog);
 
-			glGetProgramInfoLog(m_handle, infoLogLength, nullptr, strInfoLog);
+			glGetProgramInfoLog(handle, infoLogLength, nullptr, strInfoLog);
 
 			msg.append(strInfoLog);
 			msg.append("\n");
-			m_errorLog.append(msg);
+			errorLog.append(msg);
 
-			glDeleteProgram(m_handle);
-			m_handle = 0;
+			glDeleteProgram(handle);
+			handle = 0;
 
-			m_isLinked = false;
-			return m_isLinked;
+			isLinked = false;
+			return isLinked;
 		}
 
-		m_isLinked = true;
+		isLinked = true;
 	}
 
-	return m_isLinked;
+	return isLinked;
 }
-
-u32 ShaderProgram::getNativeHandle() const { return m_handle; }
-
-bool ShaderProgram::isLinked() const { return m_isLinked; }
-
-const std::string& ShaderProgram::getErrorLog() const { return m_errorLog; }
 
 void ShaderProgram::bindAttribLocation(u32 location, const std::string& name)
 {
-	glBindAttribLocation(m_handle, location, name.c_str());
+	glBindAttribLocation(handle, location, name.c_str());
 	m_attribLocations[name] = location;
 }
 
@@ -269,7 +256,7 @@ s32 ShaderProgram::getAttribLocation(const std::string& name) const
 	if (found != std::end(m_attribLocations))
 		return found->second;
 
-	s32 loc{glGetAttribLocation(m_handle, name.c_str())};
+	s32 loc{glGetAttribLocation(handle, name.c_str())};
 	m_attribLocations[name] = loc;
 	return loc;
 }
@@ -280,7 +267,7 @@ s32 ShaderProgram::getUniformLocation(const std::string& name) const
 	if (found != std::end(m_uniformLocations))
 		return found->second;
 
-	s32 loc{glGetUniformLocation(m_handle, name.c_str())};
+	s32 loc{glGetUniformLocation(handle, name.c_str())};
 	m_uniformLocations[name] = loc;
 	return loc;
 }

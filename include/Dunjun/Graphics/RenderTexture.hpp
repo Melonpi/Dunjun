@@ -7,9 +7,8 @@
 
 namespace Dunjun
 {
-class RenderTexture
+struct RenderTexture
 {
-public:
 	enum TextureType
 	{
 		Color = 1,
@@ -18,8 +17,16 @@ public:
 		Lighting = 4 | Color,
 	};
 
-	RenderTexture();
+	Texture colorTexture{};
+	Texture depthTexture{};
 
+	u32 width{0};
+	u32 height{0};
+
+	TextureType type{TextureType::Color};
+	u32 fbo{0};
+
+	RenderTexture() = default;
 	virtual ~RenderTexture();
 
 	bool create(u32 width,
@@ -29,26 +36,6 @@ public:
 	            TextureWrapMode wrapMode = TextureWrapMode::ClampToEdge);
 
 	GLOBAL void bind(const RenderTexture* rt);
-
-	u32 getWidth() const;
-	u32 getHeight() const;
-
-	TextureType getType() const;
-
-	u32 getNativeHandle() const;
-
-	// TODO(bill): Specific Method(s) for Textures
-	Texture colorTexture;
-	Texture depthTexture;
-
-private:
-	u32 m_width;
-	u32 m_height;
-
-	TextureType m_type;
-
-
-	u32 m_fbo; // framebuffer
 };
 } // namespace Dunjun
 
