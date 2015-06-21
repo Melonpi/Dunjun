@@ -9,9 +9,9 @@ namespace Dunjun
 {
 struct Transform
 {
-	Vector3 position{0, 0, 0};
-	Quaternion orientation{};
-	Vector3 scale{1, 1, 1};
+	Vector3 position = Vector3{0, 0, 0};
+	Quaternion orientation = Quaternion{0, 0, 0, 1};
+	Vector3 scale = Vector3{1, 1, 1};
 };
 
 // World = Parent * Local

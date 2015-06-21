@@ -12,20 +12,16 @@ struct Rectangle
 	f32 y{0};
 	f32 width{0};
 	f32 height{0};
-
-	Rectangle() = default;
-	Rectangle(const Rectangle& other) = default;
-
-	Rectangle(f32 x, f32 y, f32 width, f32 height);
-	Rectangle(const Vector2& position, const Vector2& size);
-
-	bool contains(const Vector2& point) const;
-	bool intersects(const Rectangle& rectangle) const;
-	bool intersects(const Rectangle& rectangle, Rectangle& intersection) const;
 };
 
 bool operator==(const Rectangle& left, const Rectangle& right);
 bool operator!=(const Rectangle& left, const Rectangle& right);
+
+bool contains(const Rectangle& a, const Vector2& point);
+bool intersects(const Rectangle& a, const Rectangle& b);
+bool intersects(const Rectangle& a,
+                const Rectangle& b,
+                Rectangle& intersection);
 
 } // namespace Dunjun
 

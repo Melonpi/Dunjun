@@ -4,116 +4,92 @@
 
 namespace Dunjun
 {
-Vector2::Vector2()
-: x{0}
-, y{0}
-{
-}
-
-Vector2::Vector2(f32 xy)
-: x{xy}
-, y{xy}
-{
-}
-
-Vector2::Vector2(f32 x, f32 y)
-: x{x}
-, y{y}
-{
-}
-
-Vector2::Vector2(f32 xy[2])
-: x{xy[0]}
-, y{xy[1]}
-{
-}
-
-bool Vector2::operator==(const Vector2& other) const
+bool operator==(const Vector2& a, const Vector2& b)
 {
 	for (usize i{0}; i < 2; i++)
 	{
-		if (data[i] != other.data[i])
+		if (a.data[i] != b.data[i])
 			return false;
 	}
 
 	return true;
 }
 
-bool Vector2::operator!=(const Vector2& other) const
+bool operator!=(const Vector2& a, const Vector2& b)
 {
-	return !Vector2::operator==(other);
+	return !operator==(a, b);
 }
 
-Vector2 Vector2::operator-() const { return {-x, -y}; }
+Vector2 operator-(const Vector2& a) { return {-a.x, -a.y}; }
 
-Vector2 Vector2::operator+(const Vector2& other) const
+Vector2 operator+(const Vector2& a, const Vector2& b)
 {
-	return {x + other.x, y + other.y};
+	return {a.x + b.x, a.y + b.y};
 }
 
-Vector2 Vector2::operator-(const Vector2& other) const
+Vector2 operator-(const Vector2& a, const Vector2& b)
 {
-	return {x - other.x, y - other.y};
+	return {a.x - b.x, a.y - b.y};
 }
 
-Vector2 Vector2::operator*(f32 scalar) const
+Vector2 operator*(const Vector2& a, f32 scalar)
 {
-	return {scalar * x, scalar * y};
+	return {scalar * a.x, scalar * a.y};
 }
 
-Vector2 Vector2::operator/(f32 scalar) const
+Vector2 operator/(const Vector2& a, f32 scalar)
 {
-	return {x / scalar, y / scalar};
+	return {a.x / scalar, a.y / scalar};
 }
 
 // Hadamard Product
-Vector2 Vector2::operator*(const Vector2& other) const
+Vector2 operator*(const Vector2& a, const Vector2& b)
 {
 	Vector2 result;
 	for (usize i{0}; i < 2; i++)
-		result[i] = data[i] * other.data[i];
+		result.data[i] = a.data[i] * b.data[i];
 	return result;
 }
 
 // Hadamard Product
-Vector2 Vector2::operator/(const Vector2& other) const
+Vector2 operator/(const Vector2& a, const Vector2& b)
 {
 	Vector2 result;
 	for (usize i{0}; i < 2; i++)
-		result[i] = data[i] / other.data[i];
+		result.data[i] = a.data[i] / b.data[i];
 	return result;
 }
 
-Vector2& Vector2::operator+=(const Vector2& other)
+Vector2& operator+=(Vector2& a, const Vector2& b)
 {
-	x += other.x;
-	y += other.y;
+	a.x += b.x;
+	a.y += b.y;
 
-	return *this;
+	return a;
 }
 
-Vector2& Vector2::operator-=(const Vector2& other)
+Vector2& operator-=(Vector2& a, const Vector2& b)
 {
-	x -= other.x;
-	y -= other.y;
+	a.x -= b.x;
+	a.y -= b.y;
 
-	return *this;
+	return a;
 }
 
-Vector2& Vector2::operator*=(f32 scalar)
+Vector2& operator*=(Vector2& a, f32 scalar)
 {
-	x *= scalar;
-	y *= scalar;
+	a.x *= scalar;
+	a.y *= scalar;
 
-	return *this;
+	return a;
 }
 
-Vector2& Vector2::operator/=(f32 scalar)
+Vector2& operator/=(Vector2& a, f32 scalar)
 {
-	x /= scalar;
-	y /= scalar;
+	a.x /= scalar;
+	a.y /= scalar;
 
-	return *this;
+	return a;
 }
 
 f32 dot(const Vector2& a, const Vector2& b) { return a.x * b.x + a.y * b.y; }

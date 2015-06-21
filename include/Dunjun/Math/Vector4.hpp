@@ -7,59 +7,65 @@
 
 namespace Dunjun
 {
-struct Vector4
+union Vector4
 {
-	union
+	struct
 	{
-		f32 data[4];
-		struct
-		{
-			f32 x, y, z, w;
-		};
-		struct
-		{
-			f32 r, g, b, a;
-		};
-		struct
-		{
-			f32 s, t, p, q;
-		};
+		f32 x, y, z, w;
+	};
+	struct
+	{
+		f32 r, g, b, a;
+	};
+	struct
+	{
+		f32 s, t, p, q;
 	};
 
-	Vector4();
-	explicit Vector4(f32 xyzw);
-	Vector4(f32 x, f32 y, f32 z, f32 w);
-	Vector4(f32 xyzw[4]);
-	explicit Vector4(const Vector2& xy, f32 z, f32 w);
-	explicit Vector4(const Vector2& xy, const Vector2& zw);
-	explicit Vector4(const Vector3& xyz, f32 w);
-	Vector4(const Vector4& other) = default;
+	f32 data[4];
 
-	inline f32& operator[](usize index) { return data[index]; }
-	inline const f32& operator[](usize index) const { return data[index]; }
+	struct
+	{
+		Vector2 xy;
+		Vector2 zw;
+	};
 
-	bool operator==(const Vector4& other) const;
-	bool operator!=(const Vector4& other) const;
+	Vector3 xyz;
 
-	Vector4 operator-() const;
+	struct
+	{
+		f32 x;
+		Vector2 yz;
+	};
 
-	Vector4 operator+(const Vector4& other) const;
-
-	Vector4 operator-(const Vector4& other) const;
-
-	Vector4 operator*(f32 scalar) const;
-
-	// Hadamard Product
-	Vector4 operator*(const Vector4& other) const;
-	// Hadamard Product
-	Vector4 operator/(const Vector4& other) const;
-	Vector4 operator/(f32 scalar) const;
-
-	Vector4& operator+=(const Vector4& other);
-	Vector4& operator-=(const Vector4& other);
-	Vector4& operator*=(f32 scalar);
-	Vector4& operator/=(f32 scalar);
+	struct
+	{
+		f32 x;
+		Vector3 yzw;
+	};
 };
+
+
+bool operator==(const Vector4& a, const Vector4& b);
+bool operator!=(const Vector4& a, const Vector4& b);
+
+Vector4 operator-(const Vector4& a);
+
+Vector4 operator+(const Vector4& a, const Vector4& b);
+Vector4 operator-(const Vector4& a, const Vector4& b);
+
+Vector4 operator*(const Vector4& a, f32 scalar);
+
+// Hadamard Product
+Vector4 operator*(const Vector4& a, const Vector4& b);
+// Hadamard Product
+Vector4 operator/(const Vector4& a, const Vector4& b);
+Vector4 operator/(const Vector4& a, f32 scalar);
+
+Vector4& operator+=(Vector4& a, const Vector4& b);
+Vector4& operator-=(Vector4& a, const Vector4& b);
+Vector4& operator*=(Vector4& a, f32 scalar);
+Vector4& operator/=(Vector4& a, f32 scalar);
 
 inline Vector4 operator*(f32 scalar, const Vector4& vector)
 {
@@ -74,8 +80,8 @@ Vector4 normalize(const Vector4& a);
 
 inline std::ostream& operator<<(std::ostream& os, const Vector4& v)
 {
-	return os << "Vector4(" << v[0] << ", " << v[1] << ", " << v[2] << ", "
-	          << v[3] << ")";
+	return os << "Vector4{" << v.x << ", " << v.y << ", " << v.z << ", "
+	          << v.w << "}";
 }
 
 } // namespace Dunjun

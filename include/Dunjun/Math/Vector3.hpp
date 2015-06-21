@@ -7,59 +7,50 @@
 
 namespace Dunjun
 {
-struct Vector3
+union Vector3
 {
-	union
+	struct
 	{
-		f32 data[3];
-		struct
-		{
-			f32 x, y, z;
-		};
-		struct
-		{
-			f32 r, g, b;
-		};
-		struct
-		{
-			f32 s, t, p;
-		};
+		f32 x, y, z;
 	};
+	struct
+	{
+		f32 r, g, b;
+	};
+	struct
+	{
+		f32 s, t, p;
+	};
+	f32 data[3];
 
-	Vector3();
-
-	explicit Vector3(f32 xyz);
-
-	Vector3(f32 x, f32 y, f32 z);
-
-	Vector3(f32 xyz[3]);
-	explicit Vector3(const Vector2& other, f32 z);
-	Vector3(const Vector3& other) = default;
-
-	inline f32& operator[](usize index) { return data[index]; }
-	inline const f32& operator[](usize index) const { return data[index]; }
-
-	bool operator==(const Vector3& other) const;
-	bool operator!=(const Vector3& other) const;
-
-	Vector3 operator-() const;
-
-	Vector3 operator+(const Vector3& other) const;
-	Vector3 operator-(const Vector3& other) const;
-	Vector3 operator*(f32 scalar) const;
-	Vector3 operator/(f32 scalar) const;
-
-	// Hadamard Product
-	Vector3 operator*(const Vector3& other) const;
-	// Hadamard Product
-	Vector3 operator/(const Vector3& other) const;
-	Vector3& operator+=(const Vector3& other);
-	Vector3& operator-=(const Vector3& other);
-
-	Vector3& operator*=(f32 scalar);
-
-	Vector3& operator/=(f32 scalar);
+	Vector2 xy;
+	struct
+	{
+		f32 x;
+		Vector2 yz;
+	};
 };
+
+bool operator==(const Vector3& a, const Vector3& b);
+bool operator!=(const Vector3& a, const Vector3& b);
+
+Vector3 operator-(const Vector3& a);
+
+Vector3 operator+(const Vector3& a, const Vector3& b);
+Vector3 operator-(const Vector3& a, const Vector3& b);
+Vector3 operator*(const Vector3& a, f32 scalar);
+Vector3 operator/(const Vector3& a, f32 scalar);
+
+// Hadamard Product
+Vector3 operator*(const Vector3& a, const Vector3& b);
+// Hadamard Product
+Vector3 operator/(const Vector3& a, const Vector3& b);
+Vector3& operator+=(Vector3& a, const Vector3& b);
+Vector3& operator-=(Vector3& a, const Vector3& b);
+
+Vector3& operator*=(Vector3& a, f32 scalar);
+
+Vector3& operator/=(Vector3& a, f32 scalar);
 
 inline Vector3 operator*(f32 scalar, const Vector3& vector)
 {
@@ -76,7 +67,7 @@ Vector3 normalize(const Vector3& a);
 
 inline std::ostream& operator<<(std::ostream& os, const Vector3& v)
 {
-	return os << "Vector3(" << v[0] << ", " << v[1] << ", " << v[2] << ")";
+	return os << "Vector3{" << v.x << ", " << v.y << ", " << v.z << "}";
 }
 
 } // namespace Dunjun

@@ -10,10 +10,10 @@ void Mesh::Data::generateNormals()
 		Vertex& v1{vertices[indices[i + 1]]};
 		Vertex& v2{vertices[indices[i + 2]]};
 
-		Vector3 a{v1.position - v0.position};
-		Vector3 b{v2.position - v1.position};
+		Vector3 a = v1.position - v0.position;
+		Vector3 b = v2.position - v1.position;
 
-		Vector3 normal{normalize(cross(a, b))};
+		Vector3 normal = normalize(cross(a, b));
 
 		v0.normal += normal;
 		v1.normal += normal;

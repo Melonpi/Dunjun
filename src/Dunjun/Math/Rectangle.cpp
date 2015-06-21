@@ -4,51 +4,35 @@
 
 namespace Dunjun
 {
-Rectangle::Rectangle(f32 x, f32 y, f32 width, f32 height)
-: x{x}
-, y{y}
-, width{width}
-, height{height}
-{
-}
-Rectangle::Rectangle(const Vector2& position, const Vector2& size)
-: x{position.x}
-, y{position.y}
-, width{size.x}
-, height{size.y}
-{
-}
-
-bool Rectangle::contains(const Vector2& point) const
+bool contains(const Rectangle& a, const Vector2& point)
 {
 	// TODO(bill): compare similar due to floating point arithmetic
-	f32 minX{std::min(x, x + width)};
-	f32 maxX{std::max(x, x + width)};
-	f32 minY{std::min(y, y + height)};
-	f32 maxY{std::max(y, y + height)};
+	f32 minX{std::min(a.x, a.x + a.width)};
+	f32 maxX{std::max(a.x, a.x + a.width)};
+	f32 minY{std::min(a.y, a.y + a.height)};
+	f32 maxY{std::max(a.y, a.y + a.height)};
 
 	return (point.x >= minX) && (point.x < maxX) && (point.y >= minY) &&
 	       (point.y < maxY);
 }
 
-bool Rectangle::intersects(const Rectangle& rectangle) const
+bool intersects(const Rectangle& a, const Rectangle& b)
 {
 	Rectangle intersection;
-	return intersects(rectangle, intersection);
+	return intersects(a, b, intersection);
 }
 
-bool Rectangle::intersects(const Rectangle& rectangle,
-                           Rectangle& intersection) const
+bool intersects(const Rectangle& a, const Rectangle& b, Rectangle& intersection)
 {
-	f32 r1MinX{std::min(x, x + width)};
-	f32 r1MaxX{std::max(x, x + width)};
-	f32 r1MinY{std::min(y, y + height)};
-	f32 r1MaxY{std::max(y, y + height)};
+	f32 r1MinX{std::min(a.x, a.x + a.width)};
+	f32 r1MaxX{std::max(a.x, a.x + a.width)};
+	f32 r1MinY{std::min(a.y, a.y + a.height)};
+	f32 r1MaxY{std::max(a.y, a.y + a.height)};
 
-	f32 r2MinX{std::min(rectangle.x, rectangle.x + rectangle.width)};
-	f32 r2MaxX{std::max(rectangle.x, rectangle.x + rectangle.width)};
-	f32 r2MinY{std::min(rectangle.y, rectangle.y + rectangle.height)};
-	f32 r2MaxY{std::max(rectangle.y, rectangle.y + rectangle.height)};
+	f32 r2MinX{std::min(b.x, b.x + b.width)};
+	f32 r2MaxX{std::max(b.x, b.x + b.width)};
+	f32 r2MinY{std::min(b.y, b.y + b.height)};
+	f32 r2MaxY{std::max(b.y, b.y + b.height)};
 
 	f32 x1{std::max(r1MinX, r2MinX)};
 	f32 x2{std::min(r1MaxX, r2MaxX)};
@@ -59,12 +43,19 @@ bool Rectangle::intersects(const Rectangle& rectangle,
 	// If intersection is valid (positive non-zero area)
 	if ((x1 < x2) && (y1 < y2))
 	{
-		intersection = Rectangle{x1, y1, x2 - x1, y2 - y1};
+		intersection.x = x1;
+		intersection.y = y1;
+		intersection.width = x2 - x1;
+		intersection.height = y2 - y1;
 		return true;
 	}
 	else
 	{
-		intersection = Rectangle{0, 0, 0, 0};
+		intersection.x = 0;
+		intersection.y = 0;
+		intersection.width = 0;
+		intersection.height = 0;
+
 		return false;
 	}
 }

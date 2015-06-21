@@ -147,7 +147,7 @@ void World::update(Time dt)
 				lts = normalize(lts);
 			Vector3 velDir{0, 0, 0};
 
-			Vector3 forward{mainCamera.forward()};
+			Vector3 forward = mainCamera.forward();
 			forward.y = 0;
 			forward = normalize(forward);
 			velDir += lts.x * mainCamera.right();
@@ -163,7 +163,7 @@ void World::update(Time dt)
 			if (Input::isControllerButtonPressed(
 			        0, Input::ControllerButton::DpadUp))
 			{
-				Vector3 f{mainCamera.forward()};
+				Vector3 f = mainCamera.forward();
 				f.y = 0;
 				f = normalize(f);
 				velDir += f;
@@ -171,7 +171,7 @@ void World::update(Time dt)
 			if (Input::isControllerButtonPressed(
 			        0, Input::ControllerButton::DpadDown))
 			{
-				Vector3 b{mainCamera.backward()};
+				Vector3 b = mainCamera.backward();
 				b.y = 0;
 				b = normalize(b);
 				velDir += b;
@@ -180,7 +180,7 @@ void World::update(Time dt)
 			if (Input::isControllerButtonPressed(
 			        0, Input::ControllerButton::DpadLeft))
 			{
-				Vector3 l{mainCamera.left()};
+				Vector3 l = mainCamera.left();
 				l.y = 0;
 				l = normalize(l);
 				velDir += l;
@@ -188,7 +188,7 @@ void World::update(Time dt)
 			if (Input::isControllerButtonPressed(
 			        0, Input::ControllerButton::DpadRight))
 			{
-				Vector3 r{mainCamera.right()};
+				Vector3 r = mainCamera.right();
 				r.y = 0;
 				r = normalize(r);
 				velDir += r;
@@ -214,7 +214,7 @@ void World::update(Time dt)
 
 	f32 playerVel{4.0f};
 	{
-		Vector3 velDir{0, 0, 0};
+		Vector3 velDir = {0, 0, 0};
 
 		if (Input::isKeyPressed(Input::Key::Up))
 			velDir += {0, 0, -1};
@@ -267,12 +267,12 @@ void World::update(Time dt)
 	// in SceneRenderer
 	for (auto& room : level->rooms)
 	{
-		Vector3 roomPos{room->transform.position};
+		Vector3 roomPos = room->transform.position;
 		roomPos.x += room->size.x / 2;
 		roomPos.z += room->size.y / 2;
-		const Vector3 playerPos{mainCamera.transform.position};
+		const Vector3 playerPos = mainCamera.transform.position;
 
-		const Vector3 dp{roomPos - playerPos};
+		const Vector3 dp = roomPos - playerPos;
 
 		const f32 dist{length(dp)};
 
@@ -282,7 +282,7 @@ void World::update(Time dt)
 		// Distance Culling
 		if (dist < mainCamera.farPlane)
 		{
-			const Vector3 f{mainCamera.forward()};
+			const Vector3 f = mainCamera.forward();
 
 			f32 cosTheta{dot(f, normalize(dp))};
 
@@ -316,7 +316,7 @@ void World::render()
 		ShaderProgram& shaders = context.shaderHolder->get("texPass");
 		shaders.use();
 
-		shaders.setUniform("u_scale", Vector3{1.0f});
+		shaders.setUniform("u_scale", Vector3{1, 1, 1});
 		shaders.setUniform("u_tex", 0);
 		Texture::bind(&renderer.outTexture.colorTexture, 0);
 		// Texture::bind(&renderer.lightingTexture.colorTexture, 0);

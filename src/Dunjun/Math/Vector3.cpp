@@ -4,131 +4,96 @@
 
 namespace Dunjun
 {
-Vector3::Vector3()
-: x{0}
-, y{0}
-, z{0}
-{
-}
-
-Vector3::Vector3(f32 xyz)
-: x{xyz}
-, y{xyz}
-, z{xyz}
-{
-}
-
-Vector3::Vector3(f32 x, f32 y, f32 z)
-: x{x}
-, y{y}
-, z{z}
-{
-}
-
-Vector3::Vector3(f32 xyz[3])
-: x{xyz[0]}
-, y{xyz[1]}
-, z{xyz[2]}
-{
-}
-
-Vector3::Vector3(const Vector2& other, f32 z)
-: x{other.x}
-, y{other.y}
-, z{z}
-{
-}
-
-bool Vector3::operator==(const Vector3& other) const
+bool operator==(const Vector3& a, const Vector3& b)
 {
 	for (usize i{0}; i < 3; i++)
 	{
-		if (data[i] != other.data[i])
+		if (a.data[i] != b.data[i])
 			return false;
 	}
 
 	return true;
 }
 
-bool Vector3::operator!=(const Vector3& other) const
+bool operator!=(const Vector3& a, const Vector3& b)
 {
-	return !Vector3::operator==(other);
+	return !operator==(a, b);
 }
 
-Vector3 Vector3::operator-() const { return {-x, -y, -z}; }
+Vector3 operator-(const Vector3& a) { return {-a.x, -a.y, -a.z}; }
 
-Vector3 Vector3::operator+(const Vector3& other) const
+Vector3 operator+(const Vector3& a, const Vector3& b)
 {
-	return {x + other.x, y + other.y, z + other.z};
+	return {a.x + b.x, a.y + b.y, a.z + b.z};
 }
 
-Vector3 Vector3::operator-(const Vector3& other) const
+Vector3 operator-(const Vector3& a, const Vector3& b)
 {
-	return {x - other.x, y - other.y, z - other.z};
+	return {a.x - b.x, a.y - b.y, a.z - b.z};
 }
 
-Vector3 Vector3::operator*(f32 scalar) const
+Vector3 operator*(const Vector3& a, f32 scalar)
 {
-	return {scalar * x, scalar * y, scalar * z};
+	return {scalar * a.x, scalar * a.y, scalar * a.z};
 }
 
-Vector3 Vector3::operator/(f32 scalar) const
+Vector3 operator/(const Vector3& a, f32 scalar)
 {
-	return {x / scalar, y / scalar, z / scalar};
+	return {a.x / scalar, a.y / scalar, a.z / scalar};
 }
 
 // Hadamard Product
-Vector3 Vector3::operator*(const Vector3& other) const
+Vector3 operator*(const Vector3& a, const Vector3& b)
 {
 	Vector3 result;
 	for (usize i{0}; i < 3; i++)
-		result[i] = data[i] * other.data[i];
+		result.data[i] = a.data[i] * b.data[i];
 	return result;
 }
 
 // Hadamard Product
-Vector3 Vector3::operator/(const Vector3& other) const
+Vector3 operator/(const Vector3& a, const Vector3& b)
 {
 	Vector3 result;
 	for (usize i{0}; i < 3; i++)
-		result[i] = data[i] / other.data[i];
+		result.data[i] = a.data[i] / b.data[i];
 	return result;
 }
 
-Vector3& Vector3::operator+=(const Vector3& other)
+Vector3& operator+=(Vector3& a, const Vector3& b)
 {
-	x += other.x;
-	y += other.y;
-	z += other.z;
+	a.x += b.x;
+	a.y += b.y;
+	a.z += b.z;
 
-	return *this;
+	return a;
 }
 
-Vector3& Vector3::operator-=(const Vector3& other)
+Vector3& operator-=(Vector3& a, const Vector3& b)
 {
-	x -= other.x;
-	y -= other.y;
-	z -= other.z;
+	a.x -= b.x;
+	a.y -= b.y;
+	a.z -= b.z;
 
-	return *this;
+	return a;
 }
 
-Vector3& Vector3::operator*=(f32 scalar)
+Vector3& operator*=(Vector3& a, f32 scalar)
 {
-	x *= scalar;
-	y *= scalar;
-	z *= scalar;
+	a.x *= scalar;
+	a.y *= scalar;
+	a.z *= scalar;
 
-	return *this;
+	return a;
 }
 
-Vector3& Vector3::operator/=(f32 scalar)
+Vector3& operator/=(Vector3& a, f32 scalar)
 {
-	x /= scalar;
-	y /= scalar;
-	z /= scalar;
+	a.x /= scalar;
+	a.y /= scalar;
+	a.z /= scalar;
 
-	return *this;
+	return a;
 }
 
 f32 dot(const Vector3& a, const Vector3& b)

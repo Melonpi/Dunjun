@@ -348,7 +348,7 @@ void ShaderProgram::setUniform(const std::string& name, const Vector2& v) const
 	s32 loc{getUniformLocation(name)};
 	if (loc == -1)
 		return;
-	glUniform2fv(loc, 1, &v[0]);
+	glUniform2fv(loc, 1, &v.data[0]);
 }
 
 void ShaderProgram::setUniform(const std::string& name, const Vector3& v) const
@@ -357,7 +357,7 @@ void ShaderProgram::setUniform(const std::string& name, const Vector3& v) const
 	s32 loc{getUniformLocation(name)};
 	if (loc == -1)
 		return;
-	glUniform3fv(loc, 1, &v[0]);
+	glUniform3fv(loc, 1, &v.data[0]);
 }
 
 void ShaderProgram::setUniform(const std::string& name, const Vector4& v) const
@@ -366,7 +366,7 @@ void ShaderProgram::setUniform(const std::string& name, const Vector4& v) const
 	s32 loc{getUniformLocation(name)};
 	if (loc == -1)
 		return;
-	glUniform4fv(loc, 1, &v[0]);
+	glUniform4fv(loc, 1, &v.data[0]);
 }
 
 void ShaderProgram::setUniform(const std::string& name, const Matrix4& m) const
@@ -375,7 +375,7 @@ void ShaderProgram::setUniform(const std::string& name, const Matrix4& m) const
 	s32 loc{getUniformLocation(name)};
 	if (loc == -1)
 		return;
-	glUniformMatrix4fv(loc, 1, false, &m[0][0]);
+	glUniformMatrix4fv(loc, 1, false, &m.data[0].data[0]);
 }
 
 void ShaderProgram::setUniform(const std::string& name,
@@ -396,19 +396,19 @@ void ShaderProgram::setUniform(const std::string& name,
 		s32 loc{getUniformLocation(name + ".position")};
 		if (loc == -1)
 			return;
-		glUniform3fv(loc, 1, &t.position[0]);
+		glUniform3fv(loc, 1, &t.position.data[0]);
 	}
 	{
 		s32 loc{getUniformLocation(name + ".orientation")};
 		if (loc == -1)
 			return;
-		glUniform4fv(loc, 1, &t.orientation[0]);
+		glUniform4fv(loc, 1, &t.orientation.data[0]);
 	}
 	{
 		s32 loc{getUniformLocation(name + ".scale")};
 		if (loc == -1)
 			return;
-		glUniform3fv(loc, 1, &t.scale[0]);
+		glUniform3fv(loc, 1, &t.scale.data[0]);
 	}
 }
 

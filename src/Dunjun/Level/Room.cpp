@@ -70,15 +70,15 @@ void Room::generate(bool northDoor,
 			if (mapGrid[i][j] != emptyTile)
 			{
 				addTileSurface(
-				    Vector3(i, 0, j), TileSurfaceFace::Up, mapGrid[i][j]);
+				    Vector3{i, 0, j}, TileSurfaceFace::Up, mapGrid[i][j]);
 				addTileSurface(
-				    Vector3(i, 3, j), TileSurfaceFace::Down, stoneTiles);
+				    Vector3{i, 3, j}, TileSurfaceFace::Down, stoneTiles);
 			}
 #if 1 // Build Walls
 			else
 			{
 				addTileSurface(
-				    Vector3(i, Height, j), TileSurfaceFace::Up, stoneTiles);
+				    Vector3{i, Height, j}, TileSurfaceFace::Up, stoneTiles);
 			}
 
 			for (int k{0}; k < Height; k++)
@@ -88,7 +88,7 @@ void Room::generate(bool northDoor,
 					if (i > 0)
 					{
 						if (mapGrid[i - 1][j] != emptyTile)
-							addTileSurface(Vector3(i, k, j),
+							addTileSurface(Vector3{i, k, j},
 							               TileSurfaceFace::Left,
 							               stoneTiles);
 					}
@@ -96,7 +96,7 @@ void Room::generate(bool northDoor,
 					if (i < size.x - 1)
 					{
 						if (mapGrid[i + 1][j] != emptyTile)
-							addTileSurface(Vector3(i + 1, k, j),
+							addTileSurface(Vector3{i + 1, k, j},
 							               TileSurfaceFace::Right,
 							               stoneTiles);
 					}
@@ -104,7 +104,7 @@ void Room::generate(bool northDoor,
 					if (j > 0)
 					{
 						if (mapGrid[i][j - 1] != emptyTile)
-							addTileSurface(Vector3(i, k, j),
+							addTileSurface(Vector3{i, k, j},
 							               TileSurfaceFace::Back,
 							               stoneTiles);
 					}
@@ -112,7 +112,7 @@ void Room::generate(bool northDoor,
 					if (j < size.y - 1)
 					{
 						if (mapGrid[i][j + 1] != emptyTile)
-							addTileSurface(Vector3(i, k, j + 1),
+							addTileSurface(Vector3{i, k, j + 1},
 							               TileSurfaceFace::Front,
 							               stoneTiles);
 					}
@@ -124,13 +124,13 @@ void Room::generate(bool northDoor,
 						if (westDoor)
 						{
 							if (j != size.y / 2)
-								addTileSurface(Vector3(i, k, j),
+								addTileSurface(Vector3{i, k, j},
 								               TileSurfaceFace::Right,
 								               stoneTiles);
 						}
 						else
 						{
-							addTileSurface(Vector3(i, k, j),
+							addTileSurface(Vector3{i, k, j},
 							               TileSurfaceFace::Right,
 							               stoneTiles);
 						}
@@ -140,13 +140,13 @@ void Room::generate(bool northDoor,
 						if (eastDoor)
 						{
 							if (j != size.y / 2)
-								addTileSurface(Vector3(i + 1, k, j),
+								addTileSurface(Vector3{i + 1, k, j},
 								               TileSurfaceFace::Left,
 								               stoneTiles);
 						}
 						else
 						{
-							addTileSurface(Vector3(i + 1, k, j),
+							addTileSurface(Vector3{i + 1, k, j},
 							               TileSurfaceFace::Left,
 							               stoneTiles);
 						}
@@ -156,13 +156,13 @@ void Room::generate(bool northDoor,
 						if (northDoor)
 						{
 							if (i != size.x / 2)
-								addTileSurface(Vector3(i, k, j),
+								addTileSurface(Vector3{i, k, j},
 								               TileSurfaceFace::Front,
 								               stoneTiles);
 						}
 						else
 						{
-							addTileSurface(Vector3(i, k, j),
+							addTileSurface(Vector3{i, k, j},
 							               TileSurfaceFace::Front,
 							               stoneTiles);
 						}
@@ -172,13 +172,13 @@ void Room::generate(bool northDoor,
 						if (southDoor)
 						{
 							if (i != size.x / 2)
-								addTileSurface(Vector3(i, k, j + 1),
+								addTileSurface(Vector3{i, k, j + 1},
 								               TileSurfaceFace::Back,
 								               stoneTiles);
 						}
 						else
 						{
-							addTileSurface(Vector3(i, k, j + 1),
+							addTileSurface(Vector3{i, k, j + 1},
 							               TileSurfaceFace::Back,
 							               stoneTiles);
 						}

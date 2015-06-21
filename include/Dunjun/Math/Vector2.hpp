@@ -6,58 +6,45 @@
 
 namespace Dunjun
 {
-struct Vector2
+union Vector2
 {
-	union
+	struct
 	{
-		f32 data[2];
-		struct
-		{
-			f32 x, y;
-		};
-		struct
-		{
-			f32 r, g;
-		};
-		struct
-		{
-			f32 s, t;
-		};
+		f32 x, y;
 	};
-
-	Vector2();
-	explicit Vector2(f32 xy);
-	Vector2(f32 x, f32 y);
-	Vector2(f32 xy[2]);
-
-	Vector2(const Vector2& other) = default;
-
-	inline f32& operator[](usize index) { return data[index]; }
-	inline const f32& operator[](usize index) const { return data[index]; }
-
-	bool operator==(const Vector2& other) const;
-	bool operator!=(const Vector2& other) const;
-
-	Vector2 operator-() const;
-
-	Vector2 operator+(const Vector2& other) const;
-	Vector2 operator-(const Vector2& other) const;
-
-	Vector2 operator*(f32 scalar) const;
-
-	Vector2 operator/(f32 scalar) const;
-
-	// Hadamard Product
-	Vector2 operator*(const Vector2& other) const;
-	// Hadamard Product
-	Vector2 operator/(const Vector2& other) const;
-
-	Vector2& operator+=(const Vector2& other);
-	Vector2& operator-=(const Vector2& other);
-	Vector2& operator*=(f32 scalar);
-
-	Vector2& operator/=(f32 scalar);
+	struct
+	{
+		f32 r, g;
+	};
+	struct
+	{
+		f32 s, t;
+	};
+	f32 data[2];
 };
+
+bool operator==(const Vector2& a, const Vector2& b);
+bool operator!=(const Vector2& a, const Vector2& b);
+
+Vector2 operator-(const Vector2& a);
+
+Vector2 operator+(const Vector2& a, const Vector2& b);
+Vector2 operator-(const Vector2& a, const Vector2& b);
+
+Vector2 operator*(const Vector2& a, f32 scalar);
+
+Vector2 operator/(const Vector2& a, f32 scalar);
+
+// Hadamard Product
+Vector2 operator*(const Vector2& a, const Vector2& b);
+// Hadamard Product
+Vector2 operator/(const Vector2& a, const Vector2& b);
+
+Vector2& operator+=(Vector2& a, const Vector2& b);
+Vector2& operator-=(Vector2& a, const Vector2& b);
+Vector2& operator*=(Vector2& a, f32 scalar);
+
+Vector2& operator/=(Vector2& a, f32 scalar);
 
 inline Vector2 operator*(f32 scalar, const Vector2& vector)
 {
@@ -74,7 +61,7 @@ Vector2 normalize(const Vector2& a);
 
 inline std::ostream& operator<<(std::ostream& os, const Vector2& v)
 {
-	return os << "Vector2(" << v[0] << ", " << v[1] << ")";
+	return os << "Vector2{" << v.x << ", " << v.y << "}";
 }
 } // namespace Dunjun
 

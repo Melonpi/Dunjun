@@ -12,8 +12,8 @@ void Camera::lookAt(const Vector3& position, const Vector3& up)
 
 void Camera::offsetOrientation(const Radian& yaw, const Radian& pitch)
 {
-	const Quaternion yawRot{angleAxis(yaw, {0, 1, 0})};   // absolute up
-	const Quaternion pitchRot{angleAxis(pitch, right())}; // relative right
+	const Quaternion yawRot = angleAxis(yaw, {0, 1, 0});   // absolute up
+	const Quaternion pitchRot = angleAxis(pitch, right()); // relative right
 
 	transform.orientation = yawRot * pitchRot * transform.orientation;
 }
@@ -49,7 +49,7 @@ Matrix4 Camera::getMatrix() const { return getProjection() * getView(); }
 
 Matrix4 Camera::getProjection() const
 {
-	Matrix4 proj;
+	Matrix4 proj = Matrix4::Identity;
 
 	if (projectionType == ProjectionType::Perspective)
 	{
@@ -77,9 +77,9 @@ Matrix4 Camera::getProjection() const
 
 Matrix4 Camera::getView() const
 {
-	Matrix4 view;
+	Matrix4 view = Matrix4::Identity;
 
-	view = Math::scale(Vector3(1) / transform.scale) *
+	view = Math::scale(Vector3{1, 1, 1} / transform.scale) *
 	       quaternionToMatrix4(conjugate(transform.orientation)) *
 	       Math::translate(-transform.position);
 

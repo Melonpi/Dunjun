@@ -26,7 +26,7 @@ struct DirectionalLight : BaseLight
 
 struct PointLight : BaseLight
 {
-	Vector3 position{0, 0, 0};
+	Vector3 position = Vector3{0, 0, 0};
 
 	Attenuation attenuation;
 
@@ -49,7 +49,7 @@ inline f32 calculateLightRange(const PointLight& l)
 struct SpotLight : PointLight
 {
 	Radian coneAngle{0.35f};
-	Vector3 direction{0, 0, -1};
+	Vector3 direction = Vector3{0, 0, -1};
 };
 } // namespace Dunjun
 

@@ -10,43 +10,26 @@
 
 namespace Dunjun
 {
-struct Quaternion
+union Quaternion
 {
-	// NOTE(bill): GLSL, vec4 xyzw
-	union
+	struct
 	{
-		f32 data[4];
-		struct
-		{
-			f32 x, y, z, w;
-		};
+		f32 x, y, z, w;
 	};
-
-	Quaternion();
-	Quaternion(const Quaternion& q) = default;
-	explicit Quaternion(f32 x, f32 y, f32 z, f32 w);
-	explicit Quaternion(const Vector3& v, f32 s);
-
-	inline const f32& operator[](usize index) const { return data[index]; }
-	inline f32& operator[](usize index) { return data[index]; }
-
-	Quaternion operator-() const;
-	Quaternion operator+(const Quaternion& b) const;
-	Quaternion operator-(const Quaternion& b) const;
-
-	Quaternion operator*(const Quaternion& b) const;
-	Quaternion operator*(f32 s) const;
-	Quaternion operator/(f32 s) const;
-
-	bool operator==(const Quaternion& b) const;
-	bool operator!=(const Quaternion& b) const;
-
-	const Vector3 vector() const;
-	Vector3& vector();
-
-	f32 scalar() const;
-	f32& scalar();
+	Vector3 xyz;
+	f32 data[4];
 };
+
+Quaternion operator-(const Quaternion& a);
+Quaternion operator+(const Quaternion& a, const Quaternion& b);
+Quaternion operator-(const Quaternion& a, const Quaternion& b);
+
+Quaternion operator*(const Quaternion& a, const Quaternion& b);
+Quaternion operator*(const Quaternion& a, f32 s);
+Quaternion operator/(const Quaternion& a, f32 s);
+
+bool operator==(const Quaternion& a, const Quaternion& b);
+bool operator!=(const Quaternion& a, const Quaternion& b);
 
 inline Quaternion operator*(f32 s, const Quaternion& q) { return q * s; }
 
@@ -66,14 +49,14 @@ Vector3 operator*(const Quaternion& q, const Vector3& v);
 
 inline std::ostream& operator<<(std::ostream& os, const Quaternion& q)
 {
-	os << "Quaternion(";
+	os << "Quaternion{";
 	for (usize i{0}; i < 4; i++)
 	{
-		os << q[i];
+		os << q.data[i];
 		if (i < 3)
 			os << ", ";
 	}
-	os << ")";
+	os << "}";
 
 	return os;
 }
@@ -100,9 +83,9 @@ Radian yaw(const Quaternion& q);
 
 EulerAngles quaternionToEulerAngles(const Quaternion& q);
 Quaternion eulerAnglesToQuaternion(const EulerAngles& e,
-                                          const Vector3& xAxis = {1, 0, 0},
-                                          const Vector3& yAxis = {0, 1, 0},
-                                          const Vector3& zAxis = {0, 0, 1});
+                                   const Vector3& xAxis = {1, 0, 0},
+                                   const Vector3& yAxis = {0, 1, 0},
+                                   const Vector3& zAxis = {0, 0, 1});
 inline Quaternion eulerAnglesToQuaternion(const Radian& pitch,
                                           const Radian& yaw,
                                           const Radian& roll,

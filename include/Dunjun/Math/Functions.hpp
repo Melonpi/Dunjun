@@ -105,7 +105,7 @@ inline Quaternion slerp(const Quaternion& x, const Quaternion& y, f32 t)
 {
 	assert(t >= 0.0f && t <= 1.0f && "Math::lerp `t` out range (0..1).");
 
-	Quaternion z{y};
+	Quaternion z = y;
 
 	f32 cosTheta{dot(x, y)};
 
@@ -125,8 +125,7 @@ inline Quaternion slerp(const Quaternion& x, const Quaternion& y, f32 t)
 
 	Radian angle{Math::acos(cosTheta)};
 
-	Quaternion result{Math::sin(Radian{1.0f} - (t * angle)) * x +
-	                  Math::sin(t * angle) * z};
+	Quaternion result = Math::sin(Radian{1.0f} - (t * angle)) * x +  Math::sin(t * angle) * z;
 	return result * (1.0f / Math::sin(angle));
 }
 
