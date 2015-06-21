@@ -6,16 +6,10 @@
 
 namespace Dunjun
 {
-VideoMode::VideoMode()
-: width{0}
-, height{0}
-, bitsPerPixel{0}
-{
-}
-VideoMode::VideoMode(u32 modeWidth, u32 modeHeight, u32 modeBitsPerPixel)
-: width{modeWidth}
-, height{modeHeight}
-, bitsPerPixel{modeBitsPerPixel}
+VideoMode::VideoMode(u32 width, u32 height, u32 bitsPerPixel)
+: width{width}
+, height{height}
+, bitsPerPixel{bitsPerPixel}
 {
 }
 
@@ -42,7 +36,8 @@ const std::vector<VideoMode>& VideoMode::getFullscreenModes()
 
 		if (displayModeCount < 1)
 		{
-			std::cerr << "SDL_GetNumDisplayModes failed: " << SDL_GetError() << std::endl;
+			std::cerr << "SDL_GetNumDisplayModes failed: " << SDL_GetError()
+			          << std::endl;
 			return modes;
 		}
 
@@ -50,13 +45,15 @@ const std::vector<VideoMode>& VideoMode::getFullscreenModes()
 		{
 			if (SDL_GetDisplayMode(0, i, &dm) != 0)
 			{
-				std::cerr << "SDL_GetNumDisplayModes failed: " << SDL_GetError() << std::endl;
+				std::cerr << "SDL_GetNumDisplayModes failed: " << SDL_GetError()
+				          << std::endl;
 				continue;
 			}
 			modes.emplace_back(dm.w, dm.h, SDL_BITSPERPIXEL(dm.format));
 		}
 
-		std::sort(std::begin(modes), std::end(modes), std::greater<VideoMode>());
+		std::sort(
+		    std::begin(modes), std::end(modes), std::greater<VideoMode>());
 	}
 
 	return modes;
@@ -66,16 +63,14 @@ bool VideoMode::isValid() const
 {
 	const std::vector<VideoMode>& modes = getFullscreenModes();
 
-	return std::find(std::begin(modes), std::end(modes), *this) != std::end(modes);
+	return std::find(std::begin(modes), std::end(modes), *this) !=
+	       std::end(modes);
 }
 
 bool operator==(const VideoMode& left, const VideoMode& right)
 {
-	return (
-		(left.width == right.width) &&
-		(left.height == right.height) &&
-		(left.bitsPerPixel == right.bitsPerPixel)
-		);
+	return ((left.width == right.width) && (left.height == right.height) &&
+	        (left.bitsPerPixel == right.bitsPerPixel));
 }
 
 bool operator!=(const VideoMode& left, const VideoMode& right)

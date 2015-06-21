@@ -1,35 +1,33 @@
-#ifndef DUNJUN_SYSTEM_TICKCOUNTER_HPP
+#ifndef DUNJUN_SYSTETICKCOUNTER_HPP
 #define DUNJUN_SYSTEM_TICKCOUNTER_HPP
 
 #include <Dunjun/System/Clock.hpp>
 
 namespace Dunjun
 {
-class TickCounter
+struct TickCounter
 {
-public:
+	usize tick{0};
+	f64 tickRate{0};
+	Clock clock{};
+
 	bool update(Time period)
 	{
 		bool reset{false};
-		if (m_clock.getElapsedTime() >= period)
+		if (clock.getElapsedTime() >= period)
 		{
-			m_tickRate = m_tick * (1.0f / period.asSeconds());
-			m_tick = 0;
+			tickRate = tick * (1.0f / period.asSeconds());
+			tick = 0;
 			reset = true;
-			m_clock.restart();
+			clock.restart();
 		}
 
-		m_tick++;
+		tick++;
 
 		return reset;
 	}
 
-	inline f64 getTickRate() const { return m_tickRate; }
-
-private:
-	usize m_tick{0};
-	f64 m_tickRate{0};
-	Clock m_clock{};
+	inline f64 getTickRate() const { return tickRate; }
 };
 
 } // namespace Dunjun

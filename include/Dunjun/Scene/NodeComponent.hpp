@@ -17,19 +17,14 @@ class NodeComponent : private NonCopyable
 public:
 	using UPtr = std::unique_ptr<NodeComponent>;
 
+	SceneNode* parent{nullptr};
+
 	virtual ~NodeComponent() {}
 
 	virtual void init() {}
 	virtual void update(Time dt) {}
 	virtual void handleEvent(const Event& event) {}
 	virtual void draw(SceneRenderer& renderer, Transform t) const {}
-
-	SceneNode* getParent() const { return m_parent; }
-
-private:
-	friend class SceneNode;
-
-	SceneNode* m_parent{nullptr};
 };
 } // namespace Dunjun
 

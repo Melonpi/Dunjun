@@ -211,7 +211,10 @@ void init()
 		std::exit(EXIT_FAILURE);
 	}
 
-	g_window.create({854, 480}, "Dunjun");
+	VideoMode v;
+	v.width = 854;
+	v.height = 480;
+	g_window.create(v, "Dunjun");
 	g_window.setFramerateLimit(FrameLimit);
 
 	glewInit();

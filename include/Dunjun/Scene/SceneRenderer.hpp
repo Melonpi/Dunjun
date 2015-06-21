@@ -22,19 +22,29 @@ class SceneRenderer : private NonCopyable
 public:
 	struct ModelInstance
 	{
-		ModelInstance() = default;
-		ModelInstance(const MeshRenderer& meshRenderer, const Transform& transform)
-		: meshRenderer{&meshRenderer}
-		, transform{transform}
-		{
-		}
-
-
-		const MeshRenderer* meshRenderer;
-		Transform transform;
+		const MeshRenderer* meshRenderer{nullptr};
+		Transform transform{};
 	};
 
-	SceneRenderer(World& world);
+	World* world{nullptr};
+
+	u32 fbWidth{512};
+	u32 fbHeight{512};
+
+	GBuffer gBuffer{};
+	RenderTexture lBuffer{};
+
+	RenderTexture outTexture{};
+
+	Color ambientColor{222, 227, 234};
+	f32   ambientIntensity{0.02f};
+
+	const Camera* camera{nullptr};
+	const Material* currentMaterial{nullptr};
+	const ShaderProgram* currentShaders{nullptr};
+	const Texture* currentTexture{nullptr};
+
+	std::deque<ModelInstance> modelInstances{};
 
 	virtual ~SceneRenderer()
 	{
@@ -54,36 +64,10 @@ public:
 	SceneRenderer& lightPass();
 	SceneRenderer& outPass();
 
-	SceneRenderer& setFramebufferSize(u32 width, u32 height);
-	SceneRenderer& setCamera(const Camera& camera);
-	SceneRenderer& setAmbientLight(const Color& color, f32 intensity);
-
-	const GBuffer& getGBuffer() const { return m_gBuffer; }
-	const Texture& getFinalTexture() const { return m_outTexture.colorTexture; }
-
 private:
 	bool setShaders(const ShaderProgram* shaders);
 	bool setTexture(const Texture* texture, u32 position);
 
-	World& m_world;
-
-	u32 m_fbWidth{512};
-	u32 m_fbHeight{512};
-
-	GBuffer m_gBuffer;
-	RenderTexture m_lBuffer;
-
-	RenderTexture m_outTexture;
-
-	Color m_ambientColor{222, 227, 234};
-	f32   m_ambientIntensity{0.02f};
-
-	const Camera* m_camera{nullptr};
-	const Material* m_currentMaterial{nullptr};
-	const ShaderProgram* m_currentShaders{nullptr};
-	const Texture* m_currentTexture{nullptr};
-
-	std::deque<ModelInstance> m_modelInstances;
 };
 } // namespace Dunjun
 

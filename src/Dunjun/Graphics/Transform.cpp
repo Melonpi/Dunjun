@@ -1,6 +1,6 @@
 #include <Dunjun/Graphics/Transform.hpp>
 
-#include <Dunjun/Math/Functions/Transformation.hpp>
+#include <Dunjun/Math/Functions.hpp>
 
 namespace Dunjun
 {

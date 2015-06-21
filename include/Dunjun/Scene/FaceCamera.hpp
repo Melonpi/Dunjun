@@ -9,6 +9,9 @@ namespace Dunjun
 class FaceCamera : public NodeComponent
 {
 public:
+	const Camera* camera;
+	Vector3 up;
+
 	explicit FaceCamera(const Camera& camera, const Vector3& up = {0, 1, 0})
 	: camera{&camera}
 	, up{up}
@@ -16,9 +19,6 @@ public:
 	}
 
 	virtual void update(Time dt) override;
-
-	const Camera* camera;
-	Vector3 up;
 };
 } // namespace Dunjun
 

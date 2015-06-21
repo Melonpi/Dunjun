@@ -8,6 +8,12 @@ namespace Dunjun
 {
 struct Context
 {
+	Window* window;
+	TextureHolder* textureHolder;
+	ShaderHolder* shaderHolder;
+	MeshHolder* meshHolder;
+	MaterialHolder* materialHolder;
+
 	Context() = default;
 
 	Context(Window& window,
@@ -22,12 +28,6 @@ struct Context
 	, materialHolder{&materialHolder}
 	{
 	}
-
-	Window* window;
-	TextureHolder* textureHolder;
-	ShaderHolder* shaderHolder;
-	MeshHolder* meshHolder;
-	MaterialHolder* materialHolder;
 };
 } // namespace Dunjun
 

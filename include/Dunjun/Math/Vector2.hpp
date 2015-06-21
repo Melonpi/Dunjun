@@ -8,6 +8,23 @@ namespace Dunjun
 {
 struct Vector2
 {
+	union
+	{
+		f32 data[2];
+		struct
+		{
+			f32 x, y;
+		};
+		struct
+		{
+			f32 r, g;
+		};
+		struct
+		{
+			f32 s, t;
+		};
+	};
+
 	Vector2();
 	explicit Vector2(f32 xy);
 	Vector2(f32 x, f32 y);
@@ -40,23 +57,6 @@ struct Vector2
 	Vector2& operator*=(f32 scalar);
 
 	Vector2& operator/=(f32 scalar);
-
-	union
-	{
-		f32 data[2];
-		struct
-		{
-			f32 x, y;
-		};
-		struct
-		{
-			f32 r, g;
-		};
-		struct
-		{
-			f32 s, t;
-		};
-	};
 };
 
 inline Vector2 operator*(f32 scalar, const Vector2& vector)

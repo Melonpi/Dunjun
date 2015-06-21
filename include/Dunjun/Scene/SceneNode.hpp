@@ -50,6 +50,18 @@ public:
 	using ComponentArray = std::array<NodeComponent*, MaxComponents>;
 	using Id = u64; // There could be billions of them, even old ones!
 
+	const Id id;
+	std::string name;
+	Transform transform{};
+	bool enabled{true}; // TODO(bill): Remove State change
+
+	SceneNode* parent{nullptr};
+	std::deque<UPtr> children{};
+
+	std::deque<NodeComponent::UPtr> components{};
+	ComponentArray componentArray{};
+	ComponentBitset componentBitset{};
+
 	explicit SceneNode();
 
 	virtual ~SceneNode() {}
@@ -76,11 +88,11 @@ public:
 
 		ComponentType* component{
 		    new ComponentType{std::forward<Args>(args)...}};
-		component->m_parent = this;
-		m_components.emplace_back(std::unique_ptr<NodeComponent>{component});
+		component->parent = this;
+		components.emplace_back(std::unique_ptr<NodeComponent>{component});
 
-		m_componentArray[getComponentTypeId<ComponentType>()] = component;
-		m_componentBitset[getComponentTypeId<ComponentType>()] = true;
+		componentArray[getComponentTypeId<ComponentType>()] = component;
+		componentBitset[getComponentTypeId<ComponentType>()] = true;
 
 		return *component;
 	}
@@ -90,7 +102,7 @@ public:
 	{
 		static_assert(std::is_base_of<NodeComponent, ComponentType>::value,
 		              "ComponentType must inherit from NodeComponent.");
-		return m_componentBitset[getComponentTypeId<ComponentType>()];
+		return componentBitset[getComponentTypeId<ComponentType>()];
 	}
 
 	template <typename ComponentType>
@@ -103,16 +115,9 @@ public:
 
 		assert(hasComponent<ComponentType>() &&
 		       message.c_str());
-		auto ptr = m_componentArray[getComponentTypeId<ComponentType>()];
+		auto ptr = componentArray[getComponentTypeId<ComponentType>()];
 		return *reinterpret_cast<ComponentType*>(ptr);
 	}
-
-	const SceneNode* getParent() const { return m_parent; }
-
-	const Id id;
-	std::string name;
-	Transform transform{};
-	bool visible{true}; // TODO(bill): change to enabled (stop updates and drawing)
 
 protected:
 	friend class SceneRenderer;
@@ -130,13 +135,6 @@ protected:
 
 	virtual void drawCurrent(SceneRenderer& renderer, Transform t) const;
 	void drawChildren(SceneRenderer& renderer, Transform t) const;
-
-	SceneNode* m_parent{nullptr};
-	std::deque<UPtr> m_children{};
-
-	std::deque<NodeComponent::UPtr> m_components{};
-	ComponentArray m_componentArray{};
-	ComponentBitset m_componentBitset{};
 };
 } // namespace Dunjun
 

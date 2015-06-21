@@ -12,6 +12,9 @@ namespace Dunjun
 class MeshRenderer : public NodeComponent
 {
 public:
+	const Mesh* mesh;
+	Material* material;
+
 	explicit MeshRenderer(const Mesh* mesh, Material* material)
 	: mesh{mesh}
 	, material{material}
@@ -31,9 +34,6 @@ public:
 
 		renderer.addModelInstance(*this, t);
 	}
-
-	const Mesh* mesh;
-	Material* material;
 };
 } // namespace Dunjun
 

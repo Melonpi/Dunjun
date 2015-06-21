@@ -16,34 +16,34 @@ INTERNAL inline SceneNode::Id getUniqueSceneNodeId()
 
 SceneNode::SceneNode()
 : id{getUniqueSceneNodeId()}
-, m_componentBitset{}
+, componentBitset{}
 {
 	name = stringFormat("node_%llu", id);
 }
 
 SceneNode& SceneNode::attachChild(UPtr&& child)
 {
-	child->m_parent = this;
-	m_children.emplace_back(std::move(child));
+	child->parent = this;
+	children.emplace_back(std::move(child));
 
 	return *this;
 }
 
 SceneNode::UPtr SceneNode::detachChild(const SceneNode& node)
 {
-	auto found = std::find_if(std::begin(m_children),
-	                          std::end(m_children),
+	auto found = std::find_if(std::begin(children),
+	                          std::end(children),
 	                          [&node](UPtr& child)
 	                          {
 		                          return child.get() == &node;
 		                      });
 
-	if (found != std::end(m_children)) // Child was found
+	if (found != std::end(children)) // Child was found
 	{
 		UPtr result{std::move(*found)};
 
-		result->m_parent = nullptr;
-		m_children.erase(found);
+		result->parent = nullptr;
+		children.erase(found);
 
 		return result;
 	}
@@ -54,7 +54,7 @@ SceneNode::UPtr SceneNode::detachChild(const SceneNode& node)
 
 SceneNode* SceneNode::findChildById(usize id) const
 {
-	for (const UPtr& child : m_children)
+	for (const UPtr& child : children)
 {
 		if (child->id == id)
 			return child.get();
@@ -69,7 +69,7 @@ SceneNode* SceneNode::findChildById(usize id) const
 
 SceneNode* SceneNode::findChildByName(const std::string& name) const
 {
-	for (const UPtr& child : m_children)
+	for (const UPtr& child : children)
 	{
 		if (child->name == name)
 			return child.get();
@@ -87,7 +87,7 @@ Transform SceneNode::getGlobalTransform() const
 	Transform result;
 
 	// Iterate upwards until parent node has no other parent node
-	for (const SceneNode* node{this}; node != nullptr; node = node->getParent())
+	for (const SceneNode* node{this}; node != nullptr; node = node->parent)
 		result *= node->transform;
 
 	return result;
@@ -97,7 +97,7 @@ void SceneNode::init()
 {
 	initCurrent();
 	initChildren();
-	for (auto& component : m_components)
+	for (auto& component : components)
 		component->init();
 }
 
@@ -105,7 +105,7 @@ void SceneNode::update(Time dt)
 {
 	updateCurrent(dt);
 	updateChildren(dt);
-	for (auto& component : m_components)
+	for (auto& component : components)
 		component->update(dt);
 }
 
@@ -113,21 +113,21 @@ void SceneNode::handleEvent(const Event& event)
 {
 	handleEventCurrent(event);
 	handleEventChildren(event);
-	for (auto& component : m_components)
+	for (auto& component : components)
 		component->handleEvent(event);
 }
 
 
 void SceneNode::draw(SceneRenderer& renderer, Transform t) const
 {
-	if (!visible)
+	if (!enabled)
 		return;
 
 	t *= this->transform;
 
 	drawCurrent(renderer, t);
 	drawChildren(renderer, t);
-	for (auto& component : m_components)
+	for (auto& component : components)
 		component->draw(renderer, t);
 }
 
@@ -138,7 +138,7 @@ void SceneNode::initCurrent()
 
 void SceneNode::initChildren()
 {
-	for (UPtr& child : m_children)
+	for (UPtr& child : children)
 		child->init();
 }
 
@@ -149,7 +149,7 @@ void SceneNode::updateCurrent(Time dt)
 
 void SceneNode::updateChildren(Time dt)
 {
-	for (UPtr& child : m_children)
+	for (UPtr& child : children)
 		child->update(dt);
 }
 
@@ -161,7 +161,7 @@ void SceneNode::handleEventCurrent(const Event& event)
 
 void SceneNode::handleEventChildren(const Event& event)
 {
-	for (UPtr& child : m_children)
+	for (UPtr& child : children)
 		child->handleEvent(event);
 }
 
@@ -172,7 +172,7 @@ void SceneNode::drawCurrent(SceneRenderer& renderer, Transform t) const
 
 void SceneNode::drawChildren(SceneRenderer& renderer, Transform t) const
 {
-	for (const UPtr& child : m_children)
+	for (const UPtr& child : children)
 		child->draw(renderer, t);
 }
 } // namespace Dunjun

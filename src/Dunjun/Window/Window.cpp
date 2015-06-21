@@ -31,13 +31,6 @@ INTERNAL u32 generateFlags(u32 style)
 }
 }
 
-Window::Window()
-: m_impl{nullptr}
-, m_glContext{}
-, m_frameTimeLimit{Time::Zero}
-{
-}
-
 Window::Window(VideoMode mode,
                const std::string& title,
                u32 style,

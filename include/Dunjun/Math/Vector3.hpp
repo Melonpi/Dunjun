@@ -9,6 +9,23 @@ namespace Dunjun
 {
 struct Vector3
 {
+	union
+	{
+		f32 data[3];
+		struct
+		{
+			f32 x, y, z;
+		};
+		struct
+		{
+			f32 r, g, b;
+		};
+		struct
+		{
+			f32 s, t, p;
+		};
+	};
+
 	Vector3();
 
 	explicit Vector3(f32 xyz);
@@ -42,23 +59,6 @@ struct Vector3
 	Vector3& operator*=(f32 scalar);
 
 	Vector3& operator/=(f32 scalar);
-
-	union
-	{
-		f32 data[3];
-		struct
-		{
-			f32 x, y, z;
-		};
-		struct
-		{
-			f32 r, g, b;
-		};
-		struct
-		{
-			f32 s, t, p;
-		};
-	};
 };
 
 inline Vector3 operator*(f32 scalar, const Vector3& vector)

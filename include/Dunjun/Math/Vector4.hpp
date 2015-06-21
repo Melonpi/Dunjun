@@ -9,6 +9,23 @@ namespace Dunjun
 {
 struct Vector4
 {
+	union
+	{
+		f32 data[4];
+		struct
+		{
+			f32 x, y, z, w;
+		};
+		struct
+		{
+			f32 r, g, b, a;
+		};
+		struct
+		{
+			f32 s, t, p, q;
+		};
+	};
+
 	Vector4();
 	explicit Vector4(f32 xyzw);
 	Vector4(f32 x, f32 y, f32 z, f32 w);
@@ -23,7 +40,7 @@ struct Vector4
 
 	bool operator==(const Vector4& other) const;
 	bool operator!=(const Vector4& other) const;
-	
+
 	Vector4 operator-() const;
 
 	Vector4 operator+(const Vector4& other) const;
@@ -42,23 +59,6 @@ struct Vector4
 	Vector4& operator-=(const Vector4& other);
 	Vector4& operator*=(f32 scalar);
 	Vector4& operator/=(f32 scalar);
-
-	union
-	{
-		f32 data[4];
-		struct
-		{
-			f32 x, y, z, w;
-		};
-		struct
-		{
-			f32 r, g, b, a;
-		};
-		struct
-		{
-			f32 s, t, p, q;
-		};
-	};
 };
 
 inline Vector4 operator*(f32 scalar, const Vector4& vector)

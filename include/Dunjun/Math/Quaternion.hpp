@@ -12,6 +12,16 @@ namespace Dunjun
 {
 struct Quaternion
 {
+	// NOTE(bill): GLSL, vec4 xyzw
+	union
+	{
+		f32 data[4];
+		struct
+		{
+			f32 x, y, z, w;
+		};
+	};
+
 	Quaternion();
 	Quaternion(const Quaternion& q) = default;
 	explicit Quaternion(f32 x, f32 y, f32 z, f32 w);
@@ -36,16 +46,6 @@ struct Quaternion
 
 	f32 scalar() const;
 	f32& scalar();
-
-	// NOTE(bill): GLSL, vec4 xyzw
-	union
-	{
-		f32 data[4];
-		struct
-		{
-			f32 x, y, z, w;
-		};
-	};
 };
 
 inline Quaternion operator*(f32 s, const Quaternion& q) { return q * s; }

@@ -31,20 +31,20 @@ struct PointLight : BaseLight
 	Attenuation attenuation;
 
 	mutable f32 range{16.0f};
-
-	inline void calculateRange() const
-	{
-		f32 i{intensity * (f32)std::max(color.r, std::max(color.g, color.b))};
-
-		f32 r{-attenuation.linear +
-		      Math::sqrt(attenuation.linear * attenuation.linear -
-		                 4.0f * attenuation.quadratic *
-		                     (attenuation.constant - i))};
-		r /= 2.0f * attenuation.quadratic;
-
-		range = r;
-	}
 };
+
+inline f32 calculateLightRange(const PointLight& l)
+{
+	f32 i{l.intensity * (f32)std::max(l.color.r, std::max(l.color.g, l.color.b))};
+
+	f32 r{-l.attenuation.linear +
+	      Math::sqrt(l.attenuation.linear * l.attenuation.linear -
+	                 4.0f * l.attenuation.quadratic *
+	                     (l.attenuation.constant - i))};
+	r /= 2.0f * l.attenuation.quadratic;
+
+	return r;
+}
 
 struct SpotLight : PointLight
 {

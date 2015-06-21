@@ -37,12 +37,8 @@ class Window
 public:
 	struct Dimensions
 	{
-		Dimensions() = default;
-		Dimensions(int width, int height)
-			: width{width}
-			, height{height}
-		{
-		}
+		int width;
+		int height;
 
 		inline f32 aspectRatio() const
 		{
@@ -51,12 +47,9 @@ public:
 
 			return static_cast<f32>(width) / static_cast<f32>(height);
 		}
-
-		int width;
-		int height;
 	};
 
-	Window();
+	Window() = default;
 
 	explicit Window(VideoMode mode,
 					const std::string& title,
@@ -100,11 +93,11 @@ public:
 	SDL_Window* getSDLHandle() const { return m_impl; }
 
 private:
-	SDL_Window* m_impl;
-	SDL_GLContext m_glContext;
-	Clock m_clock;
-	Time m_frameTimeLimit;
-	// Dimensions m_size;
+	SDL_Window* m_impl{nullptr};
+	SDL_GLContext m_glContext{};
+	Clock m_clock{};
+	Time m_frameTimeLimit{Time::Zero};
+	// Dimensions size;
 };
 } // namespace Dunjun
 #endif

@@ -8,6 +8,11 @@ namespace Dunjun
 {
 struct Rectangle
 {
+	f32 x{0};
+	f32 y{0};
+	f32 width{0};
+	f32 height{0};
+
 	Rectangle() = default;
 	Rectangle(const Rectangle& other) = default;
 
@@ -17,11 +22,6 @@ struct Rectangle
 	bool contains(const Vector2& point) const;
 	bool intersects(const Rectangle& rectangle) const;
 	bool intersects(const Rectangle& rectangle, Rectangle& intersection) const;
-
-	f32 x{0};
-	f32 y{0};
-	f32 width{0};
-	f32 height{0};
 };
 
 bool operator==(const Rectangle& left, const Rectangle& right);

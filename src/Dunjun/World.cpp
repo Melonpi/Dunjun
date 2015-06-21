@@ -10,15 +10,15 @@
 namespace Dunjun
 {
 World::World()
-: m_renderer{*this}
 {
+	renderer.world = this;
 }
 
 World::~World() {}
 
-void World::init(Context context)
+void World::init(Context context_)
 {
-	m_context = context;
+	context = context_;
 
 	{
 		auto player = make_unique<SceneNode>();
@@ -26,26 +26,26 @@ void World::init(Context context)
 		player->name = "player";
 		player->transform.position = {2, 0.5, 2};
 		player->transform.orientation = angleAxis(Degree{45}, {0, 1, 0});
-		//player->addComponent<FaceCamera>(m_mainCamera);
+		//player->addComponent<FaceCamera>(mainCamera);
 		player->addComponent<MeshRenderer>(
-		    &m_context.meshHolder->get("sprite"),
-		    &m_context.materialHolder->get("cat"));
+		    &context.meshHolder->get("sprite"),
+		    &context.materialHolder->get("cat"));
 
 
-		m_player = player.get();
+		this->player = player.get();
 
-		m_sceneGraph.attachChild(std::move(player));
+		sceneGraph.attachChild(std::move(player));
 	}
 
 	{
 		auto level = make_unique<Level>();
 
-		level->material = &m_context.materialHolder->get("terrain");
+		level->material = &context.materialHolder->get("terrain");
 		level->generate();
 
-		m_level = level.get();
+		this->level = level.get();
 
-		m_sceneGraph.attachChild(std::move(level));
+		sceneGraph.attachChild(std::move(level));
 	}
 
 	Random random{1};
@@ -64,7 +64,7 @@ void World::init(Context context)
 		light.color.g = random.getInt(50, 255);
 		light.color.b = random.getInt(50, 255);
 
-		m_pointLights.emplace_back(light);
+		pointLights.emplace_back(light);
 	}
 
 	{
@@ -73,7 +73,7 @@ void World::init(Context context)
 		light.direction = Vector3{-1, -1, 0.5};
 		light.intensity = 0.1f;
 
-		m_directionalLights.emplace_back(light);
+		directionalLights.emplace_back(light);
 	}
 
 	{
@@ -84,32 +84,32 @@ void World::init(Context context)
 		light.intensity = 2.0f;
 		light.coneAngle = Degree{50};
 
-		m_spotLights.emplace_back(light);
+		spotLights.emplace_back(light);
 	}
 
 	{
 		// Init Camera
-		m_playerCamera.transform.position = {5, 2, 5};
-		m_playerCamera.transform.orientation =
+		playerCamera.transform.position = {5, 2, 5};
+		playerCamera.transform.orientation =
 		    angleAxis(Degree{45}, {0, 1, 0}) *
 		    angleAxis(Degree{-30}, {1, 0, 0});
 
-		m_playerCamera.fieldOfView = Degree{50.0f};
-		m_playerCamera.orthoScale = 8;
+		playerCamera.fieldOfView = Degree{50.0f};
+		playerCamera.orthoScale = 8;
 
-		m_mainCamera = m_playerCamera;
+		mainCamera = playerCamera;
 
-		m_playerCamera.projectionType = ProjectionType::Orthographic;
+		playerCamera.projectionType = ProjectionType::Orthographic;
 	}
 
-	m_currentCamera = &m_mainCamera;
+	currentCamera = &mainCamera;
 
-	m_sceneGraph.init();
+	sceneGraph.init();
 }
 
 void World::update(Time dt)
 {
-	m_sceneGraph.update(dt);
+	sceneGraph.update(dt);
 
 	f32 camVel{10.0f};
 	{
@@ -132,7 +132,7 @@ void World::update(Time dt)
 			if (Math::abs(rts.y) < deadZone)
 				rts.y = 0;
 
-			m_mainCamera.offsetOrientation(
+			mainCamera.offsetOrientation(
 			    lookSensitivity * Radian{-rts.x * dt.asSeconds()},
 			    lookSensitivity * Radian{-rts.y * dt.asSeconds()});
 
@@ -147,10 +147,10 @@ void World::update(Time dt)
 				lts = normalize(lts);
 			Vector3 velDir{0, 0, 0};
 
-			Vector3 forward{m_mainCamera.forward()};
+			Vector3 forward{mainCamera.forward()};
 			forward.y = 0;
 			forward = normalize(forward);
-			velDir += lts.x * m_mainCamera.right();
+			velDir += lts.x * mainCamera.right();
 			velDir += lts.y * forward;
 
 			if (Input::isControllerButtonPressed(
@@ -163,7 +163,7 @@ void World::update(Time dt)
 			if (Input::isControllerButtonPressed(
 			        0, Input::ControllerButton::DpadUp))
 			{
-				Vector3 f{m_mainCamera.forward()};
+				Vector3 f{mainCamera.forward()};
 				f.y = 0;
 				f = normalize(f);
 				velDir += f;
@@ -171,7 +171,7 @@ void World::update(Time dt)
 			if (Input::isControllerButtonPressed(
 			        0, Input::ControllerButton::DpadDown))
 			{
-				Vector3 b{m_mainCamera.backward()};
+				Vector3 b{mainCamera.backward()};
 				b.y = 0;
 				b = normalize(b);
 				velDir += b;
@@ -180,7 +180,7 @@ void World::update(Time dt)
 			if (Input::isControllerButtonPressed(
 			        0, Input::ControllerButton::DpadLeft))
 			{
-				Vector3 l{m_mainCamera.left()};
+				Vector3 l{mainCamera.left()};
 				l.y = 0;
 				l = normalize(l);
 				velDir += l;
@@ -188,7 +188,7 @@ void World::update(Time dt)
 			if (Input::isControllerButtonPressed(
 			        0, Input::ControllerButton::DpadRight))
 			{
-				Vector3 r{m_mainCamera.right()};
+				Vector3 r{mainCamera.right()};
 				r.y = 0;
 				r = normalize(r);
 				velDir += r;
@@ -197,7 +197,7 @@ void World::update(Time dt)
 			if (length(velDir) > 1.0f)
 				velDir = normalize(velDir);
 
-			m_mainCamera.transform.position += camVel * velDir * dt.asSeconds();
+			mainCamera.transform.position += camVel * velDir * dt.asSeconds();
 
 			// Vibrate
 			if (Input::isControllerButtonPressed(0, Input::ControllerButton::A))
@@ -234,114 +234,96 @@ void World::update(Time dt)
 		if (length(velDir) > 0)
 			velDir = normalize(velDir);
 
-		m_player->transform.position += playerVel * velDir * dt.asSeconds();
+		player->transform.position += playerVel * velDir * dt.asSeconds();
 	}
 
-	m_playerCamera.transform.position.x =
-	    Math::lerp(m_playerCamera.transform.position.x,
-	               m_player->transform.position.x,
+	playerCamera.transform.position.x =
+	    Math::lerp(playerCamera.transform.position.x,
+	               player->transform.position.x,
 	               10.0f * dt.asSeconds());
-	m_playerCamera.transform.position.z =
-	    Math::lerp(m_playerCamera.transform.position.z,
-	               m_player->transform.position.z,
+	playerCamera.transform.position.z =
+	    Math::lerp(playerCamera.transform.position.z,
+	               player->transform.position.z,
 	               10.0f * dt.asSeconds());
 
 	// g_camera.transform.position.x = player.transform.position.x;
-	f32 aspectRatio{m_context.window->getSize().aspectRatio()};
-	if (aspectRatio && m_context.window->getSize().height > 0)
+	f32 aspectRatio{context.window->getSize().aspectRatio()};
+	if (aspectRatio && context.window->getSize().height > 0)
 	{
-		m_playerCamera.viewportAspectRatio = aspectRatio;
-		m_mainCamera.viewportAspectRatio = aspectRatio;
+		playerCamera.viewportAspectRatio = aspectRatio;
+		mainCamera.viewportAspectRatio = aspectRatio;
 	}
 
 	if (Input::isKeyPressed(Input::Key::Num1))
-		m_currentCamera = &m_playerCamera;
+		currentCamera = &playerCamera;
 	else if (Input::isKeyPressed(Input::Key::Num2))
 	{
-		m_mainCamera.transform = m_playerCamera.transform;
-		m_currentCamera = &m_mainCamera;
+		mainCamera.transform = playerCamera.transform;
+		currentCamera = &mainCamera;
 	}
 
 #if 1
 	// TODO(bill): Make bounding boxes for SceneNodes and implement this
 	// in SceneRenderer
-	for (auto& room : m_level->rooms)
+	for (auto& room : level->rooms)
 	{
 		Vector3 roomPos{room->transform.position};
 		roomPos.x += room->size.x / 2;
 		roomPos.z += room->size.y / 2;
-		const Vector3 playerPos{m_mainCamera.transform.position};
+		const Vector3 playerPos{mainCamera.transform.position};
 
 		const Vector3 dp{roomPos - playerPos};
 
 		const f32 dist{length(dp)};
 
+
+		room->enabled = false;
+
 		// Distance Culling
-		if (dist < m_mainCamera.farPlane)
+		if (dist < mainCamera.farPlane)
 		{
-			const Vector3 f{m_mainCamera.forward()};
+			const Vector3 f{mainCamera.forward()};
 
 			f32 cosTheta{dot(f, normalize(dp))};
 
 			Radian theta{Math::acos(cosTheta)};
 
 			// Cone/(bad) Frustum Culling
-			if (Math::abs(theta) <= 2.0f * m_mainCamera.fieldOfView ||
+			if (Math::abs(theta) <= 2.0f * mainCamera.fieldOfView ||
 			    dist < 10)
-				room->visible = true;
-			else
-				room->visible = false;
+				room->enabled = true;
 		}
-		else
-			room->visible = false;
 	}
 #endif
 }
 
 void World::handleEvent(const Event& event)
 {
-	m_sceneGraph.handleEvent(event);
+	sceneGraph.handleEvent(event);
 }
 
 void World::render()
 {
-	Window::Dimensions fbSize{m_context.window->getSize()};
+	renderer.fbWidth = context.window->getSize().width;
+	renderer.fbHeight = context.window->getSize().height;
 
-	m_renderer.setFramebufferSize(fbSize.width, fbSize.height);
-	m_renderer.render();
+	renderer.render();
 
-	glViewport(0, 0, fbSize.width, fbSize.height);
+	glViewport(0, 0, renderer.fbWidth, renderer.fbHeight);
 	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	{
-		ShaderProgram& shaders = m_context.shaderHolder->get("texPass");
+		ShaderProgram& shaders = context.shaderHolder->get("texPass");
 		shaders.use();
 
 		shaders.setUniform("u_scale", Vector3{1.0f});
 		shaders.setUniform("u_tex", 0);
-		Texture::bind(&m_renderer.getFinalTexture(), 0);
-		// Texture::bind(&m_renderer.lightingTexture.colorTexture, 0);
+		Texture::bind(&renderer.outTexture.colorTexture, 0);
+		// Texture::bind(&renderer.lightingTexture.colorTexture, 0);
 
-		m_renderer.draw(&m_context.meshHolder->get("quad"));
+		renderer.draw(&context.meshHolder->get("quad"));
 
 		shaders.stopUsing();
 	}
 }
-
-SceneNode& World::getSceneGraph() { return m_sceneGraph; }
-
-const SceneNode& World::getSceneGraph() const { return m_sceneGraph; }
-
-Camera& World::getCurrentCamera() { return *m_currentCamera; }
-
-const Camera& World::getCurrentCamera() const { return *m_currentCamera; }
-
-SceneNode* World::getPlayer() { return m_player; }
-
-const SceneNode* World::getPlayer() const { return m_player; }
-
-Level* World::getLevel() { return m_level; }
-
-const Level* World::getLevel() const { return m_level; }
-
 } // namespace Dunjun

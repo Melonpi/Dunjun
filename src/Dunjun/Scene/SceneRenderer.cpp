@@ -11,32 +11,23 @@
 
 namespace Dunjun
 {
-
-SceneRenderer::SceneRenderer(World& world)
-: m_world{world}
-// Defaults
-, m_fbWidth{512}
-, m_fbHeight{512}
-{
-}
-
 SceneRenderer& SceneRenderer::reset()
 {
-	if (m_currentShaders)
-		m_currentShaders->stopUsing();
-	m_currentShaders = nullptr;
+	if (currentShaders)
+		currentShaders->stopUsing();
+	currentShaders = nullptr;
 
-	m_currentTexture = nullptr;
+	currentTexture = nullptr;
 	Texture::bind(nullptr, 0);
 
-	m_currentMaterial = nullptr;
+	currentMaterial = nullptr;
 
 	return *this;
 }
 
 SceneRenderer& SceneRenderer::clearAll()
 {
-	m_modelInstances.clear();
+	modelInstances.clear();
 
 	return *this;
 }
@@ -57,32 +48,20 @@ void SceneRenderer::draw(const Mesh* mesh) const
 void SceneRenderer::addModelInstance(const MeshRenderer& meshRenderer,
                                      Transform t)
 {
-	if (meshRenderer.getParent()->visible) // Just in case
-		m_modelInstances.emplace_back(meshRenderer, t);
-}
-
-SceneRenderer& SceneRenderer::setFramebufferSize(u32 width, u32 height)
-{
-	m_fbWidth = width;
-	m_fbHeight = height;
-
-	return *this;
-}
-
-SceneRenderer& SceneRenderer::setCamera(const Camera& camera)
-{
-	m_camera = &camera;
-
-	return *this;
+	ModelInstance mi;
+	mi.meshRenderer = &meshRenderer;
+	mi.transform = t;
+	modelInstances.push_back(mi);
 }
 
 void SceneRenderer::render()
 {
 	reset().clearAll();
 
-	addSceneGraph(m_world.m_sceneGraph).setCamera(*m_world.m_currentCamera);
+	addSceneGraph(world->sceneGraph);
+	camera = world->currentCamera;
 
-	m_gBuffer.create(m_fbWidth, m_fbHeight);
+	gBuffer.create(fbWidth, fbHeight);
 
 	geometryPass().lightPass().outPass();
 }
@@ -90,8 +69,8 @@ void SceneRenderer::render()
 SceneRenderer& SceneRenderer::geometryPass()
 {
 	// TODO(bill): Sort by mesh? - Instancing?
-	std::sort(std::begin(m_modelInstances),
-			  std::end(m_modelInstances),
+	std::sort(std::begin(modelInstances),
+			  std::end(modelInstances),
 	          [](const ModelInstance& a, const ModelInstance& b) -> bool
 	          {
 		          const auto* A = a.meshRenderer->material;
@@ -108,16 +87,16 @@ SceneRenderer& SceneRenderer::geometryPass()
 
 	auto& shaders = g_shaderHolder.get("geometryPass");
 
-	GBuffer::bind(&m_gBuffer);
+	GBuffer::bind(&gBuffer);
 	{
-		glViewport(0, 0, m_gBuffer.width, m_gBuffer.height);
+		glViewport(0, 0, gBuffer.width, gBuffer.height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		shaders.use();
 
-		shaders.setUniform("u_camera", m_camera->getMatrix());
-		shaders.setUniform("u_cameraPosition", m_camera->transform.position);
-		for (const auto& inst : m_modelInstances)
+		shaders.setUniform("u_camera", camera->getMatrix());
+		shaders.setUniform("u_cameraPosition", camera->transform.position);
+		for (const auto& inst : modelInstances)
 		{
 			if (inst.meshRenderer->material == nullptr)
 				continue;
@@ -146,17 +125,17 @@ SceneRenderer& SceneRenderer::geometryPass()
 
 SceneRenderer& SceneRenderer::lightPass()
 {
-	m_lBuffer.create(m_gBuffer.width, m_gBuffer.height, RenderTexture::Lighting);
+	lBuffer.create(gBuffer.width, gBuffer.height, RenderTexture::Lighting);
 
-	Texture::bind(&m_gBuffer.textures[GBuffer::Diffuse],  0);
-	Texture::bind(&m_gBuffer.textures[GBuffer::Specular], 1);
-	Texture::bind(&m_gBuffer.textures[GBuffer::Normal],   2);
-	Texture::bind(&m_gBuffer.textures[GBuffer::Depth],    3);
+	Texture::bind(&gBuffer.textures[GBuffer::Diffuse],  0);
+	Texture::bind(&gBuffer.textures[GBuffer::Specular], 1);
+	Texture::bind(&gBuffer.textures[GBuffer::Normal],   2);
+	Texture::bind(&gBuffer.textures[GBuffer::Depth],    3);
 
-	RenderTexture::bind(&m_lBuffer);
+	RenderTexture::bind(&lBuffer);
 	{
 		glClearColor(0, 0, 0, 0);
-		glViewport(0, 0, m_lBuffer.width, m_lBuffer.height);
+		glViewport(0, 0, lBuffer.width, lBuffer.height);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glDepthMask(false);
@@ -170,9 +149,9 @@ SceneRenderer& SceneRenderer::lightPass()
 			shaders.use();
 
 			Vector3 intensities{};
-			intensities.r = m_ambientColor.r * m_ambientIntensity;
-			intensities.g = m_ambientColor.g * m_ambientIntensity;
-			intensities.b = m_ambientColor.b * m_ambientIntensity;
+			intensities.r = ambientColor.r * ambientIntensity;
+			intensities.g = ambientColor.g * ambientIntensity;
+			intensities.b = ambientColor.b * ambientIntensity;
 			intensities /= 255.0f;
 
 			shaders.setUniform("u_light.intensities", intensities);
@@ -189,7 +168,7 @@ SceneRenderer& SceneRenderer::lightPass()
 			shaders.setUniform("u_specular", 1);
 			shaders.setUniform("u_normal", 2);
 
-			for (const auto& light : m_world.m_directionalLights)
+			for (const auto& light : world->directionalLights)
 			{
 				Vector3 lightIntensities;
 
@@ -215,11 +194,11 @@ SceneRenderer& SceneRenderer::lightPass()
 			shaders.setUniform("u_normal", 2);
 			shaders.setUniform("u_depth", 3);
 
-			shaders.setUniform("u_cameraInverse", inverse(m_camera->getMatrix()));
+			shaders.setUniform("u_cameraInverse", inverse(camera->getMatrix()));
 
-			for (const PointLight& light : m_world.m_pointLights)
+			for (const PointLight& light : world->pointLights)
 			{
-				light.calculateRange();
+				light.range = calculateLightRange(light);
 
 				Vector3 lightIntensities;
 
@@ -255,11 +234,11 @@ SceneRenderer& SceneRenderer::lightPass()
 			shaders.setUniform("u_normal", 2);
 			shaders.setUniform("u_depth", 3);
 
-			shaders.setUniform("u_cameraInverse", inverse(m_camera->getMatrix()));
+			shaders.setUniform("u_cameraInverse", inverse(camera->getMatrix()));
 
-			for (const SpotLight& light : m_world.m_spotLights)
+			for (const SpotLight& light : world->spotLights)
 			{
-				light.calculateRange();
+				light.range = calculateLightRange(light);
 
 				Vector3 lightIntensities;
 
@@ -299,15 +278,15 @@ SceneRenderer& SceneRenderer::lightPass()
 
 SceneRenderer& SceneRenderer::outPass()
 {
-	m_outTexture.create(m_gBuffer.width, m_gBuffer.height, RenderTexture::Color);
+	outTexture.create(gBuffer.width, gBuffer.height, RenderTexture::Color);
 
-	Texture::bind(&m_gBuffer.textures[GBuffer::Diffuse], 0);
-	Texture::bind(&m_lBuffer.colorTexture, 1);
+	Texture::bind(&gBuffer.textures[GBuffer::Diffuse], 0);
+	Texture::bind(&lBuffer.colorTexture, 1);
 
-	RenderTexture::bind(&m_outTexture);
+	RenderTexture::bind(&outTexture);
 	{
 		glClearColor(1, 1, 1, 1);
-		glViewport(0, 0, m_outTexture.width, m_outTexture.height);
+		glViewport(0, 0, outTexture.width, outTexture.height);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		auto& shaders = g_shaderHolder.get("out");
@@ -327,13 +306,13 @@ SceneRenderer& SceneRenderer::outPass()
 
 bool SceneRenderer::setShaders(const ShaderProgram* shaders)
 {
-	if (shaders != m_currentShaders)
+	if (shaders != currentShaders)
 	{
-		if (m_currentShaders)
-			m_currentShaders->stopUsing();
+		if (currentShaders)
+			currentShaders->stopUsing();
 
-		m_currentShaders = shaders;
-		m_currentShaders->use();
+		currentShaders = shaders;
+		currentShaders->use();
 
 		return true;
 	}
@@ -343,11 +322,11 @@ bool SceneRenderer::setShaders(const ShaderProgram* shaders)
 
 bool SceneRenderer::setTexture(const Texture* texture, u32 position)
 {
-	if (texture != m_currentTexture)
+	if (texture != currentTexture)
 	{
-		m_currentTexture = texture;
+		currentTexture = texture;
 
-		Texture::bind(m_currentTexture, position);
+		Texture::bind(currentTexture, position);
 
 		return true;
 	}

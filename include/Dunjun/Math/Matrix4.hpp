@@ -5,9 +5,10 @@
 
 namespace Dunjun
 {
-class Matrix4
+struct Matrix4
 {
-public:
+	Vector4 data[4];
+
 	Matrix4(); // Indentity
 
 	explicit Matrix4(f32 x); // x * Indentity
@@ -38,8 +39,6 @@ public:
 	Matrix4& operator-=(const Matrix4& other);
 
 	Matrix4& operator*=(const Matrix4& other);
-
-	Vector4 data[4];
 };
 
 inline Matrix4 operator*(f32 scalar, const Matrix4& m) { return m * scalar; }
