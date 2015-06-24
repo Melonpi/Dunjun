@@ -1,0 +1,6 @@
+http://www.slideshare.net/DICEStudio/introduction-to-data-oriented-design
+https://www.youtube.com/watch?v=rX0ItVEVjHc
+https://molecularmusings.wordpress.com/2011/11/03/adventures-in-data-oriented-design-part-1-mesh-data-3/
+http://shaneenishry.com/blog/2015/03/26/data-oriented-design-matters/
+http://shaneenishry.com/blog/2014/12/27/misconceptions-of-component-based-entity-systems/
+http://gamesfromwithin.com/data-oriented-design
