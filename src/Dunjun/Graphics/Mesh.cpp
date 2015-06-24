@@ -4,23 +4,24 @@ namespace Dunjun
 {
 void Mesh::Data::generateNormals()
 {
-	for (u32 i{0}; i < len(indices); i += 3)
+	u32 li{(u32)len(indices)};
+	for (u32 i{0}; i < li; i += 3)
 	{
 		Vertex& v0{vertices[indices[i + 0]]};
 		Vertex& v1{vertices[indices[i + 1]]};
 		Vertex& v2{vertices[indices[i + 2]]};
 
-		Vector3 a = v1.position - v0.position;
-		Vector3 b = v2.position - v1.position;
+		const Vector3 a = v1.position - v0.position;
+		const Vector3 b = v2.position - v1.position;
 
-		Vector3 normal = normalize(cross(a, b));
+		const Vector3 normal = normalize(cross(a, b));
 
 		v0.normal += normal;
 		v1.normal += normal;
 		v2.normal += normal;
 	}
-
-	for (usize i{0}; i < len(vertices); i++)
+	usize lv{len(vertices)};
+	for (usize i{0}; i < lv; i++)
 		vertices[i].normal = normalize(vertices[i].normal);
 }
 
@@ -35,12 +36,12 @@ Mesh::Mesh()
 }
 
 Mesh::Mesh(const Data& data)
-: data{data}
+: data(data)
 , generated{false}
 , vbo{0}
 , ibo{0}
 , drawType{data.drawType}
-, drawCount{(s32)len(data.indices)}
+, drawCount((s32)len(data.indices))
 {
 	generate();
 }
@@ -49,7 +50,7 @@ void Mesh::addData(const Data& data_)
 {
 	data = data_;
 	drawType = data.drawType;
-	drawCount = len(data.indices);
+	drawCount = (u32)len(data.indices);
 	generated = false;
 }
 

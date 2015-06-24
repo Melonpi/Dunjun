@@ -8,7 +8,7 @@ bool operator==(const Vector4& a, const Vector4& b)
 {
 	for (usize i{0}; i < 4; i++)
 	{
-		if (a.data[i] != b.data[i])
+		if (a[i] != b[i])
 			return false;
 	}
 
@@ -42,7 +42,7 @@ Vector4 operator*(const Vector4& a, const Vector4& b)
 {
 	Vector4 result;
 	for (usize i{0}; i < 4; i++)
-		result.data[i] = a.data[i] * b.data[i];
+		result[i] = a[i] * b[i];
 	return result;
 }
 
@@ -51,7 +51,7 @@ Vector4 operator/(const Vector4& a, const Vector4& b)
 {
 	Vector4 result;
 	for (usize i{0}; i < 4; i++)
-		result.data[i] = a.data[i] / b.data[i];
+		result[i] = a[i] / b[i];
 	return result;
 }
 

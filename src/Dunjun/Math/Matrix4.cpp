@@ -11,7 +11,7 @@ bool operator==(const Matrix4& a, const Matrix4& b)
 {
 	for (usize i{0}; i < 4; i++)
 	{
-		if (a.data[i] != b.data[i])
+		if (a[i] != b[i])
 			return false;
 	}
 	return true;
@@ -26,7 +26,7 @@ Matrix4 operator+(const Matrix4& a, const Matrix4& b)
 {
 	Matrix4 mat;
 	for (usize i{0}; i < 4; i++)
-		mat.data[i] = a.data[i] + b.data[i];
+		mat[i] = a[i] + b[i];
 	return mat;
 }
 
@@ -34,7 +34,7 @@ Matrix4 operator-(const Matrix4& a, const Matrix4& b)
 {
 	Matrix4 mat;
 	for (usize i{0}; i < 4; i++)
-		mat.data[i] = a.data[i] - b.data[i];
+		mat[i] = a[i] - b[i];
 	return mat;
 }
 
@@ -42,20 +42,20 @@ Matrix4 operator*(const Matrix4& a, const Matrix4& b)
 {
 
 	Matrix4 result;
-	result.x = a.x * b.x.x + a.y * b.x.y + a.z * b.x.z + a.w * b.x.w;
-	result.y = a.x * b.y.x + a.y * b.y.y + a.z * b.y.z + a.w * b.y.w;
-	result.z = a.x * b.z.x + a.y * b.z.y + a.z * b.z.z + a.w * b.z.w;
-	result.w = a.x * b.w.x + a.y * b.w.y + a.z * b.w.z + a.w * b.w.w;
+	result[0] = a[0] * b[0][0] + a[1] * b[0][1] + a[2] * b[0][2] + a[3] * b[0][3];
+	result[1] = a[0] * b[1][0] + a[1] * b[1][1] + a[2] * b[1][2] + a[3] * b[1][3];
+	result[2] = a[0] * b[2][0] + a[1] * b[2][1] + a[2] * b[2][2] + a[3] * b[2][3];
+	result[3] = a[0] * b[3][0] + a[1] * b[3][1] + a[2] * b[3][2] + a[3] * b[3][3];
 	return result;
 }
 
 Vector4 operator*(const Matrix4& a, const Vector4& v)
 {
 
-	const Vector4 mul0 = a.x * v.x;
-	const Vector4 mul1 = a.y * v.y;
-	const Vector4 mul2 = a.z * v.z;
-	const Vector4 mul3 = a.w * v.w;
+	const Vector4 mul0 = a[0] * v[0];
+	const Vector4 mul1 = a[1] * v[1];
+	const Vector4 mul2 = a[2] * v[2];
+	const Vector4 mul3 = a[3] * v[3];
 
 	const Vector4 add0 = mul0 + mul1;
 	const Vector4 add1 = mul2 + mul3;
@@ -67,7 +67,7 @@ Matrix4 operator*(const Matrix4& a, f32 scalar)
 {
 	Matrix4 mat;
 	for (usize i{0}; i < 4; i++)
-		mat.data[i] = a.data[i] * scalar;
+		mat[i] = a[i] * scalar;
 	return mat;
 }
 
@@ -75,7 +75,7 @@ Matrix4 operator/(const Matrix4& a, f32 scalar)
 {
 	Matrix4 mat;
 	for (usize i{0}; i < 4; i++)
-		mat.data[i] = a.data[i] / scalar;
+		mat[i] = a[i] / scalar;
 	return mat;
 }
 
@@ -92,36 +92,36 @@ Matrix4 transpose(const Matrix4& m)
 	for (usize i{0}; i < 4; i++)
 	{
 		for (usize j{0}; j < 4; j++)
-			result.data[i].data[j] = m.data[j].data[i];
+			result[i][j] = m[j][i];
 	}
 	return result;
 }
 
 f32 determinant(const Matrix4& m)
 {
-	f32 coef00{m.z.z * m.w.w - m.w.z * m.z.w};
-	f32 coef02{m.y.z * m.w.w - m.w.z * m.y.w};
-	f32 coef03{m.y.z * m.z.w - m.z.z * m.y.w};
+	f32 coef00{m[2][2] * m[3][3] - m[3][2] * m[2][3]};
+	f32 coef02{m[1][2] * m[3][3] - m[3][2] * m[1][3]};
+	f32 coef03{m[1][2] * m[2][3] - m[2][2] * m[1][3]};
 
-	f32 coef04{m.z.y * m.w.w - m.w.y * m.z.w};
-	f32 coef06{m.y.y * m.w.w - m.w.y * m.y.w};
-	f32 coef07{m.y.y * m.z.w - m.z.y * m.y.w};
+	f32 coef04{m[2][1] * m[3][3] - m[3][1] * m[2][3]};
+	f32 coef06{m[1][1] * m[3][3] - m[3][1] * m[1][3]};
+	f32 coef07{m[1][1] * m[2][3] - m[2][1] * m[1][3]};
 
-	f32 coef08{m.z.y * m.w.z - m.w.y * m.z.z};
-	f32 coef10{m.y.y * m.w.z - m.w.y * m.y.z};
-	f32 coef11{m.y.y * m.z.z - m.z.y * m.y.z};
+	f32 coef08{m[2][1] * m[3][2] - m[3][1] * m[2][2]};
+	f32 coef10{m[1][1] * m[3][2] - m[3][1] * m[1][2]};
+	f32 coef11{m[1][1] * m[2][2] - m[2][1] * m[1][2]};
 
-	f32 coef12{m.z.x * m.w.w - m.w.x * m.z.w};
-	f32 coef14{m.y.x * m.w.w - m.w.x * m.y.w};
-	f32 coef15{m.y.x * m.z.w - m.z.x * m.y.w};
+	f32 coef12{m[2][0] * m[3][3] - m[3][0] * m[2][3]};
+	f32 coef14{m[1][0] * m[3][3] - m[3][0] * m[1][3]};
+	f32 coef15{m[1][0] * m[2][3] - m[2][0] * m[1][3]};
 
-	f32 coef16{m.z.x * m.w.z - m.w.x * m.z.z};
-	f32 coef18{m.y.x * m.w.z - m.w.x * m.y.z};
-	f32 coef19{m.y.x * m.z.z - m.z.x * m.y.z};
+	f32 coef16{m[2][0] * m[3][2] - m[3][0] * m[2][2]};
+	f32 coef18{m[1][0] * m[3][2] - m[3][0] * m[1][2]};
+	f32 coef19{m[1][0] * m[2][2] - m[2][0] * m[1][2]};
 
-	f32 coef20{m.z.x * m.w.y - m.w.x * m.z.y};
-	f32 coef22{m.y.x * m.w.y - m.w.x * m.y.y};
-	f32 coef23{m.y.x * m.z.y - m.z.x * m.y.y};
+	f32 coef20{m[2][0] * m[3][1] - m[3][0] * m[2][1]};
+	f32 coef22{m[1][0] * m[3][1] - m[3][0] * m[1][1]};
+	f32 coef23{m[1][0] * m[2][1] - m[2][0] * m[1][1]};
 
 	Vector4 fac0 = {coef00, coef00, coef02, coef03};
 	Vector4 fac1 = {coef04, coef04, coef06, coef07};
@@ -130,10 +130,10 @@ f32 determinant(const Matrix4& m)
 	Vector4 fac4 = {coef16, coef16, coef18, coef19};
 	Vector4 fac5 = {coef20, coef20, coef22, coef23};
 
-	Vector4 vec0 = {m.y.x, m.x.x, m.x.x, m.x.x};
-	Vector4 vec1 = {m.y.y, m.x.y, m.x.y, m.x.y};
-	Vector4 vec2 = {m.y.z, m.x.z, m.x.z, m.x.z};
-	Vector4 vec3 = {m.y.w, m.x.w, m.x.w, m.x.w};
+	Vector4 vec0 = {m[1][0], m[0][0], m[0][0], m[0][0]};
+	Vector4 vec1 = {m[1][1], m[0][1], m[0][1], m[0][1]};
+	Vector4 vec2 = {m[1][2], m[0][2], m[0][2], m[0][2]};
+	Vector4 vec3 = {m[1][3], m[0][3], m[0][3], m[0][3]};
 
 	Vector4 inv0 = vec1 * fac0 - vec2 * fac1 + vec3 * fac2;
 	Vector4 inv1 = vec0 * fac0 - vec2 * fac3 + vec3 * fac4;
@@ -144,33 +144,33 @@ f32 determinant(const Matrix4& m)
 	Vector4 signB = {-1, +1, -1, +1};
 	Matrix4 inverse = {inv0 * signA, inv1 * signB, inv2 * signA, inv3 * signB};
 
-	Vector4 row0 = {inverse.x.x, inverse.y.x, inverse.z.x, inverse.w.x};
+	Vector4 row0 = {inverse[0][0], inverse[1][0], inverse[2][0], inverse[3][0]};
 
-	Vector4 dot0 = m.x * row0;
-	f32 dot1{(dot0.x + dot0.y) + (dot0.z + dot0.w)};
+	Vector4 dot0 = m[0] * row0;
+	f32 dot1{(dot0[0] + dot0[1]) + (dot0[2] + dot0[3])};
 	return dot1;
 }
 
 Matrix4 inverse(const Matrix4& m)
 {
-	f32 coef00{m.z.z * m.w.w - m.w.z * m.z.w};
-	f32 coef02{m.y.z * m.w.w - m.w.z * m.y.w};
-	f32 coef03{m.y.z * m.z.w - m.z.z * m.y.w};
-	f32 coef04{m.z.y * m.w.w - m.w.y * m.z.w};
-	f32 coef06{m.y.y * m.w.w - m.w.y * m.y.w};
-	f32 coef07{m.y.y * m.z.w - m.z.y * m.y.w};
-	f32 coef08{m.z.y * m.w.z - m.w.y * m.z.z};
-	f32 coef10{m.y.y * m.w.z - m.w.y * m.y.z};
-	f32 coef11{m.y.y * m.z.z - m.z.y * m.y.z};
-	f32 coef12{m.z.x * m.w.w - m.w.x * m.z.w};
-	f32 coef14{m.y.x * m.w.w - m.w.x * m.y.w};
-	f32 coef15{m.y.x * m.z.w - m.z.x * m.y.w};
-	f32 coef16{m.z.x * m.w.z - m.w.x * m.z.z};
-	f32 coef18{m.y.x * m.w.z - m.w.x * m.y.z};
-	f32 coef19{m.y.x * m.z.z - m.z.x * m.y.z};
-	f32 coef20{m.z.x * m.w.y - m.w.x * m.z.y};
-	f32 coef22{m.y.x * m.w.y - m.w.x * m.y.y};
-	f32 coef23{m.y.x * m.z.y - m.z.x * m.y.y};
+	f32 coef00{m[2][2] * m[3][3] - m[3][2] * m[2][3]};
+	f32 coef02{m[1][2] * m[3][3] - m[3][2] * m[1][3]};
+	f32 coef03{m[1][2] * m[2][3] - m[2][2] * m[1][3]};
+	f32 coef04{m[2][1] * m[3][3] - m[3][1] * m[2][3]};
+	f32 coef06{m[1][1] * m[3][3] - m[3][1] * m[1][3]};
+	f32 coef07{m[1][1] * m[2][3] - m[2][1] * m[1][3]};
+	f32 coef08{m[2][1] * m[3][2] - m[3][1] * m[2][2]};
+	f32 coef10{m[1][1] * m[3][2] - m[3][1] * m[1][2]};
+	f32 coef11{m[1][1] * m[2][2] - m[2][1] * m[1][2]};
+	f32 coef12{m[2][0] * m[3][3] - m[3][0] * m[2][3]};
+	f32 coef14{m[1][0] * m[3][3] - m[3][0] * m[1][3]};
+	f32 coef15{m[1][0] * m[2][3] - m[2][0] * m[1][3]};
+	f32 coef16{m[2][0] * m[3][2] - m[3][0] * m[2][2]};
+	f32 coef18{m[1][0] * m[3][2] - m[3][0] * m[1][2]};
+	f32 coef19{m[1][0] * m[2][2] - m[2][0] * m[1][2]};
+	f32 coef20{m[2][0] * m[3][1] - m[3][0] * m[2][1]};
+	f32 coef22{m[1][0] * m[3][1] - m[3][0] * m[1][1]};
+	f32 coef23{m[1][0] * m[2][1] - m[2][0] * m[1][1]};
 
 	Vector4 fac0{coef00, coef00, coef02, coef03};
 	Vector4 fac1{coef04, coef04, coef06, coef07};
@@ -179,10 +179,10 @@ Matrix4 inverse(const Matrix4& m)
 	Vector4 fac4{coef16, coef16, coef18, coef19};
 	Vector4 fac5{coef20, coef20, coef22, coef23};
 
-	Vector4 vec0{m.y.x, m.x.x, m.x.x, m.x.x};
-	Vector4 vec1{m.y.y, m.x.y, m.x.y, m.x.y};
-	Vector4 vec2{m.y.z, m.x.z, m.x.z, m.x.z};
-	Vector4 vec3{m.y.w, m.x.w, m.x.w, m.x.w};
+	Vector4 vec0{m[1][0], m[0][0], m[0][0], m[0][0]};
+	Vector4 vec1{m[1][1], m[0][1], m[0][1], m[0][1]};
+	Vector4 vec2{m[1][2], m[0][2], m[0][2], m[0][2]};
+	Vector4 vec3{m[1][3], m[0][3], m[0][3], m[0][3]};
 
 	Vector4 inv0 = vec1 * fac0 - vec2 * fac1 + vec3 * fac2;
 	Vector4 inv1 = vec0 * fac0 - vec2 * fac3 + vec3 * fac4;
@@ -193,10 +193,10 @@ Matrix4 inverse(const Matrix4& m)
 	Vector4 signB{-1, +1, -1, +1};
 	Matrix4 inverse{inv0 * signA, inv1 * signB, inv2 * signA, inv3 * signB};
 
-	Vector4 row0{inverse.x.x, inverse.y.x, inverse.z.x, inverse.w.x};
+	Vector4 row0{inverse[0][0], inverse[1][0], inverse[2][0], inverse[3][0]};
 
-	Vector4 dot0 = m.x * row0;
-	f32 dot1{(dot0.x + dot0.y) + (dot0.z + dot0.w)};
+	Vector4 dot0 = m[0] * row0;
+	f32 dot1{(dot0[0] + dot0[1]) + (dot0[2] + dot0[3])};
 
 	f32 oneOverDeterminant{1.0f / dot1};
 
@@ -208,7 +208,7 @@ Matrix4 hadamardProduct(const Matrix4& a, const Matrix4& b)
 	Matrix4 result;
 
 	for (usize i{0}; i < 4; i++)
-		result.data[i] = a.data[i] * b.data[i];
+		result[i] = a[i] * b[i];
 
 	return result;
 }

@@ -19,6 +19,9 @@ struct Matrix4
 	};
 
 	GLOBAL const Matrix4 Identity;
+
+	inline Vector4& operator[](usize index) { return data[index]; }
+	inline const Vector4& operator[](usize index) const { return data[index]; }
 };
 
 bool operator==(const Matrix4& a, const Matrix4& b);
@@ -53,7 +56,7 @@ inline std::ostream& operator<<(std::ostream& os, const Matrix4& m)
 	os << "Matrix4(";
 	for (usize i{0}; i < 4; i++)
 	{
-		os << "\n\t" << m.data[i];
+		os << "\n\t" << m[i];
 		if (i < 3)
 			os << ", ";
 	}

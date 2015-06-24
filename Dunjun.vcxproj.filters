@@ -60,9 +60,6 @@
     <ClCompile Include="src\Dunjun\ResourceHolders.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="external\stb-master\include\stb\stb_vorbis.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Dunjun\Common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -364,7 +361,6 @@
     <None Include="misc\cloc.bat">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="TODO.md" />
     <None Include="data\shaders\texPass.frag.glsl" />
     <None Include="data\shaders\texPass.vert.glsl" />
     <None Include="data\shaders\deferredGeometryPass.vert.glsl" />
@@ -381,7 +377,6 @@
     <None Include="data\shaders\common.head.glsl" />
     <None Include="external\SDL2-2.0.3\lib\x64\SDL2.dll" />
     <None Include="external\SDL2-2.0.3\lib\x86\SDL2.dll" />
-    <None Include="Changes.md" />
     <None Include="external\glew-1.12.0\doc\advanced.html" />
     <None Include="external\glew-1.12.0\doc\basic.html" />
     <None Include="external\glew-1.12.0\doc\build.html" />

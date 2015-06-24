@@ -16,7 +16,7 @@ struct Vertex
 	Vector3 normal = Vector3{0, 0, 0};
 
 	Vertex(const Vector3& position = {0, 0, 0},
-	       const Vector2& texCoord = Vector2{0, 0},
+	       const Vector2& texCoord = {0, 0},
 	       const Color& color = Color{0xFFFFFFFF},
 	       const Vector3& normal = {0, 0, 0})
 	: position(position)

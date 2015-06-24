@@ -9,7 +9,7 @@ namespace Game
 {
 void init();
 void run();
-void cleanup();
+void shutdown();
 
 void glInit();
 } // namespace Game

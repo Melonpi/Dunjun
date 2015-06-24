@@ -12,15 +12,10 @@ union Vector2
 	{
 		f32 x, y;
 	};
-	struct
-	{
-		f32 r, g;
-	};
-	struct
-	{
-		f32 s, t;
-	};
 	f32 data[2];
+
+	inline f32& operator[](usize index) { return data[index]; }
+	inline const f32& operator[](usize index) const { return data[index]; }
 };
 
 bool operator==(const Vector2& a, const Vector2& b);

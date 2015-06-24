@@ -172,7 +172,8 @@ Degree abs(const Degree& x) { return Degree(abs(static_cast<f32>(x))); }
 Matrix4 translate(const Vector3& v)
 {
 	Matrix4 result = Matrix4::Identity;
-	result.w = {v.x, v.y, v.z, 1};
+	result[3].xyz = v;
+	result[3].w = 1;
 	return result;
 }
 
@@ -186,41 +187,41 @@ Matrix4 rotate(const Radian& angle, const Vector3& v)
 	const Vector3 t = (1.0f - c) * axis;
 
 	Matrix4 rot = Matrix4::Identity;
-	rot.x.x = c + t.x * axis.x;
-	rot.x.y = 0 + t.x * axis.y + s * axis.z;
-	rot.x.z = 0 + t.x * axis.z - s * axis.y;
-	rot.x.w = 0;
+	rot[0][0] = c + t.x * axis.x;
+	rot[0][1] = 0 + t.x * axis.y + s * axis.z;
+	rot[0][2] = 0 + t.x * axis.z - s * axis.y;
+	rot[0][3] = 0;
 
-	rot.y.x = 0 + t.y * axis.x - s * axis.z;
-	rot.y.y = c + t.y * axis.y;
-	rot.y.z = 0 + t.y * axis.z + s * axis.x;
-	rot.y.w = 0;
+	rot[1][0] = 0 + t.y * axis.x - s * axis.z;
+	rot[1][1] = c + t.y * axis.y;
+	rot[1][2] = 0 + t.y * axis.z + s * axis.x;
+	rot[1][3] = 0;
 
-	rot.z.x = 0 + t.z * axis.x + s * axis.y;
-	rot.z.y = 0 + t.z * axis.y - s * axis.x;
-	rot.z.z = c + t.z * axis.z;
-	rot.z.w = 0;
+	rot[2][0] = 0 + t.z * axis.x + s * axis.y;
+	rot[2][1] = 0 + t.z * axis.y - s * axis.x;
+	rot[2][2] = c + t.z * axis.z;
+	rot[2][3] = 0;
 
 	return rot;
 }
 
 Matrix4 scale(const Vector3& v)
 {
-	return Matrix4{Vector4{v.x, 0, 0, 0},
-	               Vector4{0, v.y, 0, 0},
-	               Vector4{0, 0, v.z, 0},
-	               Vector4{0, 0, 0, 1}};
+	return Matrix4{Vector4{v.x,   0,   0, 0},
+	               Vector4{  0, v.y,   0, 0},
+	               Vector4{  0,   0, v.z, 0},
+	               Vector4{  0,   0,   0, 1}};
 }
 
 Matrix4 ortho(f32 left, f32 right, f32 bottom, f32 top)
 {
 	Matrix4 result = Matrix4::Identity;
 
-	result.x.x = 2.0f / (right - left);
-	result.y.y = 2.0f / (top - bottom);
-	result.z.z = -1.0f;
-	result.w.x = -(right + left) / (right - left);
-	result.w.y = -(top + bottom) / (top - bottom);
+	result[0][0] = 2.0f / (right - left);
+	result[1][1] = 2.0f / (top - bottom);
+	result[2][2] = -1.0f;
+	result[3][1] = -(right + left) / (right - left);
+	result[3][1] = -(top + bottom) / (top - bottom);
 
 	return result;
 }
@@ -229,12 +230,12 @@ Matrix4 ortho(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar)
 {
 	Matrix4 result = Matrix4::Identity;
 
-	result.x.x = 2.0f / (right - left);
-	result.y.y = 2.0f / (top - bottom);
-	result.z.z = -2.0f / (zFar - zNear);
-	result.w.x = -(right + left) / (right - left);
-	result.w.y = -(top + bottom) / (top - bottom);
-	result.w.z = -(zFar + zNear) / (zFar - zNear);
+	result[0][0] = 2.0f / (right - left);
+	result[1][1] = 2.0f / (top - bottom);
+	result[2][2] = -2.0f / (zFar - zNear);
+	result[3][0] = -(right + left) / (right - left);
+	result[3][1] = -(top + bottom) / (top - bottom);
+	result[3][2] = -(zFar + zNear) / (zFar - zNear);
 
 	return result;
 }
@@ -247,11 +248,11 @@ Matrix4 perspective(const Radian& fovy, f32 aspect, f32 zNear, f32 zFar)
 	const f32 tanHalfFovy{Math::tan(0.5f * fovy)};
 
 	Matrix4 result = 0.0f * Matrix4::Identity;
-	result.x.x = 1.0f / (aspect * tanHalfFovy);
-	result.y.y = 1.0f / (tanHalfFovy);
-	result.z.z = -(zFar + zNear) / (zFar - zNear);
-	result.z.w = -1.0f;
-	result.w.z = -2.0f * zFar * zNear / (zFar - zNear);
+	result[0][0] = 1.0f / (aspect * tanHalfFovy);
+	result[1][1] = 1.0f / (tanHalfFovy);
+	result[2][2] = -(zFar + zNear) / (zFar - zNear);
+	result[2][3] = -1.0f;
+	result[3][2] = -2.0f * zFar * zNear / (zFar - zNear);
 
 	return result;
 }
@@ -266,11 +267,11 @@ Matrix4 infinitePerspective(const Radian& fovy, f32 aspect, f32 zNear)
 
 	Matrix4 result = 0.0f * Matrix4::Identity;
 
-	result.x.x = (2.0f * zNear) / (right - left);
-	result.y.y = (2.0f * zNear) / (top - bottom);
-	result.z.z = -1.0f;
-	result.z.w = -1.0f;
-	result.w.z = -2.0f * zNear;
+	result[0][0] = (2.0f * zNear) / (right - left);
+	result[1][1] = (2.0f * zNear) / (top - bottom);
+	result[2][2] = -1.0f;
+	result[2][3] = -1.0f;
+	result[3][2] = -2.0f * zNear;
 
 	return result;
 }
@@ -285,21 +286,21 @@ Matrix4 lookAt<Matrix4>(const Vector3& eye,
 	const Vector3 u = cross(s, f);
 
 	Matrix4 result = Matrix4::Identity;
-	result.x.x = +s.x;
-	result.y.x = +s.y;
-	result.z.x = +s.z;
+	result[0][0] = +s.x;
+	result[1][0] = +s.y;
+	result[2][0] = +s.z;
 
-	result.x.y = +u.x;
-	result.y.y = +u.y;
-	result.z.y = +u.z;
+	result[0][1] = +u.x;
+	result[1][1] = +u.y;
+	result[2][1] = +u.z;
 
-	result.x.z = -f.x;
-	result.y.z = -f.y;
-	result.z.z = -f.z;
+	result[0][2] = -f.x;
+	result[1][2] = -f.y;
+	result[2][2] = -f.z;
 
-	result.w.x = -dot(s, eye);
-	result.w.y = -dot(u, eye);
-	result.w.z = +dot(f, eye);
+	result[3][0] = -dot(s, eye);
+	result[3][1] = -dot(u, eye);
+	result[3][2] = +dot(f, eye);
 
 	return result;
 }

@@ -157,7 +157,7 @@ Quaternion angleAxis(const Radian& angle, const Vector3& axis)
 Matrix4 quaternionToMatrix4(const Quaternion& q)
 {
 	Matrix4 mat = Matrix4::Identity;
-	Quaternion a = normalize(q);
+	const Quaternion a = normalize(q);
 
 	const f32 xx{a.x * a.x};
 	const f32 yy{a.y * a.y};
@@ -169,17 +169,17 @@ Matrix4 quaternionToMatrix4(const Quaternion& q)
 	const f32 wy{a.w * a.y};
 	const f32 wz{a.w * a.z};
 
-	mat.x.x = 1.0f - 2.0f * (yy + zz);
-	mat.x.y = 2.0f * (xy + wz);
-	mat.x.z = 2.0f * (xz - wy);
+	mat[0][0] = 1.0f - 2.0f * (yy + zz);
+	mat[0][1] = 2.0f * (xy + wz);
+	mat[0][2] = 2.0f * (xz - wy);
 
-	mat.y.x = 2.0f * (xy - wz);
-	mat.y.y = 1.0f - 2.0f * (xx + zz);
-	mat.y.z = 2.0f * (yz + wx);
+	mat[1][0] = 2.0f * (xy - wz);
+	mat[1][1] = 1.0f - 2.0f * (xx + zz);
+	mat[1][2] = 2.0f * (yz + wx);
 
-	mat.z.x = 2.0f * (xz + wy);
-	mat.z.y = 2.0f * (yz - wx);
-	mat.z.z = 1.0f - 2.0f * (xx + yy);
+	mat[2][0] = 2.0f * (xz + wy);
+	mat[2][1] = 2.0f * (yz - wx);
+	mat[2][2] = 1.0f - 2.0f * (xx + yy);
 
 	return mat;
 }
@@ -188,10 +188,10 @@ Matrix4 quaternionToMatrix4(const Quaternion& q)
 //             applied
 Quaternion matrix4ToQuaternion(const Matrix4& m)
 {
-	f32 fourXSquaredMinus1{m.x.x - m.y.y - m.z.z};
-	f32 fourYSquaredMinus1{m.y.y - m.x.x - m.z.z};
-	f32 fourZSquaredMinus1{m.z.z - m.x.x - m.y.y};
-	f32 fourWSquaredMinus1{m.x.x + m.y.y + m.z.z};
+	f32 fourXSquaredMinus1{m[0][0] - m[1][1] - m[2][2]};
+	f32 fourYSquaredMinus1{m[1][1] - m[0][0] - m[2][2]};
+	f32 fourZSquaredMinus1{m[2][2] - m[0][0] - m[1][1]};
+	f32 fourWSquaredMinus1{m[0][0] + m[1][1] + m[2][2]};
 
 	int biggestIndex{0};
 	f32 fourBiggestSquaredMinus1{fourWSquaredMinus1};
@@ -214,39 +214,39 @@ Quaternion matrix4ToQuaternion(const Matrix4& m)
 	f32 biggestVal{Math::sqrt(fourBiggestSquaredMinus1 + 1.0f) * 0.5f};
 	f32 mult{0.25f / biggestVal};
 
-	Quaternion q;
+	Quaternion q = Quaternion{0, 0, 0, 1};
 
 	switch (biggestIndex)
 	{
 	case 0:
 	{
 		q.w = biggestVal;
-		q.x = (m.y.z - m.z.y) * mult;
-		q.y = (m.z.x - m.x.z) * mult;
-		q.z = (m.x.y - m.y.x) * mult;
+		q.x = (m[1][2] - m[2][1]) * mult;
+		q.y = (m[2][0] - m[0][2]) * mult;
+		q.z = (m[0][1] - m[1][0]) * mult;
 	}
 	break;
 	case 1:
 	{
-		q.w = (m.y.z - m.z.y) * mult;
+		q.w = (m[1][2] - m[2][1]) * mult;
 		q.x = biggestVal;
-		q.y = (m.x.y + m.y.x) * mult;
-		q.z = (m.z.x + m.x.z) * mult;
+		q.y = (m[0][1] + m[1][0]) * mult;
+		q.z = (m[2][0] + m[0][2]) * mult;
 	}
 	break;
 	case 2:
 	{
-		q.w = (m.z.x - m.x.z) * mult;
-		q.x = (m.x.y + m.y.x) * mult;
+		q.w = (m[2][0] - m[0][2]) * mult;
+		q.x = (m[0][1] + m[1][0]) * mult;
 		q.y = biggestVal;
-		q.z = (m.y.z + m.z.y) * mult;
+		q.z = (m[1][2] + m[2][1]) * mult;
 	}
 	break;
 	case 3:
 	{
-		q.w = (m.x.y - m.y.x) * mult;
-		q.x = (m.z.x + m.x.z) * mult;
-		q.y = (m.y.z + m.z.y) * mult;
+		q.w = (m[0][1] - m[1][0]) * mult;
+		q.x = (m[2][0] + m[0][2]) * mult;
+		q.y = (m[1][2] + m[2][1]) * mult;
 		q.z = biggestVal;
 	}
 	break;

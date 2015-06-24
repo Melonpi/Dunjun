@@ -17,11 +17,6 @@ union Vector4
 	{
 		f32 r, g, b, a;
 	};
-	struct
-	{
-		f32 s, t, p, q;
-	};
-
 	f32 data[4];
 
 	struct
@@ -30,19 +25,18 @@ union Vector4
 		Vector2 zw;
 	};
 
+	struct
+	{
+		Vector2 rg;
+		Vector2 ba;
+	};
+
 	Vector3 xyz;
+	Vector3 rgb;
 
-	struct
-	{
-		f32 x;
-		Vector2 yz;
-	};
 
-	struct
-	{
-		f32 x;
-		Vector3 yzw;
-	};
+	inline f32& operator[](usize index) { return data[index]; }
+	inline const f32& operator[](usize index) const { return data[index]; }
 };
 
 

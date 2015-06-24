@@ -8,7 +8,7 @@ bool operator==(const Vector3& a, const Vector3& b)
 {
 	for (usize i{0}; i < 3; i++)
 	{
-		if (a.data[i] != b.data[i])
+		if (a[i] != b[i])
 			return false;
 	}
 
@@ -47,7 +47,7 @@ Vector3 operator*(const Vector3& a, const Vector3& b)
 {
 	Vector3 result;
 	for (usize i{0}; i < 3; i++)
-		result.data[i] = a.data[i] * b.data[i];
+		result[i] = a[i] * b[i];
 	return result;
 }
 
@@ -56,7 +56,7 @@ Vector3 operator/(const Vector3& a, const Vector3& b)
 {
 	Vector3 result;
 	for (usize i{0}; i < 3; i++)
-		result.data[i] = a.data[i] / b.data[i];
+		result[i] = a[i] / b[i];
 	return result;
 }
 

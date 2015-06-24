@@ -24,6 +24,10 @@ enum class ShaderType
 class ShaderProgram : public NonCopyable
 {
 public:
+	u32 handle{0};
+	bool isLinked{false};
+	std::string errorLog{};
+
 	ShaderProgram() = default;
 	virtual ~ShaderProgram();
 
@@ -56,10 +60,6 @@ public:
 	void setUniform(const std::string& name, const Quaternion& t) const;
 	void setUniform(const std::string& name, const Transform& t) const;
 	void setUniform(const std::string& name, const Color& c) const;
-
-	u32 handle{0};
-	bool isLinked{false};
-	std::string errorLog{};
 
 private:
 	mutable std::unordered_map<std::string, s32> m_attribLocations;

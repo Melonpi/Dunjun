@@ -79,7 +79,7 @@ bool GBuffer::create(u32 w, u32 h)
 	      GL_DEPTH_COMPONENT,
 	      GL_FLOAT);
 
-	glDrawBuffers(len(drawBuffers), &drawBuffers[0]);
+	glDrawBuffers((u32)len(drawBuffers), &drawBuffers[0]);
 
 	if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) !=
 	    GL_FRAMEBUFFER_COMPLETE_EXT)

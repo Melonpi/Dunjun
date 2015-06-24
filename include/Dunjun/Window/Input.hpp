@@ -188,8 +188,8 @@ enum class CursorMode : u32
 	Disabled,
 };
 
-void setup();
-void cleanup();
+void init();
+void shutdown();
 
 void setCursorMode(CursorMode mode);
 void setStickyKeys(bool sticky);

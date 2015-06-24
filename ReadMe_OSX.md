@@ -1,5 +1,5 @@
 # Dunjun - Mac OS X #
-Mac OS X support for Dunjun is experimental at the moment and has only been tested on my own computer (OS X 10.10.2)
+Mac OS X support for Dunjun is experimental at the moment and has only been tested on my own computer (OS X 10.10)
 
 To compiler, GLEW and GLFW must be installed either through `brew` or something similar.
 

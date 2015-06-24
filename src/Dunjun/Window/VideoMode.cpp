@@ -41,7 +41,7 @@ const std::vector<VideoMode>& VideoMode::getFullscreenModes()
 			return modes;
 		}
 
-		for (usize i{0}; i < displayModeCount; i++)
+		for (s32 i{0}; i < displayModeCount; i++)
 		{
 			if (SDL_GetDisplayMode(0, i, &dm) != 0)
 			{

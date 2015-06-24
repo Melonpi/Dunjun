@@ -114,6 +114,7 @@
 * [x] ResourceHolder
 * [ ] Tag-Based Asset Loader/Manager
 * [ ] Streaming Assets
+* [ ] HiDPI - OS X
 
 ## Settings (External/Config File)
 

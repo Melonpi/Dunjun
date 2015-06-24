@@ -67,7 +67,8 @@ INTERNAL std::string stringFromFile(const std::string& filename)
 				if (includeFilename[0] == '<') // Absolute Path (library path)
 				{
 					usize closingBracketPos{0};
-					for (usize i{1}; i < len(includeFilename); i++)
+					usize length{len(includeFilename)};
+					for (usize i{1}; i < length; i++)
 					{
 						if (includeFilename[i] == '>')
 						{
@@ -89,7 +90,8 @@ INTERNAL std::string stringFromFile(const std::string& filename)
 				else if (includeFilename[0] == '\"') // Relative Path (folder path)
 				{
 					usize closingSpeechMark{0};
-					for (usize i{1}; i < len(includeFilename); i++)
+					usize length{len(includeFilename)};
+					for (usize i{1}; i < length; i++)
 					{
 						if (includeFilename[i] == '\"')
 						{
@@ -137,7 +139,7 @@ bool ShaderProgram::attachShaderFromMemory(ShaderType type,
 
 	const char* shaderSource{source.c_str()};
 
-	u32 shader;
+	u32 shader{0};
 	if (type == ShaderType::Vertex)
 		shader = glCreateShader(GL_VERTEX_SHADER);
 	else if (type == ShaderType::Fragment)

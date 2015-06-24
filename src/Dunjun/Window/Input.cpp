@@ -15,7 +15,7 @@ GLOBAL const usize MaximumControllers{4};
 GLOBAL std::array<SDL_GameController*, MaximumControllers> g_controllerHandles;
 GLOBAL std::array<SDL_Haptic*, MaximumControllers> g_rumbleHandles;
 
-void setup()
+void init()
 {
 	int maxJoysticks{SDL_NumJoysticks()};
 	int controllerIndex{0};
@@ -35,7 +35,7 @@ void setup()
 	setStickyMouseButtons(true);
 }
 
-void cleanup()
+void shutdown()
 {
 	for (int i{0}; i < MaximumControllers; i++)
 	{

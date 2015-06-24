@@ -342,7 +342,6 @@ INTERNAL Input::Key convertFromSDL_ScanCode(u32 code)
 	case SDL_SCANCODE_F15:          return Key::F15;
 	case SDL_SCANCODE_PAUSE:        return Key::Pause;
 	}
-	return Key::Unknown; // Just in-case
 	// clang-format on
 }
 

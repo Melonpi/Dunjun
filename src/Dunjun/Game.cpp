@@ -222,7 +222,7 @@ void init()
 	// Initial OpenGL settings
 	glInit();
 
-	Input::setup();
+	Input::init();
 	Input::setCursorPosition(g_window, {0, 0});
 
 	loadShaders();
@@ -280,9 +280,9 @@ void run()
 	}
 }
 
-void cleanup()
+void shutdown()
 {
-	Input::cleanup();
+	Input::shutdown();
 	g_window.close();
 	SDL_Quit();
 

@@ -112,7 +112,7 @@ bool RenderTexture::create(u32 w,
 	if (type & TextureType::Depth)
 		drawBuffers.emplace_back(GL_DEPTH_ATTACHMENT);
 
-	glDrawBuffers(len(drawBuffers), &drawBuffers[0]);
+	glDrawBuffers((u32)len(drawBuffers), &drawBuffers[0]);
 
 	if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) !=
 	    GL_FRAMEBUFFER_COMPLETE_EXT)
