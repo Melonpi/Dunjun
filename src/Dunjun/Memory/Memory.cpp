@@ -7,22 +7,22 @@ namespace Dunjun
 
 struct Header
 {
-	GLOBAL const Allocator::SizeType PadValue{(Allocator::SizeType)(-1)};
+	GLOBAL const usize PadValue{(usize)(-1)};
 
-	Allocator::SizeType size;
+	usize size;
 };
 
-INTERNAL inline void fill(Header* header, void* data, Allocator::SizeType size)
+INTERNAL inline void fill(Header* header, void* data, usize size)
 {
 	header->size = size;
-	Allocator::SizeType* ptr = (Allocator::SizeType*)(header + 1);
+	usize* ptr = (usize*)(header + 1);
 	while (ptr < data)
 		*ptr++ = Header::PadValue;
 }
 
 INTERNAL inline Header* header(void* data)
 {
-	Allocator::SizeType* v = (Allocator::SizeType*)data;
+	usize* v = (usize*)data;
 	while (*(v - 1) == Header::PadValue)
 		v--;
 
@@ -40,9 +40,9 @@ public:
 
 	~HeapAllocator() {}
 
-	virtual void* allocate(SizeType size, SizeType align = DefaultAlign)
+	virtual void* allocate(usize size, usize align = DefaultAlign)
 	{
-		const SizeType total = size + align + sizeof(Header);
+		const usize total = size + align + sizeof(Header);
 		Header* header = (Header*)malloc(total);
 		void* ptr{header + 1};
 		ptr = Memory::alignForward(ptr, align);
@@ -60,13 +60,13 @@ public:
 		free(h);
 	}
 
-	virtual SizeType allocatedSize(void* ptr)
+	virtual usize allocatedSize(void* ptr)
 	{
 		return header(ptr)->size;
 	}
 
 private:
-	SizeType m_totalAllocated;
+	usize m_totalAllocated;
 };
 
 struct MemoryGlobals

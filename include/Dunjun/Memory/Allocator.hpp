@@ -11,17 +11,15 @@ namespace Dunjun
 class Allocator
 {
 public:
-	using SizeType = usize;
-
-	GLOBAL const SizeType DefaultAlign{4};
-	GLOBAL const SizeType SizeNotTracked{(SizeType)(-1)};
+	GLOBAL const usize DefaultAlign{4};
+	GLOBAL const usize SizeNotTracked{(usize)(-1)};
 
 	Allocator() {}
 	virtual ~Allocator() {}
 
-	virtual void* allocate(SizeType size, SizeType align = DefaultAlign) = 0;
+	virtual void* allocate(usize size, usize align = DefaultAlign) = 0;
 	virtual void deallocate(void* p) = 0;
-	virtual SizeType allocatedSize(void* p) = 0;
+	virtual usize allocatedSize(void* p) = 0;
 
 	template <typename T, typename... Args>
 	T* makeNew(Args&&... args)

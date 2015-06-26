@@ -12,10 +12,10 @@ namespace Memory
 void init();
 void shutdown();
 
-inline void* alignForward(void* ptr, Allocator::SizeType align)
+inline void* alignForward(void* ptr, usize align)
 {
 	uintptr p{(uintptr)ptr};
-	const Allocator::SizeType modulo = p % align;
+	const usize modulo = p % align;
 	if (modulo)
 		p += (uintptr)(align - modulo);
 

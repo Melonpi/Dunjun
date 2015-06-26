@@ -255,10 +255,12 @@
     <ClInclude Include="include\Dunjun\Memory\Allocator.hpp" />
     <ClInclude Include="include\Dunjun\Memory\Memory.hpp" />
     <ClInclude Include="include\Dunjun\System.hpp" />
+    <ClInclude Include="include\Dunjun\System\Array.hpp" />
     <ClInclude Include="include\Dunjun\System\Clock.hpp" />
     <ClInclude Include="include\Dunjun\Graphics\Color.hpp" />
     <ClInclude Include="include\Dunjun\Common.hpp" />
     <ClInclude Include="include\Dunjun\Config.hpp" />
+    <ClInclude Include="include\Dunjun\System\Containers.hpp" />
     <ClInclude Include="include\Dunjun\Window.hpp" />
     <ClInclude Include="include\Dunjun\Window\GLContextSettings.hpp" />
     <ClInclude Include="include\Dunjun\Window\Event.hpp" />

@@ -9,6 +9,10 @@
 #define INTERNAL      static // internal linkage
 #define LOCAL_PERSIST static // local persisting variables
 
+#ifdef _MSC_VER
+#define alignof(x) __alignof(x)
+#endif
+
 namespace Dunjun
 {
 // Type Specification

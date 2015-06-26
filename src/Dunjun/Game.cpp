@@ -15,6 +15,9 @@
 #include <string>
 #include <vector>
 
+#include <Dunjun/System/Containers.hpp>
+#include <Dunjun/System/Array.hpp>
+
 namespace Dunjun
 {
 struct ModelInstance
