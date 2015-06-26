@@ -1,6 +1,7 @@
 #include <Dunjun/Config.hpp>
 #include <Dunjun/Game.hpp>
 
+#include <Dunjun/Memory/Memory.hpp>
 #include <Dunjun/System.hpp>
 #include <Dunjun/Window.hpp>
 #include <Dunjun/ResourceHolders.hpp>
@@ -201,6 +202,8 @@ INTERNAL void render() { g_world.render(); }
 
 void init()
 {
+	Memory::init();
+
 	u32 sdlFlags{SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK |
 	             SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC | 0};
 
@@ -285,6 +288,7 @@ void shutdown()
 	Input::shutdown();
 	g_window.close();
 	SDL_Quit();
+	Memory::shutdown();
 
 	std::exit(EXIT_SUCCESS);
 }

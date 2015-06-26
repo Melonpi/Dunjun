@@ -15,10 +15,10 @@ struct Vertex
 	Color color = Color{255, 255, 255};
 	Vector3 normal = Vector3{0, 0, 0};
 
-	Vertex(const Vector3& position = {0, 0, 0},
-	       const Vector2& texCoord = {0, 0},
-	       const Color& color = Color{0xFFFFFFFF},
-	       const Vector3& normal = {0, 0, 0})
+	Vertex(const Vector3& position = Vector3{0, 0, 0},
+	       const Vector2& texCoord = Vector2{0, 0},
+	       const Color& color = Color{255, 255, 255},
+	       const Vector3& normal = Vector3{0, 0, 0})
 	: position(position)
 	, texCoord(texCoord)
 	, color(color)
@@ -37,10 +37,10 @@ public:
 		return *this;
 	}
 
-	inline VertexArray& append(const Vector3& position = {0, 0, 0},
-	                           const Vector2& texCoord = {0, 0},
-	                           const Color& color = Color(0xFFFFFFFF),
-	                           const Vector3& normal = {0, 0, 0})
+	inline VertexArray& append(const Vector3& position = Vector3{0, 0, 0},
+	                           const Vector2& texCoord = Vector2{0, 0},
+	                           const Color& color = Color{255, 255, 255},
+	                           const Vector3& normal = Vector3{0, 0, 0})
 	{
 		return append(Vertex(position, texCoord, color, normal));
 	}

@@ -5,6 +5,10 @@
 #include <cstring>
 #include <memory>
 
+#define GLOBAL        static // global variables
+#define INTERNAL      static // internal linkage
+#define LOCAL_PERSIST static // local persisting variables
+
 namespace Dunjun
 {
 // Type Specification
@@ -38,6 +42,10 @@ using u32 = unsigned int;
 
 // Depending on the header, `size_t` xor `std::size_t` may defined
 using usize = std::size_t;
+
+using uintptr = uintptr_t;
+using intptr = intptr_t;
+
 
 // NOTE(bill): Prefer `bool` as it indicates it is an boolean type
 // Only use b8/b32 if you want a boolean type of a certain size

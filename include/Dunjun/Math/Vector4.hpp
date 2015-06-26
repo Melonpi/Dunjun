@@ -34,7 +34,6 @@ union Vector4
 	Vector3 xyz;
 	Vector3 rgb;
 
-
 	inline f32& operator[](usize index) { return data[index]; }
 	inline const f32& operator[](usize index) const { return data[index]; }
 };

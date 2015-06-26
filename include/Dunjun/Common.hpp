@@ -17,10 +17,6 @@
 #include <stack>
 #include <stdexcept>
 
-#define GLOBAL        static // global variables
-#define INTERNAL      static // internal linkage
-#define LOCAL_PERSIST static // local persisting variables
-
 namespace Dunjun
 {
 namespace
