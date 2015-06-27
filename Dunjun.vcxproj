@@ -261,6 +261,7 @@
     <ClInclude Include="include\Dunjun\Common.hpp" />
     <ClInclude Include="include\Dunjun\Config.hpp" />
     <ClInclude Include="include\Dunjun\System\Containers.hpp" />
+    <ClInclude Include="include\Dunjun\System\Queue.hpp" />
     <ClInclude Include="include\Dunjun\Window.hpp" />
     <ClInclude Include="include\Dunjun\Window\GLContextSettings.hpp" />
     <ClInclude Include="include\Dunjun\Window\Event.hpp" />

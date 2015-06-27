@@ -17,6 +17,8 @@
 
 #include <Dunjun/System/Containers.hpp>
 #include <Dunjun/System/Array.hpp>
+#include <Dunjun/System/Queue.hpp>
+
 
 namespace Dunjun
 {
@@ -207,8 +209,26 @@ void init()
 {
 	Memory::init();
 
+	{
+		Allocator& a = defaultAllocator();
+		Queue<int> q{a};
+
+		reserve(q, 6);
+		pushBack(q, 4);
+		pushBack(q, 9);
+		pushFront(q, 1);
+		int items[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+		push(q, items, 9);
+
+		usize length{len(q)};
+		for (usize i{0}; i < length; i++)
+			printf("%d ", q[i]);
+		printf("\n");
+
+	}
+
 	u32 sdlFlags{SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK |
-	             SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC | 0};
+	             SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC};
 
 	if (SDL_Init(sdlFlags) != 0)
 	{

@@ -6,7 +6,9 @@
 
 namespace Dunjun
 {
-// NOTE(bill): Array<T> is a dynamic array for POD types
+// Array<T> is a dynamic array for POD types
+// NOTE(bill): This will not construct and destruct elements
+// TODO(bill): Create a container that will call ctor & dtor
 template <typename T>
 struct Array
 {
@@ -14,58 +16,15 @@ struct Array
 	usize length;
 	usize capacity;
 	T* data;
-	/*
-		Array(Allocator& a);
-		~Array();
 
-		Array(const Array& other);
-		Array& operator=(const Array& other);
+	Array(Allocator& a);
+	~Array();
 
-		T& operator[](usize index);
-		const T& operator[](usize index) const;*/
-	Array(Allocator& a)
-	: allocator{&a}
-	, length{0}
-	, capacity{0}
-	, data{nullptr}
-	{
-	}
+	Array(const Array& other);
+	Array& operator=(const Array& other);
 
-	~Array()
-	{
-		allocator->deallocate(data);
-	}
-
-	Array(const Array& other)
-	: allocator{other.allocator}
-	, length{0}
-	, capacity{0}
-	, data{nullptr}
-	{
-		const usize num{other.length};
-		setCapacity(*this, num);
-		std::memcpy(data, other.data, num * sizeof(T));
-		length = num;
-	}
-
-	Array& operator=(const Array& other)
-	{
-		const usize num{other.length};
-		resize(*this, num);
-		std::memcpy(data, other.data, num * sizeof(T));
-
-		return *this;
-	}
-
-	inline T& operator[](usize index)
-	{
-		return data[index];
-	}
-
-	inline const T& operator[](usize index) const
-	{
-		return data[index];
-	}
+	T& operator[](usize index);
+	const T& operator[](usize index) const;
 };
 
 // NOTE(bill): Queue<T> is a double ended queue/ring buffer
@@ -77,6 +36,7 @@ struct Queue
 	usize offset;
 
 	Queue(Allocator& a);
+
 	T& operator[](usize index);
 	const T& operator[](usize index) const;
 };
