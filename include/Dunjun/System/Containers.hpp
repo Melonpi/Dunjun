@@ -27,7 +27,9 @@ struct Array
 	const T& operator[](usize index) const;
 };
 
-// NOTE(bill): Queue<T> is a double ended queue/ring buffer
+// Queue<T> is a double ended queue/ring buffer for POD types
+// NOTE(bill): This will not construct and destruct elements
+// TODO(bill): Create a container that will call ctor & dtor
 template <typename T>
 struct Queue
 {
@@ -41,7 +43,22 @@ struct Queue
 	const T& operator[](usize index) const;
 };
 
-// TODO(bill): Implement Hash Table/Map whatever
+// HashMap<T>
+template <typename T>
+struct HashMap
+{
+	struct Entry
+	{
+		u64 key;
+		usize next;
+		T value;
+	};
+
+	Array<usize> hashes;
+	Array<Entry> data;
+
+	HashMap(Allocator& a);
+};
 } // namespace Dunjun
 
 #endif
