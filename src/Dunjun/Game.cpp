@@ -18,6 +18,7 @@
 #include <Dunjun/System/Containers.hpp>
 #include <Dunjun/System/Array.hpp>
 #include <Dunjun/System/Queue.hpp>
+#include <Dunjun/System/HashMap.hpp>
 
 namespace Dunjun
 {
@@ -205,19 +206,23 @@ void init(int /*argc*/, char** /*argv*/)
 
 	{
 		Allocator& a = defaultAllocator();
-		Queue<int> q{a};
+		
+		HashMap<int> h{a};
 
-		reserve(q, 6);
-		pushBack(q, 4);
-		pushBack(q, 9);
-		pushFront(q, 1);
-		int items[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-		push(q, items, 9);
+		std::cout << has(h, 0) << "\n";
 
-		usize length{len(q)};
-		for (usize i{0}; i < length; i++)
-			printf("%d ", q[i]);
-		printf("\n");
+		set(h, 1337, 7331);
+		std::cout << has(h, 1337) << "\n";
+		std::cout << get(h, 1337, 0) << "\n";
+
+		for (int i{0}; i < 100; i++)
+			set(h, i, 2 * i);
+		for (int i{0}; i < 100; i++)
+			std::cout << get(h, i, -1) << "\n";
+
+
+
+
 	}
 
 	u32 sdlFlags{SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK |
