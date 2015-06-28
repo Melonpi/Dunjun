@@ -35,29 +35,26 @@ void pop(Queue<T>& q, usize count);
 // Number of elements in queue
 template <typename T>
 usize len(const Queue<T>& q);
-// Is queue empty? len(queue) == 0
-template <typename T>
-bool empty(const Queue<T>& q);
 // Number of items the queue can hold before a resize is needed
 template <typename T>
 usize space(const Queue<T>& q);
 
 // Iterators
 template <typename T>
-T* begin(const Queue<T>& q);
+T* begin(Queue<T>& q);
 template <typename T>
 const T* begin(const Queue<T>& q);
 template <typename T>
-T* end(const Queue<T>& q);
+T* end(Queue<T>& q);
 template <typename T>
 const T* end(const Queue<T>& q);
 
 template <typename T>
-T& front(const Queue<T>& q);
+T& front(Queue<T>& q);
 template <typename T>
 const T& front(const Queue<T>& q);
 template <typename T>
-T& back(const Queue<T>& q);
+T& back(Queue<T>& q);
 template <typename T>
 const T& back(const Queue<T>& q);
 
@@ -135,15 +132,13 @@ inline usize push(Queue<T>& q, const T* items, usize count)
 	if (insert + toInsert > length)
 		toInsert = length - insert;
 
-	// TODO(bill) IMPORTANT(bill): cannot use begin(q.data) as it causes
-	// ambiguous call to overloaded function
-	std::memcpy(q.data.data + insert, items, toInsert * sizeof(T));
+	std::memcpy(begin(q.data) + insert, items, toInsert * sizeof(T));
 
 	q.length += toInsert;
 	items += toInsert;
 	count -= toInsert;
 
-	std::memcpy(q.data.data, items, count * sizeof(T));
+	std::memcpy(begin(q.data), items, count * sizeof(T));
 
 	q.length += count;
 
@@ -166,19 +161,13 @@ inline usize len(const Queue<T>& q)
 }
 
 template <typename T>
-inline bool empty(const Queue<T>& q)
-{
-	return q.length == 0;
-}
-
-template <typename T>
 inline usize space(const Queue<T>& q)
 {
 	return len(q.data) - q.length;
 }
 
 template <typename T>
-inline T* begin(const Queue<T>& q)
+inline T* begin(Queue<T>& q)
 {
 	return begin(data) + q.length;
 }
@@ -186,15 +175,15 @@ inline T* begin(const Queue<T>& q)
 template <typename T>
 inline const T* begin(const Queue<T>& q)
 {
-	return q.data.data + q.length;
+	return begin(q.data) + q.length;
 }
 
 template <typename T>
-inline T* end(const Queue<T>& q)
+inline T* end(Queue<T>& q)
 {
 	const usize end{q.offset + q.length};
 
-	return end >= len(q.data) ? end(q.data) : q.data.data + end;
+	return end >= len(q.data) ? end(q.data) : begin(q.data) + end;
 }
 
 template <typename T>
@@ -202,11 +191,11 @@ inline const T* end(const Queue<T>& q)
 {
 	const usize end{q.offset + q.length};
 
-	return end >= len(q.data) ? end(q.data) : q.data.data + end;
+	return end >= len(q.data) ? end(q.data) : begin(q.data) + end;
 }
 
 template <typename T>
-inline T& front(const Queue<T>& q)
+inline T& front(Queue<T>& q)
 {
 	assert(q.length > 0);
 	return q[0];
@@ -220,7 +209,7 @@ inline const T& front(const Queue<T>& q)
 }
 
 template <typename T>
-inline T& back(const Queue<T>& q)
+inline T& back(Queue<T>& q)
 {
 	assert(q.length > 0);
 	return q[q.length - 1];
@@ -241,7 +230,7 @@ inline void clear(Queue<T>& q)
 }
 
 template <typename T>
-inline inline void setCapacity(Queue<T>& q, usize capacity)
+inline void setCapacity(Queue<T>& q, usize capacity)
 {
 	const usize oldLength{len(q.data)};
 
@@ -249,8 +238,8 @@ inline inline void setCapacity(Queue<T>& q, usize capacity)
 
 	if (q.offset + q.length > oldLength)
 	{
-		std::memmove(q.data.data + capacity - (oldLength - q.offset),
-					 q.data.data + q.offset,
+		std::memmove(begin(q.data) + capacity - (oldLength - q.offset),
+		             begin(q.data) + q.offset,
 		             (oldLength - q.offset) * sizeof(T));
 		q.offset += capacity - oldLength;
 	}

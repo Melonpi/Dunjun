@@ -7,7 +7,7 @@ namespace Dunjun
 {
 namespace Game
 {
-void init();
+void init(int argc, char** argv);
 void run();
 void shutdown();
 

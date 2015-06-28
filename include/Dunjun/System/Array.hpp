@@ -22,29 +22,26 @@ usize push(Array<T>& a, const T* items, usize count);
 // Number of elements in array
 template <typename T>
 usize len(const Array<T>& a);
-// Is array empty? len(array) == 0
-template <typename T>
-bool empty(const Array<T>& a);
 // Maximum number of items the array can hold
 template <typename T>
 usize capacity(const Array<T>& a);
 
 // Iterators
 template <typename T>
-T* begin(const Array<T>& a);
+T* begin(Array<T>& a);
 template <typename T>
 const T* begin(const Array<T>& a);
 template <typename T>
-T* end(const Array<T>& a);
+T* end(Array<T>& a);
 template <typename T>
 const T* end(const Array<T>& a);
 
 template <typename T>
-T& front(const Array<T>& a);
+T& front(Array<T>& a);
 template <typename T>
 const T& front(const Array<T>& a);
 template <typename T>
-T& back(const Array<T>& a);
+T& back(Array<T>& a);
 template <typename T>
 const T& back(const Array<T>& a);
 
@@ -53,6 +50,9 @@ const T& back(const Array<T>& a);
 // elements
 template <typename T>
 void clear(Array<T>& a);
+// Trims the array so that its capactity equals its length
+template <typename T>
+void trim(Array<T>& a);
 // Resizes the array to a given size
 // Old items will be copied to the new array. If the new capacity is smaller
 // than the previous one, the array will be shortened.
@@ -92,7 +92,7 @@ inline void popBack(Array<T>& a)
 }
 
 template <typename T>
-usize push(Array<T>& a, const T* items, usize count)
+inline usize push(Array<T>& a, const T* items, usize count)
 {
 	if (a.capacity <= a.length + count)
 		grow(a, a.length + count);
@@ -110,19 +110,13 @@ inline usize len(const Array<T>& a)
 }
 
 template <typename T>
-inline bool empty(const Array<T>& a)
-{
-	return a.length == 0;
-}
-
-template <typename T>
-usize capacity(const Array<T>& a)
+inline usize capacity(const Array<T>& a)
 {
 	return a.capacity;
 }
 
 template <typename T>
-inline T* begin(const Array<T>& a)
+inline T* begin(Array<T>& a)
 {
 	return a.data;
 }
@@ -134,7 +128,7 @@ inline const T* begin(const Array<T>& a)
 }
 
 template <typename T>
-inline T* end(const Array<T>& a)
+inline T* end(Array<T>& a)
 {
 	return a.data + a.length;
 }
@@ -146,7 +140,7 @@ inline const T* end(const Array<T>& a)
 }
 
 template <typename T>
-inline T& front(const Array<T>& a)
+inline T& front(Array<T>& a)
 {
 	assert(a.length > 0);
 	return a.data[0];
@@ -160,7 +154,7 @@ inline const T& front(const Array<T>& a)
 }
 
 template <typename T>
-inline T& back(const Array<T>& a)
+inline T& back(Array<T>& a)
 {
 	assert(a.length > 0);
 	return a.data[a.length - 1];
@@ -180,7 +174,13 @@ inline void clear(Array<T>& a)
 }
 
 template <typename T>
-void resize(Array<T>& a, usize length)
+inline void trim(Array<T>& a)
+{
+	setCapacity(a, a.length);
+}
+
+template <typename T>
+inline void resize(Array<T>& a, usize length)
 {
 	if (length > a.capacity)
 		grow(a, length);
@@ -188,7 +188,7 @@ void resize(Array<T>& a, usize length)
 }
 
 template <typename T>
-void setCapacity(Array<T>& a, usize capacity)
+inline void setCapacity(Array<T>& a, usize capacity)
 {
 	if (capacity == a.capacity)
 		return;
@@ -240,7 +240,7 @@ inline Array<T>::~Array()
 }
 
 template <typename T>
-Array<T>::Array(const Array& other)
+inline Array<T>::Array(const Array& other)
 : allocator{other.allocator}
 , length{0}
 , capacity{0}
@@ -253,7 +253,7 @@ Array<T>::Array(const Array& other)
 }
 
 template <typename T>
-Array<T>& Array<T>::operator=(const Array& other)
+inline Array<T>& Array<T>::operator=(const Array& other)
 {
 	const usize num{other.length};
 	resize(*this, num);
@@ -273,7 +273,6 @@ inline const T& Array<T>::operator[](usize index) const
 {
 	return data[index];
 }
-
 } // namespace Dunjun
 
 #endif

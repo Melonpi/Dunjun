@@ -19,7 +19,6 @@
 #include <Dunjun/System/Array.hpp>
 #include <Dunjun/System/Queue.hpp>
 
-
 namespace Dunjun
 {
 struct ModelInstance
@@ -49,25 +48,20 @@ INTERNAL void loadShaders()
 	g_shaderHolder.insertFromFile("texPass",           //
 	                              "texPass.vert.glsl", //
 	                              "texPass.frag.glsl");
-	g_shaderHolder.insertFromFile("geometryPass",
-	                              "geometryPass.vert.glsl",
-	                              "geometryPass.frag.glsl");
-	g_shaderHolder.insertFromFile("ambientLight",
-	                              "lightPass.vert.glsl",
-	                              "ambientLight.frag.glsl");
-	g_shaderHolder.insertFromFile("pointLight",
-	                              "lightPass.vert.glsl",
-	                              "pointLight.frag.glsl");
+	g_shaderHolder.insertFromFile(
+	    "geometryPass", "geometryPass.vert.glsl", "geometryPass.frag.glsl");
+	g_shaderHolder.insertFromFile(
+	    "ambientLight", "lightPass.vert.glsl", "ambientLight.frag.glsl");
+	g_shaderHolder.insertFromFile(
+	    "pointLight", "lightPass.vert.glsl", "pointLight.frag.glsl");
 	g_shaderHolder.insertFromFile("directionalLight",
 	                              "lightPass.vert.glsl",
 	                              "directionalLight.frag.glsl");
-	g_shaderHolder.insertFromFile("spotLight",
-	                              "lightPass.vert.glsl",
-	                              "spotLight.frag.glsl");
+	g_shaderHolder.insertFromFile(
+	    "spotLight", "lightPass.vert.glsl", "spotLight.frag.glsl");
 
-	g_shaderHolder.insertFromFile("out",
-	                              "lightPass.vert.glsl",
-	                              "out.frag.glsl");
+	g_shaderHolder.insertFromFile(
+	    "out", "lightPass.vert.glsl", "out.frag.glsl");
 }
 INTERNAL void loadMaterials()
 {
@@ -205,7 +199,7 @@ INTERNAL void handleEvents()
 
 INTERNAL void render() { g_world.render(); }
 
-void init()
+void init(int /*argc*/, char** /*argv*/)
 {
 	Memory::init();
 
@@ -224,7 +218,6 @@ void init()
 		for (usize i{0}; i < length; i++)
 			printf("%d ", q[i]);
 		printf("\n");
-
 	}
 
 	u32 sdlFlags{SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK |
