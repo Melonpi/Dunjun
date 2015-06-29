@@ -1,6 +1,8 @@
 #ifndef DUNJUN_SYSTEM_TYPES_HPP
 #define DUNJUN_SYSTEM_TYPES_HPP
 
+// clang-format off
+
 #include <cstddef>
 #include <cstring>
 #include <memory>
@@ -9,17 +11,22 @@
 #define INTERNAL      static // internal linkage
 #define LOCAL_PERSIST static // local persisting variables
 
-#ifdef _MSC_VER
-#define alignof(x) __alignof(x)
+#if defined(_MSC_VER)
+	#define _ALLOW_KEYWORD_MACROS
+#endif
+
+#if !defined(alignof)
+	#define alignof(x) __alignof(x)
 #endif
 
 namespace Dunjun
 {
 // Type Specification
-// Integer:        [us](8|16|32|64)
-// Floating Point: f(16|32|64)
-// Integral Size:  usize
-// Boolean:        b(8|32)
+// Integer:         [us](8|16|32|64)
+// Floating Point:  f(16|32|64)
+// Integral Size:   usize
+// Boolean:         b(8|32)
+// Pointer Integer: u?intptr
 
 // All "common" platforms use the same size for char, short and int
 // We do not need to include stdint.h/cstdint which not always available.
@@ -61,7 +68,6 @@ using f64 = double;
 
 namespace
 {
-// TODO(bill): May not be complete - Handling NaN/+-inf
 inline s16 f32Tof16(f32 f)
 {
 	s16 fint16;
@@ -73,7 +79,6 @@ inline s16 f32Tof16(f32 f)
 	return fint16;
 }
 
-// TODO(bill): May not be complete - Handling NaN/+-inf
 inline f32 f16Tof32(s16 fint16)
 {
 	s32 fint32 = ((fint16 & 0x8000) << 16);
@@ -88,10 +93,7 @@ inline f32 f16Tof32(s16 fint16)
 class f16
 {
 public:
-	f16()
-	: m_value{0}
-	{
-	}
+	f16() = default;
 
 	f16(f32 f)
 	: m_value{f32Tof16(f)}
@@ -99,7 +101,8 @@ public:
 	}
 
 	f16(const f16& f) = default;
-	f16(f16&& f)
+
+	f16(f16&& f) // NOTE(bill): default for move doesn't work on MSVC 2013
 	: m_value{std::move(f.m_value)}
 	{
 	}
@@ -160,4 +163,7 @@ inline f16 operator/(const f16& a, const f16& b)
 	return {static_cast<f32>(a) / static_cast<f32>(b)};
 }
 } // namespace Dunjun
+
+// clang-format on
+
 #endif

@@ -2,7 +2,7 @@
 #define DUNJUN_GRAPHICS_GBUFFER_HPP
 
 #include <Dunjun/System/OpenGL.hpp>
-#include <Dunjun/System/Types.hpp>
+#include <Dunjun/Types.hpp>
 #include <Dunjun/Graphics/Texture.hpp>
 
 namespace Dunjun

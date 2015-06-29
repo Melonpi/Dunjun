@@ -1,7 +1,7 @@
 #ifndef DUNJUN_MEMORY_ALLOCATOR_HPP
 #define DUNJUN_MEMORY_ALLOCATOR_HPP
 
-#include <Dunjun/System/Types.hpp>
+#include <Dunjun/Types.hpp>
 
 #include <new>
 #include <utility>
@@ -20,6 +20,7 @@ public:
 	virtual void* allocate(usize size, usize align = DefaultAlign) = 0;
 	virtual void deallocate(void* p) = 0;
 	virtual usize allocatedSize(void* p) = 0;
+	virtual usize totalAllocated() = 0;
 
 	template <typename T, typename... Args>
 	T* makeNew(Args&&... args)

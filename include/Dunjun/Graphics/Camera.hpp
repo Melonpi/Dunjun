@@ -1,7 +1,7 @@
 #ifndef DUNJUN_GRAPHICS_CAMERA_HPP
 #define DUNJUN_GRAPHICS_CAMERA_HPP
 
-#include <Dunjun/System/Types.hpp>
+#include <Dunjun/Types.hpp>
 #include <Dunjun/Graphics/Transform.hpp>
 
 namespace Dunjun

@@ -1,5 +1,9 @@
 #include <Dunjun/Memory/Memory.hpp>
 
+#include <Dunjun/Common.hpp>
+
+#include <mutex>
+
 #include <cstdlib>
 
 namespace Dunjun
@@ -7,9 +11,9 @@ namespace Dunjun
 
 struct Header
 {
-	GLOBAL const usize PadValue{(usize)(-1)};
-
 	usize size;
+
+	GLOBAL const usize PadValue{(usize)(-1)};
 };
 
 INTERNAL inline void fill(Header* header, void* data, usize size)
@@ -29,7 +33,6 @@ INTERNAL inline Header* header(void* data)
 	return (Header*)v - 1;
 }
 
-// NOTE(bill): Similar to how malloc is implemented internall with C
 class HeapAllocator : public Allocator
 {
 public:
@@ -38,20 +41,31 @@ public:
 	{
 	}
 
-	~HeapAllocator() {}
-
-	virtual void* allocate(usize size, usize align = DefaultAlign)
+	~HeapAllocator() override
 	{
+		// Check that all memory has been destroyed to prevent memory leaks
+		assert(m_totalAllocated == 0);
+	}
+
+	virtual void* allocate(usize size, usize align = DefaultAlign) override
+	{
+		m_mutex.lock();
+		defer(m_mutex.unlock());
+
 		const usize total = size + align + sizeof(Header);
 		Header* header = (Header*)malloc(total);
 		void* ptr{header + 1};
 		ptr = Memory::alignForward(ptr, align);
 		fill(header, ptr, total);
+		m_totalAllocated += total;
 		return ptr;
 	}
 
-	virtual void deallocate(void* ptr)
+	virtual void deallocate(void* ptr) override
 	{
+		m_mutex.lock();
+		defer(m_mutex.unlock());
+
 		if (!ptr)
 			return;
 
@@ -60,12 +74,24 @@ public:
 		free(h);
 	}
 
-	virtual usize allocatedSize(void* ptr)
+	virtual usize allocatedSize(void* ptr) override
 	{
+		m_mutex.lock();
+		defer(m_mutex.unlock());
+
 		return header(ptr)->size;
 	}
 
+	virtual usize totalAllocated() override
+	{
+		m_mutex.lock();
+		defer(m_mutex.unlock());
+
+		return m_totalAllocated;
+	}
+
 private:
+	std::mutex m_mutex;
 	usize m_totalAllocated;
 };
 
@@ -98,7 +124,7 @@ namespace Memory
 void init()
 {
 	u8* ptr{g_memoryGlobals.buffer};
-	g_memoryGlobals.defaultAllocator = new (ptr) HeapAllocator{};
+	g_memoryGlobals.defaultAllocator = new (ptr) HeapAllocator;
 }
 
 void shutdown()

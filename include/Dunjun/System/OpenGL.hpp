@@ -1,7 +1,7 @@
 #ifndef DUNJUN_SYSTEM_OPENGL_HPP
 #define DUNJUN_SYSTEM_OPENGL_HPP
 
-// This should be defined when compiling but just to make sure
+// NOTE(bill): This should be defined when compiling but just to make sure
 #ifndef GLEW_STATIC
 #define GLEW_STATIC
 #endif

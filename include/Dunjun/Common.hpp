@@ -2,20 +2,15 @@
 #define DUNJUN_COMMON_HPP
 
 #include <Dunjun/Config.hpp>
-#include <Dunjun/System/Types.hpp>
+#include <Dunjun/Types.hpp>
 #include <Dunjun/System/FileSystem.hpp>
 #include <Dunjun/System/NonCopyable.hpp>
 
 #include <cassert>
 #include <cstdarg>
-#include <cstdio>
-#include <cstdlib>
-#include <fstream>
 #include <functional>
 #include <iostream>
 #include <memory>
-#include <stack>
-#include <stdexcept>
 
 namespace Dunjun
 {

@@ -10,51 +10,69 @@
 
 namespace Dunjun
 {
-// Appends an item to the queue and returns the number of items in the queue
-// after the append
-template <typename T>
-usize pushBack(Queue<T>& q, const T& item);
-// Removes the last element from the queue
-template <typename T>
-void popBack(Queue<T>& q);
-// Appends an item to the front of the queue and returns the number of items in
-// the queue after the append
-template <typename T>
-usize pushFront(Queue<T>& q, const T& item);
-// Removes the first element from the queue
-template <typename T>
-void popFront(Queue<T>& q);
-// Appends items to the queue and returns the number of items in the queue after
-// the queue
-template <typename T>
-usize push(Queue<T>& q, const T* items, usize count);
-// Removes a number of elements
-template <typename T>
-void pop(Queue<T>& q, usize count);
-
 // Number of elements in queue
 template <typename T>
 usize len(const Queue<T>& q);
+
 // Number of items the queue can hold before a resize is needed
 template <typename T>
 usize space(const Queue<T>& q);
 
+// Appends an item to the queue and returns the number of items in the queue
+// after the append
+template <typename T>
+usize pushBack(Queue<T>& q, const T& item);
+
+// Removes the last element from the queue
+template <typename T>
+void popBack(Queue<T>& q);
+
+// Appends an item to the front of the queue and returns the number of items in
+// the queue after the append
+template <typename T>
+usize pushFront(Queue<T>& q, const T& item);
+
+// Removes the first element from the queue
+template <typename T>
+void popFront(Queue<T>& q);
+
+// Appends items to the queue and returns the number of items in the queue after
+// the queue
+template <typename T>
+usize push(Queue<T>& q, const T* items, usize count);
+
+// Removes a number of elements
+template <typename T>
+void pop(Queue<T>& q, usize count);
+
 // Iterators
+// NOTE(bill): These iterators only go from the Queue::offset to the
+// end(Queue::data). end(q) - begin(q) may not equal len(q) because it is a ring
+// buffer. If you need to iterate over all the elements, either use
+// Queue::operator[](usize index) or iterate over Queue::data
 template <typename T>
 T* begin(Queue<T>& q);
+
 template <typename T>
 const T* begin(const Queue<T>& q);
+
 template <typename T>
 T* end(Queue<T>& q);
+
 template <typename T>
 const T* end(const Queue<T>& q);
 
+// Same as q[0]
 template <typename T>
 T& front(Queue<T>& q);
+
 template <typename T>
 const T& front(const Queue<T>& q);
+
+// same as q[len(q) - 1]
 template <typename T>
 T& back(Queue<T>& q);
+
 template <typename T>
 const T& back(const Queue<T>& q);
 
@@ -62,12 +80,15 @@ const T& back(const Queue<T>& q);
 // Does not free memory nor call destructs (e.g. POD)
 template <typename T>
 void clear(Queue<T>& q);
+
 // Sets the capacity of the queue
 template <typename T>
 void setCapacity(Queue<T>& q, usize capacity);
+
 // Reserves space in the queue for at least capacity items
 template <typename T>
 void reserve(Queue<T>& q, usize capacity);
+
 // Grows the queue to contain at least minCapacity items
 template <typename T>
 void grow(Queue<T>& q, usize minCapacity = 0);
@@ -132,13 +153,13 @@ inline usize push(Queue<T>& q, const T* items, usize count)
 	if (insert + toInsert > length)
 		toInsert = length - insert;
 
-	std::memcpy(begin(q.data) + insert, items, toInsert * sizeof(T));
+	memcpy(begin(q.data) + insert, items, toInsert * sizeof(T));
 
 	q.length += toInsert;
 	items += toInsert;
 	count -= toInsert;
 
-	std::memcpy(begin(q.data), items, count * sizeof(T));
+	memcpy(begin(q.data), items, count * sizeof(T));
 
 	q.length += count;
 
@@ -169,29 +190,33 @@ inline usize space(const Queue<T>& q)
 template <typename T>
 inline T* begin(Queue<T>& q)
 {
-	return begin(data) + q.length;
+	return begin(q.data) + q.offset;
 }
 
 template <typename T>
 inline const T* begin(const Queue<T>& q)
 {
-	return begin(q.data) + q.length;
+	return begin(q.data) + q.offset;
 }
 
 template <typename T>
 inline T* end(Queue<T>& q)
 {
-	const usize end{q.offset + q.length};
+	const usize endPos{q.offset + q.length};
 
-	return end >= len(q.data) ? end(q.data) : begin(q.data) + end;
+	if (endPos >= len(q.data))
+		return end(q.data);
+	return begin(q.data) + endPos;
 }
 
 template <typename T>
 inline const T* end(const Queue<T>& q)
 {
-	const usize end{q.offset + q.length};
+	const usize endPos{q.offset + q.length};
 
-	return end >= len(q.data) ? end(q.data) : begin(q.data) + end;
+	if (endPos >= len(q.data))
+		return end(q.data);
+	return begin(q.data) + endPos;
 }
 
 template <typename T>
@@ -238,9 +263,9 @@ inline void setCapacity(Queue<T>& q, usize capacity)
 
 	if (q.offset + q.length > oldLength)
 	{
-		std::memmove(begin(q.data) + capacity - (oldLength - q.offset),
-		             begin(q.data) + q.offset,
-		             (oldLength - q.offset) * sizeof(T));
+		memmove(begin(q.data) + capacity - (oldLength - q.offset),
+		        begin(q.data) + q.offset,
+		        (oldLength - q.offset) * sizeof(T));
 		q.offset += capacity - oldLength;
 	}
 }
@@ -262,6 +287,10 @@ inline void grow(Queue<T>& q, usize minCapacity)
 
 	setCapacity(q, newCapacity);
 }
+
+////////////////
+// Queue<T>:: //
+////////////////
 
 template <typename T>
 inline Queue<T>::Queue(Allocator& a)

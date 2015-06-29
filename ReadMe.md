@@ -147,6 +147,17 @@ GitHub: [Dunjun GitHub](https://github.com/gingerBill/Dunjun)
 * [082 - SceneRenderer{World&}; Try Rumble w/ SDL2](https://www.youtube.com/watch?v=I1TTT3M7q6s)
 * [083 - Class Function Changes; Helper Functions](https://www.youtube.com/watch?v=9YBgDJLcyeE)
 
+### Data-Oriented Design and Custom Allocators
+
+* 084 - Remove get/set methods (Prefer Data)
+* 085 - Public Member Variables
+* 086 - POD Math Types
+* 087 - Data Oriented Design
+* 088 - Custom Allocators
+* 089 - Allocator Types and Array<T>
+* 090 - Queue<T>
+* 091 - Start Implementing HashMap<T>
+* 092 - Finish HashMap<T> & MutliHashMap funcs
 
 
 

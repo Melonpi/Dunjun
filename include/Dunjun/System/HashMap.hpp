@@ -12,10 +12,8 @@ namespace Dunjun
 // If key exists in hash map
 template <typename T>
 bool has(const HashMap<T>& h, u64 key);
-// Returns stored value for the corresponding key
-template <typename T>
-const T& get(const HashMap<T>& h, u64 key);
-// Returns stored value for the corresponding key or default value if key
+
+// Get a stored value for the corresponding key or default value if key
 // does not exist with this hash map
 template <typename T>
 const T& get(const HashMap<T>& h, u64 key, const T& defaultValue);
@@ -24,7 +22,7 @@ const T& get(const HashMap<T>& h, u64 key, const T& defaultValue);
 template <typename T>
 void set(HashMap<T>& h, u64 key, const T& value);
 
-// Removes the key from the hash map iff it exists
+// Removes the key from the hash map if it exists
 template <typename T>
 void remove(HashMap<T>& h, u64 key);
 
@@ -36,24 +34,29 @@ void reserve(HashMap<T>& h, usize capacity);
 template <typename T>
 void clear(HashMap<T>& h);
 
-// Iterators
+// Iterators (in random order)
 template <typename T>
 const typename HashMap<T>::Entry* begin(const HashMap<T>& h);
 template <typename T>
 const typename HashMap<T>::Entry* end(const HashMap<T>& h);
 
-namespace MultiHashMap
+// Functions for Multi Hash Maps e.g. keys with mutliple values
+namespace Multi
 {
-// Returns all the entries with the corresponding key
+// Get all the entries with the corresponding key
 template <typename T>
 void get(const HashMap<T>& h, u64 key, Array<T>& items);
-// Returns the number of entries with that key
+
+// Get the number of entries with that key
 template <typename T>
 usize count(const HashMap<T>& h, u64 key);
 
+// Get the first entry with that key
 template <typename T>
 const typename HashMap<T>::Entry* findFirst(const HashMap<T>& h, u64 key);
 
+// Get a pointer to next entry with the same key and if not found, returns
+// a nullptr
 template <typename T>
 const typename HashMap<T>::Entry* findNext(const HashMap<T>& h,
                                            const typename HashMap<T>::Entry* e);
@@ -70,7 +73,7 @@ void remove(HashMap<T>& h, const typename HashMap<T>::Entry* e);
 template <typename T>
 void removeAll(HashMap<T>& h, u64 key);
 
-} // namespace MultiHashMap
+} // namespace Multi
 
 ////////////////////////////////////////
 //       HashMap Implementation       //
@@ -80,35 +83,13 @@ namespace Impl
 {
 GLOBAL const usize EndOfList{(usize)(-1)};
 
+// Type for Result with holds the indexes of the hash; data; previous data
 struct FindResult
 {
 	usize hashIndex;
 	usize dataPrev;
 	usize dataIndex;
 };
-
-template <typename T>
-usize addEntry(HashMap<T>& h, u64 key);
-template <typename T>
-void erase(HashMap<T>& h, const FindResult& fr);
-template <typename T>
-FindResult find(const HashMap<T>& h, u64 key);
-template <typename T>
-FindResult find(const HashMap<T>& h, const typename HashMap<T>::Entry* e);
-template <typename T>
-usize make(HashMap<T>& h, u64 key);
-template <typename T>
-void findAndErase(HashMap<T>& h, u64 key);
-template <typename T>
-usize findOrFail(const HashMap<T>& h, u64 key);
-template <typename T>
-usize findOrMake(HashMap<T>& h, u64 key);
-template <typename T>
-void rehash(HashMap<T>& h, usize newCapacity);
-template <typename T>
-void grow(HashMap<T>& h);
-template <typename T>
-bool full(HashMap<T>& h);
 
 template <typename T>
 usize addEntry(HashMap<T>& h, u64 key)
@@ -130,14 +111,14 @@ void erase(HashMap<T>& h, const FindResult& fr)
 	else
 		h.data[fr.dataPrev].next = h.data[fr.dataIndex].next;
 
-	if (fr.dataIndex == len(h.data) - 1) // If last element
-	{
-		popBack(h.data);
-		return;
-	}
+	popBack(h.data); // updates length
 
-	h.data[fr.dataIndex] = h.data[len(h.data) - 1];
-	FindResult last{find(h, h.data[fr.dataIndex].key)};
+	if (fr.dataIndex == len(h.data))
+		return;
+
+	h.data[fr.dataIndex] = h.data[len(h.data)];
+
+	FindResult last = find(h, h.data[fr.dataIndex].key);
 
 	if (last.dataPrev == Impl::EndOfList)
 		h.hashes[last.hashIndex] = fr.dataIndex;
@@ -212,7 +193,7 @@ usize make(HashMap<T>& h, u64 key)
 template <typename T>
 void findAndErase(HashMap<T>& h, u64 key)
 {
-	const FindResult fr{find(h, key)};
+	const FindResult fr = Impl::find(h, key);
 	if (fr.dataIndex != Impl::EndOfList)
 		erase(h, fr);
 }
@@ -253,7 +234,7 @@ void rehash(HashMap<T>& h, usize newCapacity)
 	for (usize i{0}; i < oldLength; i++)
 	{
 		auto& e = h.data[i];
-		MultiHashMap::insert(nh, e.key, e.value);
+		Multi::insert(nh, e.key, e.value);
 	}
 
 	HashMap<T> empty{*h.hashes.allocator};
@@ -273,30 +254,22 @@ void grow(HashMap<T>& h)
 template <typename T>
 bool full(HashMap<T>& h)
 {
-	LOCAL_PERSIST const f32 maximumLoadCoefficient{0.75f};
+	// Make sure that there is enough space
+	const f32 maximumLoadCoefficient{0.75f};
 	return len(h.data) >= maximumLoadCoefficient * len(h.hashes);
 }
-
 } // namespace Impl
 
 ////////////////
 
 template <typename T>
-bool has(const HashMap<T>& h, u64 key)
+inline bool has(const HashMap<T>& h, u64 key)
 {
 	return Impl::findOrFail(h, key) != Impl::EndOfList;
 }
 
 template <typename T>
-const T& get(const HashMap<T>& h, u64 key)
-{
-	const usize index{findOrFail(h, key)};
-
-	assert(index != Impl::EndOfList) return h.data[index].value;
-}
-
-template <typename T>
-const T& get(const HashMap<T>& h, u64 key, const T& defaultValue)
+inline const T& get(const HashMap<T>& h, u64 key, const T& defaultValue)
 {
 	const usize index{Impl::findOrFail(h, key)};
 
@@ -306,7 +279,7 @@ const T& get(const HashMap<T>& h, u64 key, const T& defaultValue)
 }
 
 template <typename T>
-void set(HashMap<T>& h, u64 key, const T& value)
+inline void set(HashMap<T>& h, u64 key, const T& value)
 {
 	if (len(h.hashes) == 0)
 		Impl::grow(h);
@@ -318,43 +291,42 @@ void set(HashMap<T>& h, u64 key, const T& value)
 }
 
 template <typename T>
-void remove(HashMap<T>& h, u64 key)
+inline void remove(HashMap<T>& h, u64 key)
 {
 	Impl::findAndErase(h, key);
 }
 
 template <typename T>
-void reserve(HashMap<T>& h, usize capacity)
+inline void reserve(HashMap<T>& h, usize capacity)
 {
 	Impl::rehash(h, capacity);
 }
 
 template <typename T>
-void clear(HashMap<T>& h)
+inline void clear(HashMap<T>& h)
 {
 	clear(h.hashes);
 	clear(h.data);
 }
 
 template <typename T>
-const typename HashMap<T>::Entry* begin(const HashMap<T>& h)
+inline const typename HashMap<T>::Entry* begin(const HashMap<T>& h)
 {
 	return begin(h.data);
 }
 
 template <typename T>
-const typename HashMap<T>::Entry* end(const HashMap<T>& h)
+inline const typename HashMap<T>::Entry* end(const HashMap<T>& h)
 {
 	return end(h.data);
 }
 
-namespace MultiHashMap
+namespace Multi
 {
-// Returns all the entries with the corresponding key
 template <typename T>
-void get(const HashMap<T>& h, u64 key, Array<T>& items)
+inline void get(const HashMap<T>& h, u64 key, Array<T>& items)
 {
-	const typename HashMap<T>::Entry* e{findFirst(h, key)};
+	auto e = findFirst(h, key);
 
 	while (e)
 	{
@@ -363,9 +335,8 @@ void get(const HashMap<T>& h, u64 key, Array<T>& items)
 	}
 }
 
-// Returns the number of entries with that key
 template <typename T>
-usize count(const HashMap<T>& h, u64 key)
+inline usize count(const HashMap<T>& h, u64 key)
 {
 	usize c{0};
 	auto e = findFirst(h, key);
@@ -379,7 +350,7 @@ usize count(const HashMap<T>& h, u64 key)
 }
 
 template <typename T>
-void insert(HashMap<T>& h, u64 key, const T& value)
+inline void insert(HashMap<T>& h, u64 key, const T& value)
 {
 	if (len(h.hashes) == 0)
 		Impl::grow(h);
@@ -392,17 +363,17 @@ void insert(HashMap<T>& h, u64 key, const T& value)
 }
 
 template <typename T>
-const typename HashMap<T>::Entry* findFirst(const HashMap<T>& h, u64 key)
+inline const typename HashMap<T>::Entry* findFirst(const HashMap<T>& h, u64 key)
 {
-	const usize index{findOrFail(h, key)};
+	const usize index{Impl::findOrFail(h, key)};
 	if (index == Impl::EndOfList)
 		return nullptr;
 	return &h.data[index];
 }
 
 template <typename T>
-const typename HashMap<T>::Entry* findNext(const HashMap<T>& h,
-                                           const typename HashMap<T>::Entry* e)
+inline const typename HashMap<T>::Entry*
+findNext(const HashMap<T>& h, const typename HashMap<T>::Entry* e)
 {
 	if (!e)
 		return nullptr;
@@ -418,32 +389,33 @@ const typename HashMap<T>::Entry* findNext(const HashMap<T>& h,
 	return nullptr;
 }
 
-// Removes the entry from the hash map iff it exists
 template <typename T>
-void remove(HashMap<T>& h, const typename HashMap<T>::Entry* e)
+inline void remove(HashMap<T>& h, const typename HashMap<T>::Entry* e)
 {
-	const FindResult fr{find(h, e)};
+	const Impl::FindResult fr = Impl::find(h, e);
 	if (fr.dataIndex != Impl::EndOfList)
-		erase(h, fr);
+		Impl::erase(h, fr);
 }
 
-// Removes all the entries with the key
 template <typename T>
-void removeAll(HashMap<T>& h, u64 key)
+inline void removeAll(HashMap<T>& h, u64 key)
 {
 	while (has(h, key))
 		remove(h, key);
 }
 
-} // namespace MultiHashMap
+} // namespace Multi
+
+//////////////////
+// HashMap<T>:: //
+//////////////////
 
 template <typename T>
-HashMap<T>::HashMap(Allocator& a)
+inline HashMap<T>::HashMap(Allocator& a)
 : hashes{a}
 , data{a}
 {
 }
-
 } // namespace Dunjun
 
 #endif

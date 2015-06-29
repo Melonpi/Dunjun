@@ -49,20 +49,24 @@ INTERNAL void loadShaders()
 	g_shaderHolder.insertFromFile("texPass",           //
 	                              "texPass.vert.glsl", //
 	                              "texPass.frag.glsl");
-	g_shaderHolder.insertFromFile(
-	    "geometryPass", "geometryPass.vert.glsl", "geometryPass.frag.glsl");
-	g_shaderHolder.insertFromFile(
-	    "ambientLight", "lightPass.vert.glsl", "ambientLight.frag.glsl");
-	g_shaderHolder.insertFromFile(
-	    "pointLight", "lightPass.vert.glsl", "pointLight.frag.glsl");
-	g_shaderHolder.insertFromFile("directionalLight",
-	                              "lightPass.vert.glsl",
+	g_shaderHolder.insertFromFile("geometryPass",           //
+	                              "geometryPass.vert.glsl", //
+	                              "geometryPass.frag.glsl");
+	g_shaderHolder.insertFromFile("ambientLight",        //
+	                              "lightPass.vert.glsl", //
+	                              "ambientLight.frag.glsl");
+	g_shaderHolder.insertFromFile("pointLight",          //
+	                              "lightPass.vert.glsl", //
+	                              "pointLight.frag.glsl");
+	g_shaderHolder.insertFromFile("directionalLight",    //
+	                              "lightPass.vert.glsl", //
 	                              "directionalLight.frag.glsl");
-	g_shaderHolder.insertFromFile(
-	    "spotLight", "lightPass.vert.glsl", "spotLight.frag.glsl");
-
-	g_shaderHolder.insertFromFile(
-	    "out", "lightPass.vert.glsl", "out.frag.glsl");
+	g_shaderHolder.insertFromFile("spotLight",           //
+	                              "lightPass.vert.glsl", //
+	                              "spotLight.frag.glsl");
+	g_shaderHolder.insertFromFile("out",                 //
+	                              "lightPass.vert.glsl", //
+	                              "out.frag.glsl");
 }
 INTERNAL void loadMaterials()
 {
@@ -79,7 +83,6 @@ INTERNAL void loadMaterials()
 		mat->diffuseMap = &g_textureHolder.get("default");
 		g_materialHolder.insert("default", std::move(mat));
 	}
-
 	{
 		auto mat = make_unique<Material>();
 		mat->shaders = &g_shaderHolder.get("geometryPass");
@@ -87,14 +90,12 @@ INTERNAL void loadMaterials()
 		mat->specularExponent = 1e5;
 		g_materialHolder.insert("cat", std::move(mat));
 	}
-
 	{
 		auto mat = make_unique<Material>();
 		mat->shaders = &g_shaderHolder.get("geometryPass");
 		mat->diffuseMap = &g_textureHolder.get("stone");
 		g_materialHolder.insert("stone", std::move(mat));
 	}
-
 	{
 		auto mat = make_unique<Material>();
 		mat->shaders = &g_shaderHolder.get("geometryPass");
@@ -164,7 +165,6 @@ INTERNAL void handleEvents()
 		{
 		case Event::Closed:
 		{
-
 			g_window.close();
 			std::exit(EXIT_SUCCESS); // TODO(bill): Remove this exit
 			break;
@@ -204,41 +204,17 @@ void init(int /*argc*/, char** /*argv*/)
 {
 	Memory::init();
 
-	{
-		Allocator& a = defaultAllocator();
-		
-		HashMap<int> h{a};
-
-		std::cout << has(h, 0) << "\n";
-
-		set(h, 1337, 7331);
-		std::cout << has(h, 1337) << "\n";
-		std::cout << get(h, 1337, 0) << "\n";
-
-		for (int i{0}; i < 100; i++)
-			set(h, i, 2 * i);
-		for (int i{0}; i < 100; i++)
-			std::cout << get(h, i, -1) << "\n";
-
-
-
-
-	}
-
 	u32 sdlFlags{SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK |
 	             SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC};
 
 	if (SDL_Init(sdlFlags) != 0)
 	{
-		fprintf(
-		    stderr, "SDL Failed to initialize. Error: %s\n", SDL_GetError());
+		std::cerr << "SDL Failed to initialize. Error: " << SDL_GetError()
+		          << "\n";
 		std::exit(EXIT_FAILURE);
 	}
 
-	VideoMode v;
-	v.width = 854;
-	v.height = 480;
-	g_window.create(v, "Dunjun");
+	g_window.create({854, 480, 32}, "Dunjun");
 	g_window.setFramerateLimit(FrameLimit);
 
 	glewInit();

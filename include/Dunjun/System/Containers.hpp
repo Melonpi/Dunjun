@@ -1,13 +1,14 @@
 #ifndef DUNJUN_SYSTEM_CONTAINERS_HPP
 #define DUNJUN_SYSTEM_CONTAINERS_HPP
 
-#include <Dunjun/System/Types.hpp>
+#include <Dunjun/Types.hpp>
 #include <Dunjun/Memory/Allocator.hpp>
 
 namespace Dunjun
 {
 // Array<T> is a dynamic array for POD types
-// NOTE(bill): This will not construct and destruct elements
+// NOTE(bill): ctors & dtors are not called. This allows for
+// the use of memmove
 // TODO(bill): Create a container that will call ctor & dtor
 template <typename T>
 struct Array
@@ -28,7 +29,8 @@ struct Array
 };
 
 // Queue<T> is a double ended queue/ring buffer for POD types
-// NOTE(bill): This will not construct and destruct elements
+// NOTE(bill): ctors & dtors are not called. This allows for
+// the use of memmove
 // TODO(bill): Create a container that will call ctor & dtor
 template <typename T>
 struct Queue
@@ -43,7 +45,11 @@ struct Queue
 	const T& operator[](usize index) const;
 };
 
-// HashMap<T>
+// HashMap<T> is an unordered hash map/table for POD types
+// The key is a u64 so a hash function must return as a u64
+// The HashMap can be a regular HashMap or a MultiHashMasp through
+// Multi:: namespaced functions
+// TODO(bill): Create a container that will call ctor & dtor
 template <typename T>
 struct HashMap
 {

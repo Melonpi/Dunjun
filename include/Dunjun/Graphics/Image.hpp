@@ -1,7 +1,7 @@
 #ifndef DUNJUN_GRAPHICS_IMAGE_HPP
 #define DUNJUN_GRAPHICS_IMAGE_HPP
 
-#include <Dunjun/System/Types.hpp>
+#include <Dunjun/Types.hpp>
 
 #include <string>
 

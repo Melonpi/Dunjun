@@ -1,6 +1,6 @@
 #include <Dunjun/System/FileSystem.hpp>
 
-#include <Dunjun/System/Types.hpp>
+#include <Dunjun/Types.hpp>
 
 #include <SDL/SDL_filesystem.h>
 

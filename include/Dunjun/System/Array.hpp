@@ -7,30 +7,34 @@
 
 namespace Dunjun
 {
+// Number of elements in array
+template <typename T>
+usize len(const Array<T>& a);
+
+// Maximum number of items the array can hold
+template <typename T>
+usize capacity(const Array<T>& a);
+
 // Appends an item to the array and returns the number of items in the array
 // after the append
 template <typename T>
 usize pushBack(Array<T>& a, const T& item);
+
 // Removes the last element from the array
 template <typename T>
 void popBack(Array<T>& a);
+
 // Appends items to the array and returns the number of items in the array after
 // the array
 template <typename T>
 usize push(Array<T>& a, const T* items, usize count);
-
-// Number of elements in array
-template <typename T>
-usize len(const Array<T>& a);
-// Maximum number of items the array can hold
-template <typename T>
-usize capacity(const Array<T>& a);
 
 // Iterators
 template <typename T>
 T* begin(Array<T>& a);
 template <typename T>
 const T* begin(const Array<T>& a);
+
 template <typename T>
 T* end(Array<T>& a);
 template <typename T>
@@ -40,6 +44,7 @@ template <typename T>
 T& front(Array<T>& a);
 template <typename T>
 const T& front(const Array<T>& a);
+
 template <typename T>
 T& back(Array<T>& a);
 template <typename T>
@@ -50,17 +55,21 @@ const T& back(const Array<T>& a);
 // elements
 template <typename T>
 void clear(Array<T>& a);
+
 // Trims the array so that its capactity equals its length
 template <typename T>
 void trim(Array<T>& a);
+
 // Resizes the array to a given size
 // Old items will be copied to the new array. If the new capacity is smaller
 // than the previous one, the array will be shortened.
 template <typename T>
 void resize(Array<T>& a, usize length);
+
 // Sets the capacity of the array
 template <typename T>
 void setCapacity(Array<T>& a, usize capacity);
+
 // Reserves space in the array for at least capacity items
 template <typename T>
 void reserve(Array<T>& a, usize capacity);
@@ -97,7 +106,7 @@ inline usize push(Array<T>& a, const T* items, usize count)
 	if (a.capacity <= a.length + count)
 		grow(a, a.length + count);
 
-	std::memcpy(&a.data[a.length], items, count * sizeof(T));
+	memcpy(&a.data[a.length], items, count * sizeof(T));
 	a.length += count;
 
 	return a.length;
@@ -201,7 +210,7 @@ inline void setCapacity(Array<T>& a, usize capacity)
 	{
 
 		data = (T*)a.allocator->allocate(capacity * sizeof(T), alignof(T));
-		std::memcpy(data, a.data, a.length * sizeof(T));
+		memcpy(data, a.data, a.length * sizeof(T));
 	}
 	a.allocator->deallocate(a.data);
 	a.data = data;
@@ -223,6 +232,10 @@ inline void grow(Array<T>& a, usize minCapacity)
 		capacity = minCapacity;
 	setCapacity(a, capacity);
 }
+
+////////////////
+// Array<T>:: //
+////////////////
 
 template <typename T>
 inline Array<T>::Array(Allocator& a)
@@ -248,7 +261,7 @@ inline Array<T>::Array(const Array& other)
 {
 	const usize num{other.length};
 	setCapacity(*this, num);
-	std::memcpy(data, other.data, num * sizeof(T));
+	memcpy(data, other.data, num * sizeof(T));
 	length = num;
 }
 
@@ -257,7 +270,7 @@ inline Array<T>& Array<T>::operator=(const Array& other)
 {
 	const usize num{other.length};
 	resize(*this, num);
-	std::memcpy(data, other.data, num * sizeof(T));
+	memcpy(data, other.data, num * sizeof(T));
 
 	return *this;
 }

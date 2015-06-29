@@ -1,5 +1,5 @@
 #include <Dunjun/System/OpenGL.hpp>
-#include <Dunjun/System/Types.hpp>
+#include <Dunjun/Types.hpp>
 
 #include <type_traits>
 

@@ -116,7 +116,7 @@
       <AssemblerListingLocation>$(IntDir)\</AssemblerListingLocation>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <DisableSpecificWarnings>4245;4244;4201;4100;4189;4505;4127;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -151,7 +151,7 @@
       <AssemblerListingLocation>$(IntDir)\</AssemblerListingLocation>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <DisableSpecificWarnings>4245;4244;4201;4100;4189;4505;4127;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -341,7 +341,7 @@
     <ClInclude Include="include\Dunjun\System\TickCounter.hpp" />
     <ClInclude Include="include\Dunjun\System\Time.hpp" />
     <ClInclude Include="include\Dunjun\Graphics\Transform.hpp" />
-    <ClInclude Include="include\Dunjun\System\Types.hpp" />
+    <ClInclude Include="include\Dunjun\Types.hpp" />
     <ClInclude Include="include\Dunjun\Graphics\Vertex.hpp" />
     <ClInclude Include="include\Dunjun\Window\VideoMode.hpp" />
     <ClInclude Include="include\Dunjun\Window\Window.hpp" />
@@ -362,29 +362,8 @@
     <None Include="data\shaders\Material.head.glsl" />
     <None Include="data\shaders\texPass.frag.glsl" />
     <None Include="data\shaders\texPass.vert.glsl" />
-    <None Include="external\glew-1.12.0\bin\Release MX\Win32\glew32mx.dll" />
-    <None Include="external\glew-1.12.0\bin\Release MX\x64\glew32mx.dll" />
-    <None Include="external\glew-1.12.0\bin\Release\Win32\glew32.dll" />
-    <None Include="external\glew-1.12.0\bin\Release\Win32\glewinfo.exe" />
-    <None Include="external\glew-1.12.0\bin\Release\Win32\visualinfo.exe" />
-    <None Include="external\glew-1.12.0\bin\Release\x64\glew32.dll" />
-    <None Include="external\glew-1.12.0\bin\Release\x64\glewinfo.exe" />
-    <None Include="external\glew-1.12.0\bin\Release\x64\visualinfo.exe" />
-    <None Include="external\glew-1.12.0\doc\advanced.html" />
-    <None Include="external\glew-1.12.0\doc\basic.html" />
-    <None Include="external\glew-1.12.0\doc\build.html" />
-    <None Include="external\glew-1.12.0\doc\credits.html" />
-    <None Include="external\glew-1.12.0\doc\github.xcf" />
-    <None Include="external\glew-1.12.0\doc\glew.css" />
-    <None Include="external\glew-1.12.0\doc\glew.html" />
-    <None Include="external\glew-1.12.0\doc\glxew.html" />
-    <None Include="external\glew-1.12.0\doc\index.html" />
-    <None Include="external\glew-1.12.0\doc\install.html" />
-    <None Include="external\glew-1.12.0\doc\log.html" />
-    <None Include="external\glew-1.12.0\doc\wglew.html" />
     <None Include="external\SDL2-2.0.3\lib\x64\SDL2.dll" />
     <None Include="external\SDL2-2.0.3\lib\x86\SDL2.dll" />
-    <None Include="external\stb-master\README.md" />
     <None Include="License.md" />
     <None Include="Makefile_OSX" />
     <None Include="misc\cloc.bat" />
@@ -412,22 +391,6 @@
     <Library Include="external\SDL2-2.0.3\lib\x86\SDL2.lib" />
     <Library Include="external\SDL2-2.0.3\lib\x86\SDL2main.lib" />
     <Library Include="external\SDL2-2.0.3\lib\x86\SDL2test.lib" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="external\glew-1.12.0\CMakeLists.txt" />
-    <Text Include="external\glew-1.12.0\doc\glew.txt" />
-    <Text Include="external\glew-1.12.0\doc\gpl.txt" />
-    <Text Include="external\glew-1.12.0\doc\khronos.txt" />
-    <Text Include="external\glew-1.12.0\doc\mesa.txt" />
-    <Text Include="external\glew-1.12.0\LICENSE.txt" />
-    <Text Include="external\glew-1.12.0\README.txt" />
-    <Text Include="external\glew-1.12.0\TODO.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="external\glew-1.12.0\doc\github.png" />
-    <Image Include="external\glew-1.12.0\doc\glew.png" />
-    <Image Include="external\glew-1.12.0\doc\new.png" />
-    <Image Include="external\glew-1.12.0\doc\ogl_sm.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
