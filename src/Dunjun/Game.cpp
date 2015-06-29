@@ -19,6 +19,7 @@
 #include <Dunjun/System/Array.hpp>
 #include <Dunjun/System/Queue.hpp>
 #include <Dunjun/System/HashMap.hpp>
+#include <Dunjun/System/Murmur.hpp>
 
 namespace Dunjun
 {

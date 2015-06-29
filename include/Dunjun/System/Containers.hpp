@@ -47,7 +47,7 @@ struct Queue
 
 // HashMap<T> is an unordered hash map/table for POD types
 // The key is a u64 so a hash function must return as a u64
-// The HashMap can be a regular HashMap or a MultiHashMasp through
+// The HashMap can be a regular HashMap or a MultiHashMap through
 // Multi:: namespaced functions
 // TODO(bill): Create a container that will call ctor & dtor
 template <typename T>
