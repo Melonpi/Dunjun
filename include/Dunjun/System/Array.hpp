@@ -213,7 +213,7 @@ inline void setCapacity(Array<T>& a, usize capacity)
 		memcpy(data, a.data, a.length * sizeof(T));
 	}
 	a.allocator->deallocate(a.data);
-	a.data = data;
+	a.data     = data;
 	a.capacity = capacity;
 }
 

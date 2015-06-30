@@ -8,7 +8,8 @@
 
 namespace Dunjun
 {
-
+namespace Memory
+{
 struct Header
 {
 	usize size;
@@ -113,14 +114,6 @@ namespace
 MemoryGlobals g_memoryGlobals;
 } // namespace (anonymous)
 
-
-Allocator& defaultAllocator()
-{
-	return *g_memoryGlobals.defaultAllocator;
-}
-
-namespace Memory
-{
 void init()
 {
 	u8* ptr{g_memoryGlobals.buffer};
@@ -133,4 +126,10 @@ void shutdown()
 	g_memoryGlobals = MemoryGlobals{};
 }
 } // namespace Memory
+
+
+Allocator& defaultAllocator()
+{
+	return *Memory::g_memoryGlobals.defaultAllocator;
+}
 } // namespace Dunjun

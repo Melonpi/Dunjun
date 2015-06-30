@@ -19,6 +19,7 @@
 #include <Dunjun/System/Queue.hpp>
 #include <Dunjun/System/HashMap.hpp>
 #include <Dunjun/System/Murmur.hpp>
+#include <Dunjun/System/TempAllocator.hpp>
 
 namespace Dunjun
 {
@@ -203,6 +204,16 @@ INTERNAL void render() { g_world.render(); }
 void init(int /*argc*/, char** /*argv*/)
 {
 	Memory::init();
+
+	{
+		TempAllocator128 ta;
+		Array<s32> a{ta};
+		for (s32 i{0}; i < 64; i++)
+			pushBack(a, i);
+		assert(len(a) == 64);
+
+	}
+
 
 	u32 sdlFlags{SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK |
 	             SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC};

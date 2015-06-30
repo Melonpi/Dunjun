@@ -4,6 +4,7 @@
     BasedOnStyle: LLVM,
     AccessModifierOffset: -4, # 1 tab
     AlignTrailingComments: true,
+    AlignConsecutiveAssignments: true,
     AllowAllParametersOfDeclarationOnNextLine: false,
     AllowShortBlocksOnASingleLine: false,
     AllowShortIfStatementsOnASingleLine: false,

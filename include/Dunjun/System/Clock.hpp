@@ -13,9 +13,9 @@ struct Clock
 
 	inline Time restart()
 	{
-		Time now{Time::now()};
-		Time elapsed{now - startTime};
-		startTime = now;
+		Time now     = Time::now();
+		Time elapsed = now - startTime;
+		startTime    = now;
 
 		return elapsed;
 	}
