@@ -15,110 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Math\Constants.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Math\Matrix4.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Math\Quaternion.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Math\Vector2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Math\Vector3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Math\Vector4.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Scene\SceneNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Scene\FaceCamera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Math\Rectangle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Level\Room.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Level\Level.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Scene\SceneRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\ResourceHolders.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Common.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Window\Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Window\VideoMode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Window\Input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\System\FileSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\System\Time.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\System\OpenGL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Graphics\Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Graphics\GBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Graphics\Image.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Graphics\Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Graphics\RenderTexture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Graphics\ShaderProgram.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Graphics\Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Graphics\Transform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\World.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Math\Functions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\Memory\Memory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Dunjun\System\Murmur.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="include\Dunjun\Math\Vector2.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -407,18 +303,15 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="external\SDL2-2.0.3\lib\x64\SDL2.lib" />
-    <Library Include="external\SDL2-2.0.3\lib\x64\SDL2main.lib" />
-    <Library Include="external\SDL2-2.0.3\lib\x64\SDL2test.lib" />
     <Library Include="external\SDL2-2.0.3\lib\x86\SDL2.lib" />
-    <Library Include="external\SDL2-2.0.3\lib\x86\SDL2main.lib" />
-    <Library Include="external\SDL2-2.0.3\lib\x86\SDL2test.lib" />
     <Library Include="external\glew-1.12.0\lib\Release\Win32\glew32.lib" />
     <Library Include="external\glew-1.12.0\lib\Release\Win32\glew32s.lib" />
     <Library Include="external\glew-1.12.0\lib\Release\x64\glew32.lib" />
     <Library Include="external\glew-1.12.0\lib\Release\x64\glew32s.lib" />
-    <Library Include="external\glew-1.12.0\lib\Release MX\Win32\glew32mx.lib" />
-    <Library Include="external\glew-1.12.0\lib\Release MX\Win32\glew32mxs.lib" />
-    <Library Include="external\glew-1.12.0\lib\Release MX\x64\glew32mx.lib" />
-    <Library Include="external\glew-1.12.0\lib\Release MX\x64\glew32mxs.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\UnityBuild.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

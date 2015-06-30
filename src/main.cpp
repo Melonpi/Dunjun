@@ -1,8 +1,7 @@
 #include <Dunjun/Game.hpp>
 
-#ifndef SDL_main
 #include <SDL/SDL_main.h>
-#endif
+#undef main
 
 int main(int argc, char** argv)
 {

@@ -2,7 +2,7 @@
 #define DUNJUN_SYSTEM_CONTAINERS_HPP
 
 #include <Dunjun/Types.hpp>
-#include <Dunjun/Memory/Allocator.hpp>
+#include <Dunjun/System/Allocator.hpp>
 
 namespace Dunjun
 {

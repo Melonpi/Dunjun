@@ -122,7 +122,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>false</StringPooling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
       <BufferSecurityCheck />
       <FloatingPointModel>Fast</FloatingPointModel>
       <ForceConformanceInForLoopScope>false</ForceConformanceInForLoopScope>
@@ -157,7 +157,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StringPooling>false</StringPooling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
       <BufferSecurityCheck />
       <FloatingPointModel>Fast</FloatingPointModel>
       <ForceConformanceInForLoopScope>false</ForceConformanceInForLoopScope>
@@ -198,7 +198,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>glew32s.lib;opengl32.lib;SDL2main.lib;SDL2.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)/external/SDL2-2.0.3/lib/x86;$(ProjectDir)/external/glew-1.12.0/lib/Release/Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -226,173 +226,11 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(ProjectDir)/external/SDL2-2.0.3/lib/x64;$(ProjectDir)/external/glew-1.12.0/lib/Release/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>glew32s.lib;opengl32.lib;SDL2main.lib;SDL2.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Dunjun\Graphics\Camera.cpp" />
-    <ClCompile Include="src\Dunjun\Common.cpp" />
-    <ClCompile Include="src\Dunjun\Math\Functions.cpp" />
-    <ClCompile Include="src\Dunjun\Memory\Memory.cpp" />
-    <ClCompile Include="src\Dunjun\System\FileSystem.cpp" />
-    <ClCompile Include="src\Dunjun\System\Murmur.cpp" />
-    <ClCompile Include="src\Dunjun\System\OpenGL.cpp" />
-    <ClCompile Include="src\Dunjun\ResourceHolders.cpp" />
-    <ClCompile Include="src\Dunjun\Game.cpp" />
-    <ClCompile Include="src\Dunjun\Graphics\GBuffer.cpp" />
-    <ClCompile Include="src\Dunjun\Graphics\Image.cpp" />
-    <ClCompile Include="src\Dunjun\Window\Input.cpp" />
-    <ClCompile Include="src\Dunjun\Level\Level.cpp" />
-    <ClCompile Include="src\Dunjun\Level\Room.cpp" />
-    <ClCompile Include="src\Dunjun\Math\Constants.cpp" />
-    <ClCompile Include="src\Dunjun\Math\Matrix4.cpp" />
-    <ClCompile Include="src\Dunjun\Math\Quaternion.cpp" />
-    <ClCompile Include="src\Dunjun\Math\Rectangle.cpp" />
-    <ClCompile Include="src\Dunjun\Math\Vector2.cpp" />
-    <ClCompile Include="src\Dunjun\Math\Vector3.cpp" />
-    <ClCompile Include="src\Dunjun\Math\Vector4.cpp" />
-    <ClCompile Include="src\Dunjun\Graphics\Mesh.cpp" />
-    <ClCompile Include="src\Dunjun\Graphics\RenderTexture.cpp" />
-    <ClCompile Include="src\Dunjun\Scene\SceneRenderer.cpp" />
-    <ClCompile Include="src\Dunjun\Scene\FaceCamera.cpp" />
-    <ClCompile Include="src\Dunjun\Scene\SceneNode.cpp" />
-    <ClCompile Include="src\Dunjun\Graphics\ShaderProgram.cpp" />
-    <ClCompile Include="src\Dunjun\Graphics\Texture.cpp" />
-    <ClCompile Include="src\Dunjun\System\Time.cpp" />
-    <ClCompile Include="src\Dunjun\Graphics\Transform.cpp" />
-    <ClCompile Include="src\Dunjun\Window\VideoMode.cpp" />
-    <ClCompile Include="src\Dunjun\Window\Window.cpp" />
-    <ClCompile Include="src\Dunjun\World.cpp" />
-    <ClCompile Include="src\main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="external\glew-1.12.0\include\GL\glew.h" />
-    <ClInclude Include="external\glew-1.12.0\include\GL\glxew.h" />
-    <ClInclude Include="external\glew-1.12.0\include\GL\wglew.h" />
-    <ClInclude Include="external\stb-master\include\stb\stb.h" />
-    <ClInclude Include="external\stb-master\include\stb\stb_c_lexer.h" />
-    <ClInclude Include="external\stb-master\include\stb\stb_divide.h" />
-    <ClInclude Include="external\stb-master\include\stb\stb_dxt.h" />
-    <ClInclude Include="external\stb-master\include\stb\stb_easy_font.h" />
-    <ClInclude Include="external\stb-master\include\stb\stb_herringbone_wang_tile.h" />
-    <ClInclude Include="external\stb-master\include\stb\stb_image.h" />
-    <ClInclude Include="external\stb-master\include\stb\stb_image_resize.h" />
-    <ClInclude Include="external\stb-master\include\stb\stb_image_write.h" />
-    <ClInclude Include="external\stb-master\include\stb\stb_leakcheck.h" />
-    <ClInclude Include="external\stb-master\include\stb\stb_perlin.h" />
-    <ClInclude Include="external\stb-master\include\stb\stb_rect_pack.h" />
-    <ClInclude Include="external\stb-master\include\stb\stb_textedit.h" />
-    <ClInclude Include="external\stb-master\include\stb\stb_tilemap_editor.h" />
-    <ClInclude Include="external\stb-master\include\stb\stb_truetype.h" />
-    <ClInclude Include="external\stb-master\include\stb\stb_voxel_render.h" />
-    <ClInclude Include="external\stb-master\include\stb\stretchy_buffer.h" />
-    <ClInclude Include="include\Dunjun\Context.hpp" />
-    <ClInclude Include="include\Dunjun\Graphics.hpp" />
-    <ClInclude Include="include\Dunjun\Graphics\Camera.hpp" />
-    <ClInclude Include="include\Dunjun\Memory\Allocator.hpp" />
-    <ClInclude Include="include\Dunjun\Memory\Memory.hpp" />
-    <ClInclude Include="include\Dunjun\System.hpp" />
-    <ClInclude Include="include\Dunjun\System\Array.hpp" />
-    <ClInclude Include="include\Dunjun\System\Clock.hpp" />
-    <ClInclude Include="include\Dunjun\Graphics\Color.hpp" />
-    <ClInclude Include="include\Dunjun\Common.hpp" />
-    <ClInclude Include="include\Dunjun\Config.hpp" />
-    <ClInclude Include="include\Dunjun\System\Containers.hpp" />
-    <ClInclude Include="include\Dunjun\System\HashMap.hpp" />
-    <ClInclude Include="include\Dunjun\System\Murmur.hpp" />
-    <ClInclude Include="include\Dunjun\System\Queue.hpp" />
-    <ClInclude Include="include\Dunjun\Window.hpp" />
-    <ClInclude Include="include\Dunjun\Window\GLContextSettings.hpp" />
-    <ClInclude Include="include\Dunjun\Window\Event.hpp" />
-    <ClInclude Include="include\Dunjun\System\FileSystem.hpp" />
-    <ClInclude Include="include\Dunjun\Game.hpp" />
-    <ClInclude Include="include\Dunjun\Graphics\GBuffer.hpp" />
-    <ClInclude Include="include\Dunjun\Graphics\RenderTexture.hpp" />
-    <ClInclude Include="include\Dunjun\Graphics\Image.hpp" />
-    <ClInclude Include="include\Dunjun\Window\Input.hpp" />
-    <ClInclude Include="include\Dunjun\Level\Level.hpp" />
-    <ClInclude Include="include\Dunjun\Level\Room.hpp" />
-    <ClInclude Include="include\Dunjun\Graphics\Material.hpp" />
-    <ClInclude Include="include\Dunjun\Math.hpp" />
-    <ClInclude Include="include\Dunjun\Math\Angle.hpp" />
-    <ClInclude Include="include\Dunjun\Math\Constants.hpp" />
-    <ClInclude Include="include\Dunjun\Math\Functions.hpp" />
-    <ClInclude Include="include\Dunjun\Math\Matrix4.hpp" />
-    <ClInclude Include="include\Dunjun\Math\Quaternion.hpp" />
-    <ClInclude Include="include\Dunjun\Math\Random.hpp" />
-    <ClInclude Include="include\Dunjun\Math\Rectangle.hpp" />
-    <ClInclude Include="include\Dunjun\Math\Unit.hpp" />
-    <ClInclude Include="include\Dunjun\Math\Vector2.hpp" />
-    <ClInclude Include="include\Dunjun\Math\Vector3.hpp" />
-    <ClInclude Include="include\Dunjun\Math\Vector4.hpp" />
-    <ClInclude Include="include\Dunjun\Graphics\Mesh.hpp" />
-    <ClInclude Include="include\Dunjun\Graphics\ModelAsset.hpp" />
-    <ClInclude Include="include\Dunjun\System\NonCopyable.hpp" />
-    <ClInclude Include="include\Dunjun\System\OpenGL.hpp" />
-    <ClInclude Include="include\Dunjun\ResourceHolder.hpp" />
-    <ClInclude Include="include\Dunjun\ResourceHolders.hpp" />
-    <ClInclude Include="include\Dunjun\Scene\Lighting.hpp" />
-    <ClInclude Include="include\Dunjun\Scene\SceneRenderer.hpp" />
-    <ClInclude Include="include\Dunjun\Scene.hpp" />
-    <ClInclude Include="include\Dunjun\Scene\FaceCamera.hpp" />
-    <ClInclude Include="include\Dunjun\Scene\MeshRenderer.hpp" />
-    <ClInclude Include="include\Dunjun\Scene\NodeComponent.hpp" />
-    <ClInclude Include="include\Dunjun\Scene\SceneNode.hpp" />
-    <ClInclude Include="include\Dunjun\Graphics\ShaderProgram.hpp" />
-    <ClInclude Include="include\Dunjun\Graphics\Texture.hpp" />
-    <ClInclude Include="include\Dunjun\System\TickCounter.hpp" />
-    <ClInclude Include="include\Dunjun\System\Time.hpp" />
-    <ClInclude Include="include\Dunjun\Graphics\Transform.hpp" />
-    <ClInclude Include="include\Dunjun\Types.hpp" />
-    <ClInclude Include="include\Dunjun\Graphics\Vertex.hpp" />
-    <ClInclude Include="include\Dunjun\Window\VideoMode.hpp" />
-    <ClInclude Include="include\Dunjun\Window\Window.hpp" />
-    <ClInclude Include="include\Dunjun\World.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include=".clang-format" />
-    <None Include=".gitattributes" />
-    <None Include=".gitignore" />
-    <None Include="data\shaders\common.head.glsl" />
-    <None Include="data\shaders\deferredAmbientLight.frag.glsl" />
-    <None Include="data\shaders\deferredDirectionalLight.frag.glsl" />
-    <None Include="data\shaders\deferredGeometryPass.frag.glsl" />
-    <None Include="data\shaders\deferredGeometryPass.vert.glsl" />
-    <None Include="data\shaders\deferredLightPass.vert.glsl" />
-    <None Include="data\shaders\deferredPointLight.frag.glsl" />
-    <None Include="data\shaders\Lighting.head.glsl" />
-    <None Include="data\shaders\Material.head.glsl" />
-    <None Include="data\shaders\texPass.frag.glsl" />
-    <None Include="data\shaders\texPass.vert.glsl" />
-    <None Include="external\SDL2-2.0.3\lib\x64\SDL2.dll" />
-    <None Include="external\SDL2-2.0.3\lib\x86\SDL2.dll" />
-    <None Include="License.md" />
-    <None Include="Makefile_OSX" />
-    <None Include="misc\cloc.bat" />
-    <None Include="misc\Iridis Blue.vssettings" />
-    <None Include="misc\shell.bat" />
-    <None Include="misc\st.bat" />
-    <None Include="misc\static_check.bat" />
-    <None Include="misc\todo_check.bat" />
-    <None Include="ReadMe.md" />
-    <None Include="ReadMe_OSX.md" />
-    <None Include="todo\Todo - Engine.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="external\glew-1.12.0\lib\Release MX\Win32\glew32mx.lib" />
-    <Library Include="external\glew-1.12.0\lib\Release MX\Win32\glew32mxs.lib" />
-    <Library Include="external\glew-1.12.0\lib\Release MX\x64\glew32mx.lib" />
-    <Library Include="external\glew-1.12.0\lib\Release MX\x64\glew32mxs.lib" />
-    <Library Include="external\glew-1.12.0\lib\Release\Win32\glew32.lib" />
-    <Library Include="external\glew-1.12.0\lib\Release\Win32\glew32s.lib" />
-    <Library Include="external\glew-1.12.0\lib\Release\x64\glew32.lib" />
-    <Library Include="external\glew-1.12.0\lib\Release\x64\glew32s.lib" />
-    <Library Include="external\SDL2-2.0.3\lib\x64\SDL2.lib" />
-    <Library Include="external\SDL2-2.0.3\lib\x64\SDL2main.lib" />
-    <Library Include="external\SDL2-2.0.3\lib\x64\SDL2test.lib" />
-    <Library Include="external\SDL2-2.0.3\lib\x86\SDL2.lib" />
-    <Library Include="external\SDL2-2.0.3\lib\x86\SDL2main.lib" />
-    <Library Include="external\SDL2-2.0.3\lib\x86\SDL2test.lib" />
+    <ClCompile Include="src\UnityBuild.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

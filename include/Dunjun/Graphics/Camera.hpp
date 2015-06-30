@@ -1,3 +1,4 @@
+#pragma once
 #ifndef DUNJUN_GRAPHICS_CAMERA_HPP
 #define DUNJUN_GRAPHICS_CAMERA_HPP
 

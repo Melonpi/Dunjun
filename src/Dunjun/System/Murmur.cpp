@@ -50,15 +50,15 @@ u64 murmurHash64(const void* key, s32 len, u64 seed)
 	return h;
 }
 
-#elif define(DUNJUN_32_BIT)
+#elif defined(DUNJUN_32_BIT)
 
 u64 murmurHash64(const void* key, s32 len, u64 seed)
 {
 	const u32 m = 0x5bd1e995;
 	const s32 r = 24;
 
-	u32 h1{u32{seed} ^ len};
-	u32 h2{u32{seed >> 32}};
+	u32 h1 = u32(seed) ^ len;
+	u32 h2 = u32(seed >> 32);
 
 	const u32* data{(const u32*)key};
 

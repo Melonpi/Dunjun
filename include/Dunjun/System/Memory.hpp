@@ -1,7 +1,7 @@
 #ifndef DUNJUN_MEMORY_MEMORY_HPP
 #define DUNJUN_MEMORY_MEMORY_HPP
 
-#include <Dunjun/Memory/Allocator.hpp>
+#include <Dunjun/System/Allocator.hpp>
 
 namespace Dunjun
 {

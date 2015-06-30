@@ -1,6 +1,7 @@
 #ifndef DUNJUN_SYSTEM_HPP
 #define DUNJUN_SYSTEM_HPP
 
+#include <Dunjun/System/Memory.hpp>
 #include <Dunjun/System/Containers.hpp>
 #include <Dunjun/System/Clock.hpp>
 #include <Dunjun/System/FileSystem.hpp>
