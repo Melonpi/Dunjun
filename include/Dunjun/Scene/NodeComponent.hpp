@@ -17,7 +17,7 @@ class NodeComponent : private NonCopyable
 public:
 	using UPtr = std::unique_ptr<NodeComponent>;
 
-	SceneNode* parent{nullptr};
+	SceneNode* parent = nullptr;
 
 	virtual ~NodeComponent() {}
 

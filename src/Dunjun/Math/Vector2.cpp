@@ -6,7 +6,7 @@ namespace Dunjun
 {
 bool operator==(const Vector2& a, const Vector2& b)
 {
-	for (usize i{0}; i < 2; i++)
+	for (usize i = 0; i < 2; i++)
 	{
 		if (a[i] != b[i])
 			return false;
@@ -46,7 +46,7 @@ Vector2 operator/(const Vector2& a, f32 scalar)
 Vector2 operator*(const Vector2& a, const Vector2& b)
 {
 	Vector2 result;
-	for (usize i{0}; i < 2; i++)
+	for (usize i = 0; i < 2; i++)
 		result[i] = a[i] * b[i];
 	return result;
 }
@@ -55,7 +55,7 @@ Vector2 operator*(const Vector2& a, const Vector2& b)
 Vector2 operator/(const Vector2& a, const Vector2& b)
 {
 	Vector2 result;
-	for (usize i{0}; i < 2; i++)
+	for (usize i = 0; i < 2; i++)
 		result[i] = a[i] / b[i];
 	return result;
 }

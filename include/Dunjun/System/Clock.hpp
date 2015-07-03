@@ -7,7 +7,7 @@ namespace Dunjun
 {
 struct Clock
 {
-	Time startTime{Time::now()};
+	Time startTime = Time::now();
 
 	inline Time getElapsedTime() const { return Time::now() - startTime; }
 

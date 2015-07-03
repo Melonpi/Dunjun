@@ -18,7 +18,7 @@ usize capacity(const Array<T>& a);
 // Appends an item to the array and returns the number of items in the array
 // after the append
 template <typename T>
-usize pushBack(Array<T>& a, const T& item);
+usize append(Array<T>& a, const T& item);
 
 // Removes the last element from the array
 template <typename T>
@@ -27,7 +27,7 @@ void popBack(Array<T>& a);
 // Appends items to the array and returns the number of items in the array after
 // the array
 template <typename T>
-usize push(Array<T>& a, const T* items, usize count);
+usize append(Array<T>& a, const T* items, usize count);
 
 // Iterators
 template <typename T>
@@ -83,7 +83,7 @@ void grow(Array<T>& a, usize minCapacity = 0);
 ////////////////////////////////////////
 
 template <typename T>
-inline usize pushBack(Array<T>& a, const T& item)
+inline usize append(Array<T>& a, const T& item)
 {
 	if (a.length == a.capacity)
 		grow(a);
@@ -101,7 +101,7 @@ inline void popBack(Array<T>& a)
 }
 
 template <typename T>
-inline usize push(Array<T>& a, const T* items, usize count)
+inline usize append(Array<T>& a, const T* items, usize count)
 {
 	if (a.capacity <= a.length + count)
 		grow(a, a.length + count);
@@ -205,7 +205,7 @@ inline void setCapacity(Array<T>& a, usize capacity)
 	if (capacity < a.length)
 		resize(a, capacity);
 
-	T* data{nullptr};
+	T* data = nullptr;
 	if (capacity > 0)
 	{
 
@@ -227,7 +227,7 @@ inline void reserve(Array<T>& a, usize capacity)
 template <typename T>
 inline void grow(Array<T>& a, usize minCapacity)
 {
-	usize capacity{2 * a.capacity + 2};
+	usize capacity = 2 * a.capacity + 2;
 	if (capacity < minCapacity)
 		capacity = minCapacity;
 	setCapacity(a, capacity);
@@ -259,7 +259,7 @@ inline Array<T>::Array(const Array& other)
 , capacity{0}
 , data{nullptr}
 {
-	const usize num{other.length};
+	const usize num = other.length;
 	setCapacity(*this, num);
 	memcpy(data, other.data, num * sizeof(T));
 	length = num;
@@ -268,7 +268,7 @@ inline Array<T>::Array(const Array& other)
 template <typename T>
 inline Array<T>& Array<T>::operator=(const Array& other)
 {
-	const usize num{other.length};
+	const usize num = other.length;
 	resize(*this, num);
 	memcpy(data, other.data, num * sizeof(T));
 

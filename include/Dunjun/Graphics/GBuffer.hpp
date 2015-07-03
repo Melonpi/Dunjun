@@ -13,7 +13,7 @@ public:
 	enum TextureType
 	{
 		Diffuse, // TODO(bill): Rename to albedo? (PBR Shaders...)
- 		Specular,
+		Specular,
 		Normal,
 		Depth,
 		// TODO(bill): Emission,

@@ -15,7 +15,7 @@ void Level::generate()
 	// placeRooms(1);
 }
 
-void Level::placeRooms(int floor)
+void Level::placeRooms(int floorLevel)
 {
 	if (material == nullptr)
 	{
@@ -28,33 +28,34 @@ void Level::placeRooms(int floor)
 		return;
 	}
 
-	// m_random.setSeed(1);
+	m_random.setSeed(1337);
 
-	const int w{100};
-	const int h{100};
-	const Room::Size size{9, 9};
+	const int w = 100;
+	const int h = 100;
+
+	const Room::Size size = Room::Size{9, 9};
 
 	// transform.position.x = -(w - 0.5f) * size.x / 2.0f;
 	// transform.position.z = -(h - 0.5f) * size.y / 2.0f;
 
-	bool grid[w][h]{{}};
+	bool grid[w][h] = {{}}; // Make sure to init otherwise undefined behaviour
 
 	grid[w / 2][h / 2] = true;
 
 	// 2 Random walks from center;
-	for (int r{0}; r < 4; r++)
+	for (int r = 0; r < 4; r++)
 	{
-		int x{w / 2};
-		int y{h / 2};
+		int x = w / 2;
+		int y = h / 2;
 
-		int prevX{w / 2};
-		int prevY{h / 2};
+		int prevX = w / 2;
+		int prevY = h / 2;
 		// random walk from center
-		for (int n{0}; n < 10; n++)
+		for (int n = 0; n < 10; n++)
 		{
-			int d{m_random.getInt(0, 3)};
+			int d = m_random.getInt(0, 3);
 
-			for (int l{0}; l < 3; l++)
+			for (int l = 0; l < 3; l++)
 			{
 				switch (d)
 				{
@@ -83,24 +84,24 @@ void Level::placeRooms(int floor)
 				}
 
 				grid[x][y] = true;
-				prevX = x;
-				prevY = y;
+				prevX      = x;
+				prevY      = y;
 			}
 		}
 	}
 
 	// random off shoots
 	{
-		for (int shoot{0}; shoot < 10; shoot++)
+		for (int shoot = 0; shoot < 10; shoot++)
 		{
 			while (true)
 			{
-				int x{m_random.getInt(0, w - 1)};
-				int y{m_random.getInt(0, h - 1)};
+				int x = m_random.getInt(0, w - 1);
+				int y = m_random.getInt(0, h - 1);
 
 				if (grid[x][y])
 				{
-					int d{m_random.getInt(0, 3)};
+					int d = m_random.getInt(0, 3);
 
 					switch (d)
 					{
@@ -131,11 +132,11 @@ void Level::placeRooms(int floor)
 		}
 	}
 
-	int roomCount{0};
+	int roomCount = 0;
 
-	for (int i{0}; i < w; i++)
+	for (int i = 0; i < w; i++)
 	{
-		for (int j{0}; j < h; j++)
+		for (int j = 0; j < h; j++)
 		{
 			if (grid[i][j] == false)
 				continue;
@@ -143,15 +144,15 @@ void Level::placeRooms(int floor)
 			auto room = make_unique<Room>(m_random, size);
 
 			room->transform.position.x = size.x * (i - w / 2);
-			room->transform.position.y = Room::Height * floor;
+			room->transform.position.y = Room::Height * floorLevel;
 			room->transform.position.z = size.y * (j - h / 2);
 
 			room->material = material;
 
-			bool northDoor{false};
-			bool eastDoor{false};
-			bool southDoor{false};
-			bool westDoor{false};
+			bool northDoor = false;
+			bool eastDoor  = false;
+			bool southDoor = false;
+			bool westDoor  = false;
 
 			if (i != 0 && grid[i - 1][j])
 				westDoor = true;

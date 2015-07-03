@@ -9,7 +9,7 @@ namespace
 {
 INTERNAL inline SceneNode::Id getUniqueSceneNodeId()
 {
-	LOCAL_PERSIST SceneNode::Id lastId{0};
+	LOCAL_PERSIST SceneNode::Id lastId = 0;
 	return lastId++;
 }
 } // namespace (anonymous)
@@ -40,7 +40,7 @@ SceneNode::UPtr SceneNode::detachChild(const SceneNode& node)
 
 	if (found != std::end(children)) // Child was found
 	{
-		UPtr result{std::move(*found)};
+		UPtr result = std::move(*found);
 
 		result->parent = nullptr;
 		children.erase(found);
@@ -55,11 +55,11 @@ SceneNode::UPtr SceneNode::detachChild(const SceneNode& node)
 SceneNode* SceneNode::findChildById(usize id) const
 {
 	for (const UPtr& child : children)
-{
+	{
 		if (child->id == id)
 			return child.get();
 		// If not found, check its children
-		SceneNode* subChild{child->findChildById(id)};
+		SceneNode* subChild = child->findChildById(id);
 		if (subChild != nullptr)
 			return subChild;
 	}
@@ -74,7 +74,7 @@ SceneNode* SceneNode::findChildByName(const std::string& name) const
 		if (child->name == name)
 			return child.get();
 		// If not found, check its children
-		SceneNode* subChild{child->findChildByName(name)};
+		SceneNode* subChild = child->findChildByName(name);
 		if (subChild != nullptr)
 			return subChild;
 	}
@@ -87,7 +87,7 @@ Transform SceneNode::getGlobalTransform() const
 	Transform result;
 
 	// Iterate upwards until parent node has no other parent node
-	for (const SceneNode* node{this}; node != nullptr; node = node->parent)
+	for (const SceneNode* node = this; node != nullptr; node = node->parent)
 		result *= node->transform;
 
 	return result;
@@ -116,7 +116,6 @@ void SceneNode::handleEvent(const Event& event)
 	for (auto& component : components)
 		component->handleEvent(event);
 }
-
 
 void SceneNode::draw(SceneRenderer& renderer, Transform t) const
 {
@@ -152,7 +151,6 @@ void SceneNode::updateChildren(Time dt)
 	for (UPtr& child : children)
 		child->update(dt);
 }
-
 
 void SceneNode::handleEventCurrent(const Event& event)
 {

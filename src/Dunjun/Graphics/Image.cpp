@@ -16,14 +16,12 @@ Image::Image(const Image& other)
 , height{0}
 , pixels{nullptr}
 {
-	loadFromMemory(
-	    other.width, other.height, other.format, other.pixels);
+	loadFromMemory(other.width, other.height, other.format, other.pixels);
 }
 
 Image& Image::operator=(const Image& other)
 {
-	loadFromMemory(
-	    other.width, other.height, other.format, other.pixels);
+	loadFromMemory(other.width, other.height, other.format, other.pixels);
 	return *this;
 }
 
@@ -36,7 +34,7 @@ Image::~Image()
 bool Image::loadFromFile(const std::string& filename)
 {
 	int w, h, f;
-	u8* p{stbi_load(filename.c_str(), &w, &h, &f, 0)};
+	u8* p = stbi_load(filename.c_str(), &w, &h, &f, 0);
 
 	if (!p)
 	{
@@ -66,11 +64,11 @@ bool Image::loadFromMemory(u32 w, u32 h, ImageFormat f, const u8* p)
 		return false;
 	}
 
-	width = w;
+	width  = w;
 	height = h;
 	format = f;
 
-	usize imageSize{width * height * (usize)f};
+	usize imageSize = width * height * (usize)f;
 
 	if (pixels)
 		delete[] pixels;
@@ -78,7 +76,7 @@ bool Image::loadFromMemory(u32 w, u32 h, ImageFormat f, const u8* p)
 	pixels = new u8[imageSize];
 
 	if (p != nullptr)
-		std::memcpy(pixels, p, imageSize);
+		memcpy(pixels, p, imageSize);
 
 	return true;
 }
@@ -96,28 +94,26 @@ void Image::setPixel(u32 column, u32 row, const u32* pixel)
 	if (column >= width || row >= height)
 		return;
 
-	u8* p{getPixel(column, row)};
-	std::memcpy(p, pixel, (usize)format);
+	u8* p = getPixel(column, row);
+	memcpy(p, pixel, (usize)format);
 }
 
 void Image::flipVertically()
 {
-	usize pitch{width * (usize)format};
-	u32 halfRows{height / 2};
-	u8* rowBuffer{new u8[pitch]};
+	usize pitch   = width * (usize)format;
+	u32 halfRows  = height / 2;
+	u8* rowBuffer = new u8[pitch];
 	defer(delete[] rowBuffer);
 
 	for (u32 i{0}; i < halfRows; i++)
 	{
-		u8* row{pixels + (i * width) * (usize)format};
-		u8* oppositeRow{pixels +
-		                ((height - i - 1) * width) * (usize)format};
+		u8* row         = pixels + (i * width) * (usize)format;
+		u8* oppositeRow = pixels + ((height - i - 1) * width) * (usize)format;
 
-		std::memcpy(rowBuffer, row, pitch);
-		std::memcpy(row, oppositeRow, pitch);
-		std::memcpy(oppositeRow, rowBuffer, pitch);
+		memcpy(rowBuffer, row, pitch);
+		memcpy(row, oppositeRow, pitch);
+		memcpy(oppositeRow, rowBuffer, pitch);
 	}
-
 }
 
 // void Image::rotate90CCW()

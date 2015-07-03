@@ -35,39 +35,40 @@ void Room::generate(bool northDoor,
 	std::vector<std::vector<TileId>> mapGrid(size.x,
 	                                         std::vector<TileId>(size.y));
 
-	TileId emptyTile{-1, -1};
-
-	TileId lightWoodTile{0, 11};
-	TileId darkWoodTile{0, 0};
+	TileId emptyTile     = {-1, -1};
+	TileId lightWoodTile = {0, 11};
+	TileId darkWoodTile  = {0, 0};
 	RandomTileSet stoneTiles;
-	for (int i{1}; i < 3; i++)
+
+	for (int i = 1; i < 3; i++)
 		stoneTiles.emplace_back(i, 15);
 	RandomTileSet darkRockTiles;
-	for (int i{0}; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 		darkRockTiles.emplace_back(i, 0);
 	RandomTileSet colorfulTiles;
-	for (int i{3}; i < 12; i++)
+	for (int i = 3; i < 12; i++)
 		colorfulTiles.emplace_back(i, 15);
 
-	for (int i{0}; i < size.x; i++)
+	for (int i = 0; i < size.x; i++)
 	{
-		for (int j{0}; j < size.y; j++)
+		for (int j = 0; j < size.y; j++)
 			mapGrid[i][j] = emptyTile;
 	}
 
-	TileId tile{colorfulTiles[m_random.getInt(0, (u32)len(colorfulTiles) - 1)]};
+	TileId tile =
+	    colorfulTiles[m_random.getInt(0, (u32)len(colorfulTiles) - 1)];
 
-	const Room::Size s{size};
-	for (int i{0}; i < s.x; i++)
+	const Room::Size s = size;
+	for (int i = 0; i < s.x; i++)
 	{
-		for (int j{0}; j < s.y; j++)
+		for (int j = 0; j < s.y; j++)
 			mapGrid[i][j] = tile;
 	}
 
-	const s32 h{Height};
-	for (int i{0}; i < size.x; i++)
+	const s32 h = Height;
+	for (int i = 0; i < size.x; i++)
 	{
-		for (int j{0}; j < size.y; j++)
+		for (int j = 0; j < size.y; j++)
 		{
 			if (mapGrid[i][j] != emptyTile)
 			{
@@ -83,7 +84,7 @@ void Room::generate(bool northDoor,
 				    Vector3{i, h, j}, TileSurfaceFace::Up, stoneTiles);
 			}
 
-			for (int k{0}; k < h; k++)
+			for (int k = 0; k < h; k++)
 			{
 				if (mapGrid[i][j] == emptyTile)
 				{
@@ -203,10 +204,10 @@ void Room::addTileSurface(const Vector3& position,
                           TileSurfaceFace face,
                           const TileId& tilePos)
 {
-	const f32 tileWidth{1.0f / 16.0f};
-	const f32 tileHeight{1.0f / 16.0f};
+	const f32 tileWidth  = 1.0f / 16.0f;
+	const f32 tileHeight = 1.0f / 16.0f;
 
-	u32 index{(u32)len(m_meshData.vertices)};
+	u32 index = (u32)len(m_meshData.vertices);
 
 	// Right/Left
 	if ((u32)face / 2 == 0)
@@ -267,7 +268,7 @@ void Room::addTileSurface(const Vector3& position,
                           TileSurfaceFace face,
                           const RandomTileSet& randomTilePosSet)
 {
-	usize length{len(randomTilePosSet)};
+	usize length = len(randomTilePosSet);
 	if (length == 0)
 		return;
 	if (length == 1)
@@ -276,7 +277,7 @@ void Room::addTileSurface(const Vector3& position,
 		return;
 	}
 
-	TileId tilePos{randomTilePosSet[m_random.getInt(0, (s32)length - 1)]};
+	TileId tilePos = randomTilePosSet[m_random.getInt(0, (s32)length - 1)];
 	addTileSurface(position, face, tilePos);
 }
 

@@ -19,8 +19,8 @@ bool RenderTexture::create(u32 w,
 	if (w == width && h == height && t == type)
 		return true;
 
-	type = t;
-	width = w;
+	type   = t;
+	width  = w;
 	height = h;
 
 	if (!fbo)
@@ -60,7 +60,7 @@ bool RenderTexture::create(u32 w,
 			             GL_UNSIGNED_BYTE,
 			             0);
 		}
-		colorTexture.width = width;
+		colorTexture.width  = width;
 		colorTexture.height = height;
 
 		glTexParameteri(
@@ -90,7 +90,7 @@ bool RenderTexture::create(u32 w,
 		             GL_DEPTH_COMPONENT,
 		             GL_FLOAT,
 		             0);
-		depthTexture.width = width;
+		depthTexture.width  = width;
 		depthTexture.height = height;
 
 		glTexParameteri(

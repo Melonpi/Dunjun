@@ -34,7 +34,7 @@ void arrayTest()
 
 	Array<int> v1{a};
 	assert(len(v1) == 0);
-	pushBack(v1, 7);
+	append(v1, 7);
 	assert(len(v1) == 1);
 	assert(v1[0] == 7);
 
@@ -52,7 +52,7 @@ void arrayTest()
 	assert(len(v1) == 0);
 
 	for (int i{0}; i < 100; i++)
-		pushBack(v1, i);
+		append(v1, i);
 	assert(len(v1) == 100);
 
 	Memory::shutdown();
@@ -67,15 +67,15 @@ void arrayTest()
 
 	reserve(q, 10);
 	assert(space(q) == 10);
-	pushBack(q, 1);
-	pushFront(q, 2);
+	append(q, 1);
+	prepend(q, 2);
 	assert(len(q) == 2);
 	assert(q[0] == 2);
 	assert(q[1] == 1);
 	clear(q);
 	assert(len(q) == 0);
 	int items[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-	push(q, items, 10);
+	append(q, items, 10);
 	assert(len(q) == 10);
 	for (int i{0}; i < 10; i++)
 		assert(q[i] == i + 1);

@@ -9,20 +9,20 @@ namespace Dunjun
 {
 enum class ImageFormat
 {
-	None = 0,
-	Greyscale = 1,
+	None           = 0,
+	Greyscale      = 1,
 	GreyscaleAlpha = 2,
-	RGB = 3,
-	RGBA = 4,
+	RGB            = 3,
+	RGBA           = 4,
 };
 
 struct Image
 {
 public:
-	ImageFormat format{ImageFormat::None};
-	u32 width{0};
-	u32 height{0};
-	u8* pixels{nullptr};
+	ImageFormat format = ImageFormat::None;
+	u32 width          = 0;
+	u32 height         = 0;
+	u8* pixels         = nullptr;
 
 	Image() = default;
 	Image(const Image& other);

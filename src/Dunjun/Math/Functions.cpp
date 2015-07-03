@@ -37,11 +37,11 @@ f32 hypotenuse(f32 x, f32 y) { return std::hypot(x, y); }
 
 f32 fastInvSqrt(f32 number)
 {
-	const f32 threeHalfs{1.5f};
+	const f32 threeHalfs = 1.5f;
 
-	f32 x2{number * 0.5f};
-	f32 y{number};
-	u32 i{pseudo_cast<u32>(y)}; // Evil floating point bit level hacking
+	f32 x2 = number * 0.5f;
+	f32 y  = number;
+	u32 i  = pseudo_cast<u32>(y); // Evil floating point bit level hacking
 	//	i = 0x5f3759df - (i >> 1);           // What the fuck?
 	i = 0x5f375a86 - (i >> 1); // What the fuck? Improved!
 	y = pseudo_cast<f32>(i);
@@ -76,16 +76,16 @@ f32 ceil(f32 x) { return std::ceil(x); }
 f32 floor(f32 x) { return std::floor(x); }
 f32 mod(f32 x, f32 y)
 {
-	f32 result{std::remainder(Math::abs(x), (y = Math::abs(y)))};
+	f32 result = std::remainder(Math::abs(x), (y = Math::abs(y)));
 	if (std::signbit(result))
 		result += y;
 	return std::copysign(result, x);
 }
 f32 truncate(f32 x)
 {
-	u32 i{pseudo_cast<u32>(x)};
-	u32 exponent{(i >> 23) & 0xFF}; // extract exponent field
-	u32 fractionalBits{0x7F + 23 - exponent};
+	u32 i              = pseudo_cast<u32>(x);
+	u32 exponent       = (i >> 23) & 0xFF; // extract exponent field
+	u32 fractionalBits = 0x7F + 23 - exponent;
 	if (fractionalBits > 23) // abs(x) < 1.0f
 		return 0.0f;
 	if (fractionalBits > 0)
@@ -96,7 +96,7 @@ f32 round(f32 x)
 {
 	std::fenv_t saveEnv;
 	std::feholdexcept(&saveEnv);
-	f32 result{std::rint(x)};
+	f32 result = std::rint(x);
 	if (std::fetestexcept(FE_INEXACT))
 	{
 		std::fesetround(FE_TOWARDZERO);
@@ -108,7 +108,7 @@ f32 round(f32 x)
 
 s32 sign(s32 x)
 {
-	u32 i{reinterpret_cast<const u32&>(x)};
+	u32 i = reinterpret_cast<const u32&>(x);
 	i &= 0x80000000ul;
 	if (i)
 		return -1;
@@ -117,7 +117,7 @@ s32 sign(s32 x)
 
 s64 sign(s64 x)
 {
-	u64 i{reinterpret_cast<const u64&>(x)};
+	u64 i = reinterpret_cast<const u64&>(x);
 	i &= 0x8000000000000000ull;
 	if (i)
 		return -1;
@@ -126,7 +126,7 @@ s64 sign(s64 x)
 
 f32 sign(f32 x)
 {
-	u32 i{reinterpret_cast<const u32&>(x)};
+	u32 i = reinterpret_cast<const u32&>(x);
 	i &= 0x80000000ul;
 	if (i)
 		return -1.0f;
@@ -136,31 +136,31 @@ f32 sign(f32 x)
 // Other
 f32 abs(f32 x)
 {
-	u32 i{reinterpret_cast<const u32&>(x)};
+	u32 i = reinterpret_cast<const u32&>(x);
 	i &= 0x7FFFFFFFul;
 	return reinterpret_cast<const f32&>(i);
 }
 s8 abs(s8 x)
 {
-	u8 i{reinterpret_cast<const u8&>(x)};
+	u8 i = reinterpret_cast<const u8&>(x);
 	i &= 0x7Fu;
 	return reinterpret_cast<const s8&>(i);
 }
 s16 abs(s16 x)
 {
-	u16 i{reinterpret_cast<const u16&>(x)};
+	u16 i = reinterpret_cast<const u16&>(x);
 	i &= 0x7FFFu;
 	return reinterpret_cast<const s16&>(i);
 }
 s32 abs(s32 x)
 {
-	u32 i{reinterpret_cast<const u32&>(x)};
+	u32 i = reinterpret_cast<const u32&>(x);
 	i &= 0x7FFFFFFFul;
 	return reinterpret_cast<const s32&>(i);
 }
 s64 abs(s64 x)
 {
-	u64 i{reinterpret_cast<const u64&>(x)};
+	u64 i = reinterpret_cast<const u64&>(x);
 	i &= 0x7FFFFFFFFFFFFFFFull;
 	return reinterpret_cast<const s64&>(i);
 }
@@ -172,25 +172,25 @@ Degree abs(const Degree& x) { return Degree(abs(static_cast<f32>(x))); }
 Matrix4 translate(const Vector3& v)
 {
 	Matrix4 result = Matrix4::Identity;
-	result[3].xyz = v;
-	result[3].w = 1;
+	result[3].xyz  = v;
+	result[3].w    = 1;
 	return result;
 }
 
 // Angle in Radians
 Matrix4 rotate(const Radian& angle, const Vector3& v)
 {
-	const f32 c{Math::cos(angle)};
-	const f32 s{Math::sin(angle)};
+	const f32 c = Math::cos(angle);
+	const f32 s = Math::sin(angle);
 
 	const Vector3 axis = normalize(v);
-	const Vector3 t = (1.0f - c) * axis;
+	const Vector3 t    = (1.0f - c) * axis;
 
 	Matrix4 rot = Matrix4::Identity;
-	rot[0][0] = c + t.x * axis.x;
-	rot[0][1] = 0 + t.x * axis.y + s * axis.z;
-	rot[0][2] = 0 + t.x * axis.z - s * axis.y;
-	rot[0][3] = 0;
+	rot[0][0]   = c + t.x * axis.x;
+	rot[0][1]   = 0 + t.x * axis.y + s * axis.z;
+	rot[0][2]   = 0 + t.x * axis.z - s * axis.y;
+	rot[0][3]   = 0;
 
 	rot[1][0] = 0 + t.y * axis.x - s * axis.z;
 	rot[1][1] = c + t.y * axis.y;
@@ -207,10 +207,10 @@ Matrix4 rotate(const Radian& angle, const Vector3& v)
 
 Matrix4 scale(const Vector3& v)
 {
-	return Matrix4{Vector4{v.x,   0,   0, 0},
-	               Vector4{  0, v.y,   0, 0},
-	               Vector4{  0,   0, v.z, 0},
-	               Vector4{  0,   0,   0, 1}};
+	return Matrix4{Vector4{v.x, 0, 0, 0},
+	               Vector4{0, v.y, 0, 0},
+	               Vector4{0, 0, v.z, 0},
+	               Vector4{0, 0, 0, 1}};
 }
 
 Matrix4 ortho(f32 left, f32 right, f32 bottom, f32 top)
@@ -245,25 +245,25 @@ Matrix4 perspective(const Radian& fovy, f32 aspect, f32 zNear, f32 zFar)
 	assert(Math::abs(aspect - std::numeric_limits<f32>::epsilon()) > 0.0f &&
 	       "Math::perspective `fovy` is 0/inf.");
 
-	const f32 tanHalfFovy{Math::tan(0.5f * fovy)};
+	const f32 tanHalfFovy = Math::tan(0.5f * fovy);
 
 	Matrix4 result = 0.0f * Matrix4::Identity;
-	result[0][0] = 1.0f / (aspect * tanHalfFovy);
-	result[1][1] = 1.0f / (tanHalfFovy);
-	result[2][2] = -(zFar + zNear) / (zFar - zNear);
-	result[2][3] = -1.0f;
-	result[3][2] = -2.0f * zFar * zNear / (zFar - zNear);
+	result[0][0]   = 1.0f / (aspect * tanHalfFovy);
+	result[1][1]   = 1.0f / (tanHalfFovy);
+	result[2][2]   = -(zFar + zNear) / (zFar - zNear);
+	result[2][3]   = -1.0f;
+	result[3][2]   = -2.0f * zFar * zNear / (zFar - zNear);
 
 	return result;
 }
 
 Matrix4 infinitePerspective(const Radian& fovy, f32 aspect, f32 zNear)
 {
-	const f32 range{Math::tan(0.5f * fovy) * zNear};
-	const f32 left{-range * aspect};
-	const f32 right{range * aspect};
-	const f32 bottom{-range};
-	const f32 top{range};
+	const f32 range  = Math::tan(0.5f * fovy) * zNear;
+	const f32 left   = -range * aspect;
+	const f32 right  = range * aspect;
+	const f32 bottom = -range;
+	const f32 top    = range;
 
 	Matrix4 result = 0.0f * Matrix4::Identity;
 
@@ -286,9 +286,9 @@ Matrix4 lookAt<Matrix4>(const Vector3& eye,
 	const Vector3 u = cross(s, f);
 
 	Matrix4 result = Matrix4::Identity;
-	result[0][0] = +s.x;
-	result[1][0] = +s.y;
-	result[2][0] = +s.z;
+	result[0][0]   = +s.x;
+	result[1][0]   = +s.y;
+	result[2][0]   = +s.z;
 
 	result[0][1] = +u.x;
 	result[1][1] = +u.y;
@@ -311,7 +311,7 @@ Quaternion lookAt<Quaternion>(const Vector3& eye,
                               const Vector3& center,
                               const Vector3& up)
 {
-	const f32 similar{0.001f};
+	const f32 similar = 0.001f;
 
 	if (length(center - eye) < similar)
 		return Quaternion{0, 0, 0, 1}; // You cannot look at where you are!

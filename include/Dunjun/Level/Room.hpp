@@ -61,11 +61,11 @@ public:
 		{
 		}
 
-		u16 x{0};
-		u16 y{0};
+		u16 x = 0;
+		u16 y = 0;
 	};
 
-	GLOBAL const s32 Height{3};
+	GLOBAL const s32 Height = 3;
 
 	explicit Room(Random& random, const Room::Size& size);
 

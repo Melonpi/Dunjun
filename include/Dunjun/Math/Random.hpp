@@ -21,7 +21,6 @@ public:
 
 	void setSeed(ResultType seed) { m_engine.seed(seed); }
 
-
 	// inclusive
 	s32 getInt(s32 min, s32 max)
 	{
@@ -37,7 +36,7 @@ public:
 	bool getBool() { return getInt(0, 1) == 1; }
 
 private:
-	std::mt19937 m_engine{std::random_device{}()};
+	std::mt19937 m_engine = {std::random_device{}()};
 };
 } // namespace Dunju
 

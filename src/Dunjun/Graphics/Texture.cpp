@@ -56,25 +56,21 @@ bool Texture::loadFromImage(const Image& image,
 	if (image.format == ImageFormat::None)
 		return false;
 
-	width = image.width;
+	width  = image.width;
 	height = image.height;
 
 	if (!handle)
 		glGenTextures(1, &handle);
 
 	glBindTexture(GL_TEXTURE_2D, handle);
-	glTexParameteri(GL_TEXTURE_2D,
-	                GL_TEXTURE_WRAP_S,
-	                static_cast<s32>(wrapMode));
-	glTexParameteri(GL_TEXTURE_2D,
-	                GL_TEXTURE_WRAP_T,
-	                static_cast<s32>(wrapMode));
-	glTexParameteri(GL_TEXTURE_2D,
-	                GL_TEXTURE_MIN_FILTER,
-	                static_cast<s32>(minMagFilter));
-	glTexParameteri(GL_TEXTURE_2D,
-	                GL_TEXTURE_MAG_FILTER,
-	                static_cast<s32>(minMagFilter));
+	glTexParameteri(
+	    GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<s32>(wrapMode));
+	glTexParameteri(
+	    GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<s32>(wrapMode));
+	glTexParameteri(
+	    GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<s32>(minMagFilter));
+	glTexParameteri(
+	    GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<s32>(minMagFilter));
 
 	glTexImage2D(GL_TEXTURE_2D,
 	             0,

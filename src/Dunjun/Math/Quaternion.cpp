@@ -75,7 +75,7 @@ Quaternion operator/(const Quaternion& a, f32 s)
 
 bool operator==(const Quaternion& a, const Quaternion& b)
 {
-	for (usize i{0}; i < 4; i++)
+	for (usize i = 0; i < 4; i++)
 	{
 		if (a.data[i] != b.data[i])
 			return false;
@@ -112,16 +112,13 @@ Quaternion conjugate(const Quaternion& q)
 	return Quaternion{-q.x, -q.y, -q.z, q.w};
 }
 
-Quaternion inverse(const Quaternion& q)
-{
-	return conjugate(q) / dot(q, q);
-}
+Quaternion inverse(const Quaternion& q) { return conjugate(q) / dot(q, q); }
 
 Vector3 operator*(const Quaternion& q, const Vector3& v)
 {
 	// return q * Quaternion(v, 0) * conjugate(q); // More Expensive
 	// TODO(bill): Remove cross product in turn for expanded form
-	Vector3 t = 2.0f * cross(q.xyz, v);
+	const Vector3 t = 2.0f * cross(q.xyz, v);
 	return (v + q.w * t + cross(q.xyz, t));
 }
 
@@ -130,12 +127,12 @@ Radian angle(const Quaternion& q) { return 2.0f * Math::acos(q.w); }
 Vector3 axis(const Quaternion& q)
 {
 	// 1 - cos(theta/2)*cos(theta/2) = sin(theta/2)*sin(theta/2)
-	f32 s2{1.0f - q.w * q.w};
+	const f32 s2 = 1.0f - q.w * q.w;
 
 	if (s2 <= 0.0f)
 		return Vector3{0, 0, 1};
 
-	f32 invs2{1.0f / Math::sqrt(s2)};
+	const f32 invs2 = 1.0f / Math::sqrt(s2);
 
 	return q.xyz * invs2;
 }
@@ -146,28 +143,28 @@ Quaternion angleAxis(const Radian& angle, const Vector3& axis)
 
 	const Vector3 a = normalize(axis);
 
-	const f32 s{Math::sin(0.5f * angle)};
+	const f32 s = Math::sin(0.5f * angle);
 
 	q.xyz = a * s;
-	q.w = Math::cos(0.5f * angle);
+	q.w   = Math::cos(0.5f * angle);
 
 	return q;
 }
 
 Matrix4 quaternionToMatrix4(const Quaternion& q)
 {
-	Matrix4 mat = Matrix4::Identity;
+	Matrix4 mat        = Matrix4::Identity;
 	const Quaternion a = normalize(q);
 
-	const f32 xx{a.x * a.x};
-	const f32 yy{a.y * a.y};
-	const f32 zz{a.z * a.z};
-	const f32 xy{a.x * a.y};
-	const f32 xz{a.x * a.z};
-	const f32 yz{a.y * a.z};
-	const f32 wx{a.w * a.x};
-	const f32 wy{a.w * a.y};
-	const f32 wz{a.w * a.z};
+	const f32 xx = a.x * a.x;
+	const f32 yy = a.y * a.y;
+	const f32 zz = a.z * a.z;
+	const f32 xy = a.x * a.y;
+	const f32 xz = a.x * a.z;
+	const f32 yz = a.y * a.z;
+	const f32 wx = a.w * a.x;
+	const f32 wy = a.w * a.y;
+	const f32 wz = a.w * a.z;
 
 	mat[0][0] = 1.0f - 2.0f * (yy + zz);
 	mat[0][1] = 2.0f * (xy + wz);
@@ -188,31 +185,31 @@ Matrix4 quaternionToMatrix4(const Quaternion& q)
 //             applied
 Quaternion matrix4ToQuaternion(const Matrix4& m)
 {
-	f32 fourXSquaredMinus1{m[0][0] - m[1][1] - m[2][2]};
-	f32 fourYSquaredMinus1{m[1][1] - m[0][0] - m[2][2]};
-	f32 fourZSquaredMinus1{m[2][2] - m[0][0] - m[1][1]};
-	f32 fourWSquaredMinus1{m[0][0] + m[1][1] + m[2][2]};
+	const f32 fourXSquaredMinus1 = m[0][0] - m[1][1] - m[2][2];
+	const f32 fourYSquaredMinus1 = m[1][1] - m[0][0] - m[2][2];
+	const f32 fourZSquaredMinus1 = m[2][2] - m[0][0] - m[1][1];
+	const f32 fourWSquaredMinus1 = m[0][0] + m[1][1] + m[2][2];
 
-	int biggestIndex{0};
+	int biggestIndex = 0;
 	f32 fourBiggestSquaredMinus1{fourWSquaredMinus1};
 	if (fourXSquaredMinus1 > fourBiggestSquaredMinus1)
 	{
 		fourBiggestSquaredMinus1 = fourXSquaredMinus1;
-		biggestIndex = 1;
+		biggestIndex             = 1;
 	}
 	if (fourYSquaredMinus1 > fourBiggestSquaredMinus1)
 	{
 		fourBiggestSquaredMinus1 = fourYSquaredMinus1;
-		biggestIndex = 2;
+		biggestIndex             = 2;
 	}
 	if (fourZSquaredMinus1 > fourBiggestSquaredMinus1)
 	{
 		fourBiggestSquaredMinus1 = fourZSquaredMinus1;
-		biggestIndex = 3;
+		biggestIndex             = 3;
 	}
 
-	f32 biggestVal{Math::sqrt(fourBiggestSquaredMinus1 + 1.0f) * 0.5f};
-	f32 mult{0.25f / biggestVal};
+	const f32 biggestVal = Math::sqrt(fourBiggestSquaredMinus1 + 1.0f) * 0.5f;
+	const f32 mult       = 0.25f / biggestVal;
 
 	Quaternion q = Quaternion{0, 0, 0, 1};
 
@@ -287,9 +284,9 @@ Quaternion eulerAnglesToQuaternion(const EulerAngles& e,
                                    const Vector3& yAxis,
                                    const Vector3& zAxis)
 {
-	Quaternion p = angleAxis(e.pitch, xAxis);
-	Quaternion y = angleAxis(e.pitch, yAxis);
-	Quaternion r = angleAxis(e.pitch, zAxis);
+	const Quaternion p = angleAxis(e.pitch, xAxis);
+	const Quaternion y = angleAxis(e.pitch, yAxis);
+	const Quaternion r = angleAxis(e.pitch, zAxis);
 
 	return y * p * r;
 }

@@ -83,14 +83,14 @@ inline void* TempAllocator<Size>::allocate(usize size, usize align)
 
 	if (size > (usize)(m_end - m_current))
 	{
-		usize toAllocate{size + align + sizeof(void*)};
+		usize toAllocate = size + align + sizeof(void*);
 
 		if (toAllocate < m_chunkSize)
 			toAllocate = m_chunkSize;
 
 		m_chunkSize *= 2;
 
-		void* ptr{m_backing.allocate(toAllocate)};
+		void* ptr = m_backing.allocate(toAllocate);
 		*(void**)m_begin = ptr;
 
 		m_current = m_begin = (u8*)ptr;

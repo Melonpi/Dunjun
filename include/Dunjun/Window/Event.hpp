@@ -113,18 +113,17 @@ struct Event
 
 	union
 	{
-		SizeEvent             size;
-		MoveEvent             move;
-		KeyEvent              key;
-		MouseMoveEvent        mouseMove;
-		MouseButtonEvent      mouseButton;
+		SizeEvent size;
+		MoveEvent move;
+		KeyEvent key;
+		MouseMoveEvent mouseMove;
+		MouseButtonEvent mouseButton;
 		MouseWheelScrollEvent mouseWheelScroll;
 
 		// TODO(bill): Joystick event types
 		ControllerConnectEvent controller;
 		ControllerButtonEvent controllerButton;
-		ControllerAxisEvent   controllerAxis;
-
+		ControllerAxisEvent controllerAxis;
 	};
 };
 } // namespace Dunjun

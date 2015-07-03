@@ -17,9 +17,9 @@ GLOBAL std::array<SDL_Haptic*, MaximumControllers> g_rumbleHandles;
 
 void init()
 {
-	int maxJoysticks{SDL_NumJoysticks()};
-	int controllerIndex{0};
-	for (int joystickIndex{0}; joystickIndex < maxJoysticks; joystickIndex++)
+	int maxJoysticks    = SDL_NumJoysticks();
+	int controllerIndex = 0;
+	for (int joystickIndex = 0; joystickIndex < maxJoysticks; joystickIndex++)
 	{
 		if (!SDL_IsGameController(joystickIndex))
 			continue;
@@ -37,7 +37,7 @@ void init()
 
 void shutdown()
 {
-	for (int i{0}; i < MaximumControllers; i++)
+	for (int i = 0; i < MaximumControllers; i++)
 	{
 		if (isControllerPresent(i))
 			setControllerVibration(i, 0);
@@ -82,7 +82,7 @@ bool isKeyPressed(Key key)
 {
 	// clang-format off
 
-	int code{0};
+	int code = 0;
 
 	switch (key)
 	{
@@ -193,7 +193,7 @@ bool isKeyPressed(Key key)
 	if (code == 0)
 		return false;
 
-	const u8* state{SDL_GetKeyboardState(nullptr)};
+	const u8* state = SDL_GetKeyboardState(nullptr);
 
 	return state[code] != 0;
 
@@ -234,14 +234,14 @@ bool isMouseButtonPressed(Mouse button)
 
 bool isControllerPresent(u32 controllerIndex)
 {
-	SDL_GameController* gc{g_controllerHandles[controllerIndex]};
+	SDL_GameController* gc = g_controllerHandles[controllerIndex];
 
 	return (gc && SDL_GameControllerGetAttached(gc));
 }
 
 bool isControllerButtonPressed(u32 controllerIndex, ControllerButton button)
 {
-	SDL_GameController* gc{g_controllerHandles[controllerIndex]};
+	SDL_GameController* gc = g_controllerHandles[controllerIndex];
 	if (gc && SDL_GameControllerGetAttached(gc))
 		return SDL_GameControllerGetButton(
 		           gc, (SDL_GameControllerButton)button) != 0;
@@ -251,11 +251,11 @@ bool isControllerButtonPressed(u32 controllerIndex, ControllerButton button)
 
 f32 getControllerAxis(u32 controllerIndex, ControllerAxis axis)
 {
-	SDL_GameController* gc{g_controllerHandles[controllerIndex]};
+	SDL_GameController* gc = g_controllerHandles[controllerIndex];
 
 	if (gc && SDL_GameControllerGetAttached(gc))
 	{
-		s16 value{SDL_GameControllerGetAxis(gc, (SDL_GameControllerAxis)axis)};
+		s16 value = SDL_GameControllerGetAxis(gc, (SDL_GameControllerAxis)axis);
 		if (axis == ControllerAxis::LeftY)
 			value = -value;
 

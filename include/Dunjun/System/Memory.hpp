@@ -14,7 +14,8 @@ void shutdown();
 
 inline void* alignForward(void* ptr, usize align)
 {
-	uintptr p{(uintptr)ptr};
+	uintptr p = (uintptr)ptr;
+
 	const usize modulo = p % align;
 	if (modulo)
 		p += (uintptr)(align - modulo);

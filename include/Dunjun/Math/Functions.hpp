@@ -67,7 +67,7 @@ f32 sign(f32 x);
 
 // Other
 f32 abs(f32 x);
-s8  abs(s8 x);
+s8 abs(s8 x);
 s16 abs(s16 x);
 s32 abs(s32 x);
 s64 abs(s64 x);
@@ -107,11 +107,11 @@ inline Quaternion slerp(const Quaternion& x, const Quaternion& y, f32 t)
 
 	Quaternion z = y;
 
-	f32 cosTheta{dot(x, y)};
+	f32 cosTheta = dot(x, y);
 
 	if (cosTheta < 0.0f)
 	{
-		z = -y;
+		z        = -y;
 		cosTheta = -cosTheta;
 	}
 
@@ -123,9 +123,10 @@ inline Quaternion slerp(const Quaternion& x, const Quaternion& y, f32 t)
 		                  lerp(x.w, y.w, t)};
 	}
 
-	Radian angle{Math::acos(cosTheta)};
+	Radian angle = Math::acos(cosTheta);
 
-	Quaternion result = Math::sin(Radian{1.0f} - (t * angle)) * x +  Math::sin(t * angle) * z;
+	Quaternion result =
+	    Math::sin(Radian{1.0f} - (t * angle)) * x + Math::sin(t * angle) * z;
 	return result * (1.0f / Math::sin(angle));
 }
 
@@ -139,7 +140,6 @@ inline Quaternion squad(const Quaternion& p,
 {
 	return slerp(slerp(p, q, t), slerp(a, b, t), 2.0f * t * (1.0f - t));
 }
-
 
 ////////////////////////////////
 // Transformation

@@ -9,17 +9,17 @@ namespace Dunjun
 
 u64 murmurHash64(const void* key, s32 len, u64 seed)
 {
-	const u64 m{0xc6a4a7935bd1e995ULL};
-	const s32 r{47};
+	const u64 m = 0xc6a4a7935bd1e995ULL;
+	const s32 r = 47;
 
-	u64 h{seed ^ (len * m)};
+	u64 h = seed ^ (len * m);
 
-	const u64* data{(const u64*)key};
-	const u64* end{data + (len / 8)};
+	const u64* data = (const u64*)key;
+	const u64* end = data + (len / 8);
 
 	while (data != end)
 	{
-		u64 k{*data++};
+		u64 k = *data++;
 
 		k *= m;
 		k ^= k >> r;
@@ -29,7 +29,7 @@ u64 murmurHash64(const void* key, s32 len, u64 seed)
 		h *= m;
 	}
 
-	const u8* data2{(const u8*)data};
+	const u8* data2 = (const u8*)data;
 
 	switch (len & 7)
 	{
@@ -60,11 +60,11 @@ u64 murmurHash64(const void* key, s32 len, u64 seed)
 	u32 h1 = u32(seed) ^ len;
 	u32 h2 = u32(seed >> 32);
 
-	const u32* data{(const u32*)key};
+	const u32* data = (const u32*)key;
 
 	while (len >= 8)
 	{
-		u32 k1{*data++};
+		u32 k1 = *data++;
 		k1 *= m;
 		k1 ^= k1 >> r;
 		k1 *= m;
@@ -72,7 +72,7 @@ u64 murmurHash64(const void* key, s32 len, u64 seed)
 		h1 ^= k1;
 		len -= 4;
 
-		u32 k2{*data++};
+		u32 k2 = *data++;
 		k2 *= m;
 		k2 ^= k2 >> r;
 		k2 *= m;
@@ -83,7 +83,7 @@ u64 murmurHash64(const void* key, s32 len, u64 seed)
 
 	if (len >= 4)
 	{
-		u32 k1{*data++};
+		u32 k1 = *data++;
 		k1 *= m;
 		k1 ^= k1 >> r;
 		k1 *= m;

@@ -18,7 +18,7 @@ public:
 	s32 asMilliseconds() const;
 	s64 asMicroseconds() const;
 
-	GLOBAL Time now(); // NOTE(bill): OS dependent
+	GLOBAL Time now();            // NOTE(bill): OS dependent
 	GLOBAL void sleep(Time time); // Sleep on current thread
 
 private:
@@ -28,7 +28,7 @@ private:
 
 	explicit Time(s64 microseconds);
 
-	std::chrono::microseconds m_microseconds{0};
+	std::chrono::microseconds m_microseconds = {0};
 };
 
 Time seconds(f32 amount);

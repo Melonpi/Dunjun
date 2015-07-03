@@ -54,8 +54,8 @@ public:
 		defer(m_mutex.unlock());
 
 		const usize total = size + align + sizeof(Header);
-		Header* header = (Header*)malloc(total);
-		void* ptr{header + 1};
+		Header* header    = (Header*)malloc(total);
+		void* ptr         = header + 1;
 		ptr = Memory::alignForward(ptr, align);
 		fill(header, ptr, total);
 		m_totalAllocated += total;
@@ -126,7 +126,6 @@ void shutdown()
 	g_memoryGlobals = MemoryGlobals{};
 }
 } // namespace Memory
-
 
 Allocator& defaultAllocator()
 {

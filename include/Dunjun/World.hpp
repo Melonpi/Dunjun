@@ -23,10 +23,10 @@ public:
 
 	Camera mainCamera;
 	Camera playerCamera;
-	Camera* currentCamera{&playerCamera};
+	Camera* currentCamera = &playerCamera;
 
-	SceneNode* player{nullptr};
-	Level* level{nullptr};
+	SceneNode* player = nullptr;
+	Level* level      = nullptr;
 
 	std::vector<PointLight> pointLights;
 	std::vector<DirectionalLight> directionalLights;

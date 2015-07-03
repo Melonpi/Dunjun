@@ -4,9 +4,8 @@
 #include <thread>
 
 #if defined(DUNJUN_COMPILER_MSVC)
-	#include <Windows.h>
+#include <Windows.h>
 #endif
-
 
 namespace Dunjun
 {
@@ -38,9 +37,10 @@ Time Time::now()
 	// and below. This may have been fixed in MSVC14 but unsure as of yet.
 
 	// Force the following code to run on first core
-	// NOTE(bill): See http://msdn.microsoft.com/en-us/library/windows/desktop/ms644904(v=vs.85).aspx
-	HANDLE currentThread{GetCurrentThread()};
-	DWORD_PTR previousMask{SetThreadAffinityMask(currentThread, 1)};
+	// NOTE(bill): See
+	// http://msdn.microsoft.com/en-us/library/windows/desktop/ms644904(v=vs.85).aspx
+	HANDLE currentThread   = GetCurrentThread();
+	DWORD_PTR previousMask = SetThreadAffinityMask(currentThread, 1);
 
 	// Get the frequency of the performance counter
 	// It is constant across the program's lifetime
@@ -61,7 +61,7 @@ Time Time::now()
 	auto now = std::chrono::high_resolution_clock::now().time_since_epoch();
 
 	return microseconds(
-		std::chrono::duration_cast<std::chrono::microseconds>(now).count());
+	    std::chrono::duration_cast<std::chrono::microseconds>(now).count());
 }
 #endif
 
@@ -77,7 +77,7 @@ void Time::sleep(Time time)
 	// Wait..
 	::Sleep(time.asMilliseconds());
 
-	 // Reset the timer resolution back to the system default
+	// Reset the timer resolution back to the system default
 	timeBeginPeriod(tc.wPeriodMin);
 #else
 	std::this_thread::sleep_for(

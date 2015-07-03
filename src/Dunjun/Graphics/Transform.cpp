@@ -9,9 +9,9 @@ Transform operator*(const Transform& ps, const Transform& ls)
 {
 	Transform ws;
 
-	ws.position = ps.position + ps.orientation * (ps.scale * ls.position);
+	ws.position    = ps.position + ps.orientation * (ps.scale * ls.position);
 	ws.orientation = ps.orientation * ls.orientation;
-	ws.scale = ps.scale * (ps.orientation * ls.scale);
+	ws.scale       = ps.scale * (ps.orientation * ls.scale);
 
 	return ws;
 }
@@ -30,9 +30,9 @@ Transform operator/(const Transform& ws, const Transform& ps)
 
 	const Quaternion psConjugate = conjugate(ps.orientation);
 
-	ls.position = (psConjugate * (ws.position - ps.position)) / ps.scale;
+	ls.position    = (psConjugate * (ws.position - ps.position)) / ps.scale;
 	ls.orientation = psConjugate * ws.orientation;
-	ls.scale = psConjugate * (ws.scale / ps.scale);
+	ls.scale       = psConjugate * (ws.scale / ps.scale);
 
 	return ls;
 }
@@ -56,9 +56,9 @@ Transform inverse(const Transform& t)
 
 	Transform invTransform;
 
-	invTransform.position = (invOrientation * -t.position) / t.scale;
+	invTransform.position    = (invOrientation * -t.position) / t.scale;
 	invTransform.orientation = invOrientation;
-	invTransform.scale = invOrientation * (Vector3{1, 1, 1} / t.scale);
+	invTransform.scale       = invOrientation * (Vector3{1, 1, 1} / t.scale);
 
 	return invTransform;
 }

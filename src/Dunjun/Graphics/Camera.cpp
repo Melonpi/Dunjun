@@ -12,7 +12,7 @@ void Camera::lookAt(const Vector3& position, const Vector3& up)
 
 void Camera::offsetOrientation(const Radian& yaw, const Radian& pitch)
 {
-	const Quaternion yawRot = angleAxis(yaw, {0, 1, 0});   // absolute up
+	const Quaternion yawRot   = angleAxis(yaw, {0, 1, 0}); // absolute up
 	const Quaternion pitchRot = angleAxis(pitch, right()); // relative right
 
 	transform.orientation = yawRot * pitchRot * transform.orientation;
@@ -51,17 +51,21 @@ Matrix4 Camera::getProjection() const
 {
 	Matrix4 proj = Matrix4::Identity;
 
-	if (projectionType == ProjectionType::Perspective)
+	switch (projectionType)
+	{
+	case ProjectionType::Perspective:
 	{
 		proj = Math::perspective(
 		    fieldOfView, viewportAspectRatio, nearPlane, farPlane);
+		break;
 	}
-	else if (projectionType == ProjectionType::InfinitePerspective)
+	case ProjectionType::InfinitePerspective:
 	{
 		proj = Math::infinitePerspective(
 		    fieldOfView, viewportAspectRatio, nearPlane);
+		break;
 	}
-	else if (projectionType == ProjectionType::Orthographic)
+	case ProjectionType::Orthographic:
 	{
 		f32 distance{0.5f * (farPlane - nearPlane)};
 		proj = Math::ortho(-orthoScale * viewportAspectRatio,
@@ -70,6 +74,8 @@ Matrix4 Camera::getProjection() const
 		                   orthoScale,
 		                   -distance,
 		                   distance);
+		break;
+	}
 	}
 
 	return proj;

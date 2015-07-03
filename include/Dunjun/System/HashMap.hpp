@@ -81,7 +81,7 @@ void removeAll(HashMap<T>& h, u64 key);
 
 namespace Impl
 {
-GLOBAL const usize EndOfList{(usize)(-1)};
+GLOBAL const usize EndOfList = (usize)(-1);
 
 // Type for Result with holds the indexes of the hash; data; previous data
 struct FindResult
@@ -95,9 +95,9 @@ template <typename T>
 usize addEntry(HashMap<T>& h, u64 key)
 {
 	typename HashMap<T>::Entry e;
-	e.key = key;
-	e.next = Impl::EndOfList;
-	usize eIndex{len(h.data)};
+	e.key        = key;
+	e.next       = Impl::EndOfList;
+	usize eIndex = len(h.data);
 	pushBack(h.data, e);
 
 	return eIndex;
@@ -131,7 +131,7 @@ FindResult find(const HashMap<T>& h, u64 key)
 {
 	FindResult fr;
 	fr.hashIndex = Impl::EndOfList;
-	fr.dataPrev = Impl::EndOfList;
+	fr.dataPrev  = Impl::EndOfList;
 	fr.dataIndex = Impl::EndOfList;
 
 	if (len(h.hashes) == 0)
@@ -143,7 +143,7 @@ FindResult find(const HashMap<T>& h, u64 key)
 	{
 		if (h.data[fr.dataIndex].key == key)
 			return fr;
-		fr.dataPrev = fr.dataIndex;
+		fr.dataPrev  = fr.dataIndex;
 		fr.dataIndex = h.data[fr.dataIndex].next;
 	}
 
@@ -155,7 +155,7 @@ FindResult find(const HashMap<T>& h, const typename HashMap<T>::Entry* e)
 {
 	FindResult fr;
 	fr.hashIndex = Impl::EndOfList;
-	fr.dataPrev = Impl::EndOfList;
+	fr.dataPrev  = Impl::EndOfList;
 	fr.dataIndex = Impl::EndOfList;
 
 	if (len(h.hashes) == 0 || !e)
@@ -167,7 +167,7 @@ FindResult find(const HashMap<T>& h, const typename HashMap<T>::Entry* e)
 	{
 		if (&h.data[fr.dataIndex] == e)
 			return fr;
-		fr.dataPrev = fr.dataIndex;
+		fr.dataPrev  = fr.dataIndex;
 		fr.dataIndex = h.data[fr.dataIndex].next;
 	}
 
@@ -178,7 +178,7 @@ template <typename T>
 usize make(HashMap<T>& h, u64 key)
 {
 	const FindResult fr = Impl::find(h, key);
-	const usize index{Impl::addEntry(h, key)};
+	const usize index   = Impl::addEntry(h, key);
 
 	if (fr.dataPrev == Impl::EndOfList)
 		h.hashes[fr.hashIndex] = index;
@@ -223,21 +223,21 @@ usize findOrMake(HashMap<T>& h, u64 key)
 template <typename T>
 void rehash(HashMap<T>& h, usize newCapacity)
 {
-	HashMap<T> nh{*h.hashes.allocator};
+	HashMap<T> nh = *h.hashes.allocator;
 	resize(nh.hashes, newCapacity);
-	const usize oldLength{len(h.data)};
+	const usize oldLength = len(h.data);
 	reserve(nh.data, oldLength);
 
-	for (usize i{0}; i < newCapacity; i++)
+	for (usize i = 0; i < newCapacity; i++)
 		nh.hashes[i] = Impl::EndOfList;
 
-	for (usize i{0}; i < oldLength; i++)
+	for (usize i = 0; i < oldLength; i++)
 	{
 		auto& e = h.data[i];
 		Multi::insert(nh, e.key, e.value);
 	}
 
-	HashMap<T> empty{*h.hashes.allocator};
+	HashMap<T> empty = *h.hashes.allocator;
 	h.~HashMap<T>();
 
 	memcpy(&h, &nh, sizeof(HashMap<T>));
@@ -247,7 +247,7 @@ void rehash(HashMap<T>& h, usize newCapacity)
 template <typename T>
 void grow(HashMap<T>& h)
 {
-	const usize newCapacity{2 * len(h.data) + 2};
+	const usize newCapacity = 2 * len(h.data) + 2;
 	rehash(h, newCapacity);
 }
 
@@ -255,7 +255,7 @@ template <typename T>
 bool full(HashMap<T>& h)
 {
 	// Make sure that there is enough space
-	const f32 maximumLoadCoefficient{0.75f};
+	const f32 maximumLoadCoefficient = 0.75f;
 	return len(h.data) >= maximumLoadCoefficient * len(h.hashes);
 }
 } // namespace Impl
@@ -271,7 +271,7 @@ inline bool has(const HashMap<T>& h, u64 key)
 template <typename T>
 inline const T& get(const HashMap<T>& h, u64 key, const T& defaultValue)
 {
-	const usize index{Impl::findOrFail(h, key)};
+	const usize index = Impl::findOrFail(h, key);
 
 	if (index == Impl::EndOfList)
 		return defaultValue;
@@ -284,7 +284,7 @@ inline void set(HashMap<T>& h, u64 key, const T& value)
 	if (len(h.hashes) == 0)
 		Impl::grow(h);
 
-	const usize index{Impl::findOrMake(h, key)};
+	const usize index   = Impl::findOrMake(h, key);
 	h.data[index].value = value;
 	if (Impl::full(h))
 		Impl::grow(h);
@@ -338,7 +338,7 @@ inline void get(const HashMap<T>& h, u64 key, Array<T>& items)
 template <typename T>
 inline usize count(const HashMap<T>& h, u64 key)
 {
-	usize c{0};
+	usize c = 0;
 	auto e = findFirst(h, key);
 	while (e)
 	{
@@ -355,7 +355,7 @@ inline void insert(HashMap<T>& h, u64 key, const T& value)
 	if (len(h.hashes) == 0)
 		Impl::grow(h);
 
-	const usize next{Impl::make(h, key)};
+	const usize next   = Impl::make(h, key);
 	h.data[next].value = value;
 
 	if (Impl::full(h))
@@ -365,7 +365,7 @@ inline void insert(HashMap<T>& h, u64 key, const T& value)
 template <typename T>
 inline const typename HashMap<T>::Entry* findFirst(const HashMap<T>& h, u64 key)
 {
-	const usize index{Impl::findOrFail(h, key)};
+	const usize index = Impl::findOrFail(h, key);
 	if (index == Impl::EndOfList)
 		return nullptr;
 	return &h.data[index];
@@ -373,12 +373,12 @@ inline const typename HashMap<T>::Entry* findFirst(const HashMap<T>& h, u64 key)
 
 template <typename T>
 inline const typename HashMap<T>::Entry*
-findNext(const HashMap<T>& h, const typename HashMap<T>::Entry* e)
+    findNext(const HashMap<T>& h, const typename HashMap<T>::Entry* e)
 {
 	if (!e)
 		return nullptr;
 
-	usize index{e->next};
+	usize index = e->next;
 	while (index != Impl::EndOfList)
 	{
 		if (h.data[index].key == e->key)

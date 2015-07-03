@@ -38,7 +38,6 @@ union Vector4
 	inline const f32& operator[](usize index) const { return data[index]; }
 };
 
-
 bool operator==(const Vector4& a, const Vector4& b);
 bool operator!=(const Vector4& a, const Vector4& b);
 
@@ -73,8 +72,8 @@ Vector4 normalize(const Vector4& a);
 
 inline std::ostream& operator<<(std::ostream& os, const Vector4& v)
 {
-	return os << "Vector4{" << v.x << ", " << v.y << ", " << v.z << ", "
-	          << v.w << "}";
+	return os << "Vector4{" << v.x << ", " << v.y << ", " << v.z << ", " << v.w
+	          << "}";
 }
 
 } // namespace Dunjun

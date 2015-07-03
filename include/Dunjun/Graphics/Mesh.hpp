@@ -34,7 +34,7 @@ struct Mesh
 {
 	struct Data
 	{
-		DrawType drawType{DrawType::Triangles};
+		DrawType drawType = DrawType::Triangles;
 
 		VertexArray vertices;
 		std::vector<u32> indices;
@@ -64,13 +64,13 @@ struct Mesh
 	// NOTE(bill): These mutables are a little bit of a hack but it works and
 	// is semi-const correct
 
-	mutable u32 vbo{0};
-	mutable u32 ibo{0};
+	mutable u32 vbo = 0;
+	mutable u32 ibo = 0;
 
-	mutable bool generated{false};
+	mutable bool generated = false;
 
-	DrawType drawType{DrawType::Triangles};
-	s32 drawCount{0};
+	DrawType drawType = DrawType::Triangles;
+	s32 drawCount     = 0;
 
 	Mesh();
 	Mesh(const Data& data);
@@ -90,7 +90,6 @@ struct Mesh
 		if (ibo)
 			glDeleteBuffers(1, &ibo);
 	}
-
 };
 } // namespace Dunjun
 

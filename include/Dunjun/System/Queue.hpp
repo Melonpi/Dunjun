@@ -21,7 +21,7 @@ usize space(const Queue<T>& q);
 // Appends an item to the queue and returns the number of items in the queue
 // after the append
 template <typename T>
-usize pushBack(Queue<T>& q, const T& item);
+usize append(Queue<T>& q, const T& item);
 
 // Removes the last element from the queue
 template <typename T>
@@ -30,7 +30,7 @@ void popBack(Queue<T>& q);
 // Appends an item to the front of the queue and returns the number of items in
 // the queue after the append
 template <typename T>
-usize pushFront(Queue<T>& q, const T& item);
+usize prepend(Queue<T>& q, const T& item);
 
 // Removes the first element from the queue
 template <typename T>
@@ -39,7 +39,7 @@ void popFront(Queue<T>& q);
 // Appends items to the queue and returns the number of items in the queue after
 // the queue
 template <typename T>
-usize push(Queue<T>& q, const T* items, usize count);
+usize append(Queue<T>& q, const T* items, usize count);
 
 // Removes a number of elements
 template <typename T>
@@ -98,7 +98,7 @@ void grow(Queue<T>& q, usize minCapacity = 0);
 ////////////////////////////////////////
 
 template <typename T>
-inline usize pushBack(Queue<T>& q, const T& item)
+inline usize append(Queue<T>& q, const T& item)
 {
 	if (space(q) == 0)
 		grow(q);
@@ -117,7 +117,7 @@ inline void popBack(Queue<T>& q)
 }
 
 template <typename T>
-inline usize pushFront(Queue<T>& q, const T& item)
+inline usize prepend(Queue<T>& q, const T& item)
 {
 	if (space(q) == 0)
 		grow(q);
@@ -141,15 +141,15 @@ inline void popFront(Queue<T>& q)
 }
 
 template <typename T>
-inline usize push(Queue<T>& q, const T* items, usize count)
+inline usize append(Queue<T>& q, const T* items, usize count)
 {
 	if (space(q) < count)
 		grow(q, q.length + count);
 
-	const usize length{len(q.data)};
-	const usize insert{(q.offset + q.length) % length};
+	const usize length = len(q.data);
+	const usize insert = (q.offset + q.length) % length;
 
-	usize toInsert{count};
+	usize toInsert = count;
 	if (insert + toInsert > length)
 		toInsert = length - insert;
 
@@ -202,7 +202,7 @@ inline const T* begin(const Queue<T>& q)
 template <typename T>
 inline T* end(Queue<T>& q)
 {
-	const usize endPos{q.offset + q.length};
+	const usize endPos = q.offset + q.length;
 
 	if (endPos >= len(q.data))
 		return end(q.data);
@@ -212,7 +212,7 @@ inline T* end(Queue<T>& q)
 template <typename T>
 inline const T* end(const Queue<T>& q)
 {
-	const usize endPos{q.offset + q.length};
+	const usize endPos = q.offset + q.length;
 
 	if (endPos >= len(q.data))
 		return end(q.data);
@@ -257,7 +257,7 @@ inline void clear(Queue<T>& q)
 template <typename T>
 inline void setCapacity(Queue<T>& q, usize capacity)
 {
-	const usize oldLength{len(q.data)};
+	const usize oldLength = len(q.data);
 
 	resize(q.data, capacity);
 
@@ -281,7 +281,7 @@ inline void reserve(Queue<T>& q, usize capacity)
 template <typename T>
 inline void grow(Queue<T>& q, usize minCapacity)
 {
-	usize newCapacity{2 * len(q.data) + 2};
+	usize newCapacity = 2 * len(q.data) + 2;
 	if (newCapacity < minCapacity)
 		newCapacity = minCapacity;
 

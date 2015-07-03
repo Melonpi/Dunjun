@@ -11,8 +11,8 @@ namespace Dunjun
 class Allocator
 {
 public:
-	GLOBAL const usize DefaultAlign{4};
-	GLOBAL const usize SizeNotTracked{(usize)(-1)};
+	GLOBAL const usize DefaultAlign   = 4;
+	GLOBAL const usize SizeNotTracked = (usize)(-1);
 
 	Allocator() {}
 	virtual ~Allocator() {}

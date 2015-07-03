@@ -15,19 +15,19 @@ namespace Dunjun
 {
 namespace Style
 {
-	enum : u32
-	{
-		Borderless = 1,
-		Windowed   = 2,
-		Fullscreen = 4,
-		Visible    = 8,
-		Hidden     = 16,
-		Minimized  = 32,
-		Maximized  = 64,
-		Resizable  = 128,
+enum : u32
+{
+	Borderless = 1,
+	Windowed   = 2,
+	Fullscreen = 4,
+	Visible    = 8,
+	Hidden     = 16,
+	Minimized  = 32,
+	Maximized  = 64,
+	Resizable  = 128,
 
-		Default = Windowed | Visible | Resizable,
-	};
+	Default = Windowed | Visible | Resizable,
+};
 } // namespace Style
 
 struct Event;
@@ -52,16 +52,16 @@ public:
 	Window() = default;
 
 	explicit Window(VideoMode mode,
-					const std::string& title,
-					u32 style = Style::Default,
-					const GLContextSettings& settings = GLContextSettings{});
+	                const std::string& title,
+	                u32 style                         = Style::Default,
+	                const GLContextSettings& settings = GLContextSettings{});
 
 	virtual ~Window();
 
 	void create(VideoMode mode,
-				const std::string& title,
-				u32 style = Style::Default,
-				const GLContextSettings& settings = GLContextSettings{});
+	            const std::string& title,
+	            u32 style                         = Style::Default,
+	            const GLContextSettings& settings = GLContextSettings{});
 
 	void close();
 	bool isOpen() const;
@@ -93,10 +93,10 @@ public:
 	SDL_Window* getSDLHandle() const { return m_impl; }
 
 private:
-	SDL_Window* m_impl{nullptr};
-	SDL_GLContext m_glContext{};
-	Clock m_clock{};
-	Time m_frameTimeLimit{Time::Zero};
+	SDL_Window* m_impl = nullptr;
+	SDL_GLContext m_glContext = {};
+	Clock m_clock ={};
+	Time m_frameTimeLimit = Time::Zero;
 	// Dimensions size;
 };
 } // namespace Dunjun

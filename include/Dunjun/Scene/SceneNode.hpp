@@ -47,15 +47,15 @@ public:
 
 	GLOBAL const usize MaxComponents{32};
 	using ComponentBitset = std::bitset<MaxComponents>;
-	using ComponentArray = std::array<NodeComponent*, MaxComponents>;
-	using Id = u64; // There could be billions of them, even old ones!
+	using ComponentArray  = std::array<NodeComponent*, MaxComponents>;
+	using Id              = u64; // There could be billions of them, even old ones!
 
 	const Id id;
 	std::string name;
-	Transform transform{};
-	bool enabled{true}; // TODO(bill): Remove State change
+	Transform transform;
+	bool enabled = true; // TODO(bill): Remove State change
 
-	SceneNode* parent{nullptr};
+	SceneNode* parent = nullptr;
 	std::deque<UPtr> children{};
 
 	std::deque<NodeComponent::UPtr> components{};
@@ -83,8 +83,9 @@ public:
 	{
 		static_assert(std::is_base_of<NodeComponent, ComponentType>::value,
 		              "ComponentType must inherit from NodeComponent.");
-		assert(!hasComponent<ComponentType>() &&
-		       "SceneNode::addComponent component of that type already exists.");
+		assert(
+		    !hasComponent<ComponentType>() &&
+		    "SceneNode::addComponent component of that type already exists.");
 
 		ComponentType* component{
 		    new ComponentType{std::forward<Args>(args)...}};
@@ -111,10 +112,11 @@ public:
 		static_assert(std::is_base_of<NodeComponent, ComponentType>::value,
 		              "ComponentType must inherit from NodeComponent.");
 
-		std::string message{"SceneNode::getComponent component not in this SceneNode." + typeid(ComponentType).name()};
+		std::string message{
+		    "SceneNode::getComponent component not in this SceneNode." +
+		    typeid(ComponentType).name()};
 
-		assert(hasComponent<ComponentType>() &&
-		       message.c_str());
+		assert(hasComponent<ComponentType>() && message.c_str());
 		auto ptr = componentArray[getComponentTypeId<ComponentType>()];
 		return *reinterpret_cast<ComponentType*>(ptr);
 	}

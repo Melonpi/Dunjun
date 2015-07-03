@@ -1,4 +1,3 @@
-#pragma once
 #ifndef DUNJUN_GRAPHICS_CAMERA_HPP
 #define DUNJUN_GRAPHICS_CAMERA_HPP
 
@@ -16,13 +15,13 @@ enum class ProjectionType
 
 struct Camera
 {
-	Transform transform{};
-	Radian fieldOfView{Degree{50}};
-	f32 orthoScale{1.0f};
-	f32 nearPlane{0.1f};
-	f32 farPlane{256.0f};
-	f32 viewportAspectRatio{4.0f / 3.0f};
-	ProjectionType projectionType{ProjectionType::Perspective};
+	Transform transform           = Transform{};
+	Radian fieldOfView            = Degree{50};
+	f32 orthoScale                = 1.0f;
+	f32 nearPlane                 = 0.1f;
+	f32 farPlane                  = 256.0f;
+	f32 viewportAspectRatio       = (4.0f / 3.0f);
+	ProjectionType projectionType = ProjectionType::Perspective;
 
 	Camera() = default;
 	Camera(const Camera& other) = default;

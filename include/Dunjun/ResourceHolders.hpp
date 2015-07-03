@@ -14,8 +14,9 @@ public:
 	                    TextureFilter minMagFilter = TextureFilter::Linear,
 	                    TextureWrapMode wrapMode = TextureWrapMode::ClampToEdge)
 	{
-		std::unique_ptr<Texture> tex{make_unique<Texture>()};
-		bool t{tex->loadFromFile(BaseDirectory::Textures + filename, minMagFilter, wrapMode)};
+		std::unique_ptr<Texture> tex = make_unique<Texture>();
+		bool t = tex->loadFromFile(
+		    BaseDirectory::Textures + filename, minMagFilter, wrapMode);
 		if (t)
 			insert(id, std::move(tex));
 		return t;
@@ -27,8 +28,8 @@ public:
 	                    TextureFilter minMagFilter = TextureFilter::Linear,
 	                    TextureWrapMode wrapMode = TextureWrapMode::ClampToEdge)
 	{
-		std::unique_ptr<Texture> tex{make_unique<Texture>()};
-		bool t{tex->loadFromImage(image, minMagFilter, wrapMode)};
+		std::unique_ptr<Texture> tex = make_unique<Texture>();
+		bool t = tex->loadFromImage(image, minMagFilter, wrapMode);
 		if (t)
 			insert(id, std::move(tex));
 
@@ -44,7 +45,7 @@ public:
 	                    const std::string& fragmentFilename,
 	                    bool bindDefaultAttribLocation = true)
 	{
-		std::unique_ptr<ShaderProgram> shaders{make_unique<ShaderProgram>()};
+		std::unique_ptr<ShaderProgram> shaders = make_unique<ShaderProgram>();
 		if (!shaders->attachShaderFromFile(ShaderType::Vertex, vertexFilename))
 		{
 			std::cerr << shaders->errorLog << std::endl;
@@ -83,7 +84,7 @@ public:
 	}
 };
 
-using MeshHolder = ResourceHolder<Mesh, std::string>;
+using MeshHolder     = ResourceHolder<Mesh, std::string>;
 using MaterialHolder = ResourceHolder<Material, std::string>;
 
 extern TextureHolder g_textureHolder;

@@ -50,7 +50,7 @@ Vector3 operator*(const Quaternion& q, const Vector3& v);
 inline std::ostream& operator<<(std::ostream& os, const Quaternion& q)
 {
 	os << "Quaternion{";
-	for (usize i{0}; i < 4; i++)
+	for (usize i = 0; i < 4; i++)
 	{
 		os << q.data[i];
 		if (i < 3)

@@ -70,7 +70,7 @@ SceneRenderer& SceneRenderer::geometryPass()
 {
 	// TODO(bill): Sort by mesh? - Instancing?
 	std::sort(std::begin(modelInstances),
-			  std::end(modelInstances),
+	          std::end(modelInstances),
 	          [](const ModelInstance& a, const ModelInstance& b) -> bool
 	          {
 		          const auto* A = a.meshRenderer->material;
@@ -107,7 +107,9 @@ SceneRenderer& SceneRenderer::geometryPass()
 				                   inst.meshRenderer->material->diffuseColor);
 				shaders.setUniform("u_material.specularColor",
 				                   inst.meshRenderer->material->specularColor);
-				shaders.setUniform("u_material.specularExponent", inst.meshRenderer->material->specularExponent);
+				shaders.setUniform(
+				    "u_material.specularExponent",
+				    inst.meshRenderer->material->specularExponent);
 			}
 			setTexture(inst.meshRenderer->material->diffuseMap, 0);
 
@@ -127,10 +129,10 @@ SceneRenderer& SceneRenderer::lightPass()
 {
 	lBuffer.create(gBuffer.width, gBuffer.height, RenderTexture::Lighting);
 
-	Texture::bind(&gBuffer.textures[GBuffer::Diffuse],  0);
+	Texture::bind(&gBuffer.textures[GBuffer::Diffuse], 0);
 	Texture::bind(&gBuffer.textures[GBuffer::Specular], 1);
-	Texture::bind(&gBuffer.textures[GBuffer::Normal],   2);
-	Texture::bind(&gBuffer.textures[GBuffer::Depth],    3);
+	Texture::bind(&gBuffer.textures[GBuffer::Normal], 2);
+	Texture::bind(&gBuffer.textures[GBuffer::Depth], 3);
 
 	RenderTexture::bind(&lBuffer);
 	{
@@ -148,7 +150,7 @@ SceneRenderer& SceneRenderer::lightPass()
 
 			shaders.use();
 
-			Vector3 intensities{};
+			Vector3 intensities;
 			intensities.r = ambientColor.r * ambientIntensity;
 			intensities.g = ambientColor.g * ambientIntensity;
 			intensities.b = ambientColor.b * ambientIntensity;
@@ -177,8 +179,10 @@ SceneRenderer& SceneRenderer::lightPass()
 				lightIntensities.b = light.color.b / 255.0f;
 				lightIntensities *= light.intensity;
 
-				shaders.setUniform("u_light.base.intensities", lightIntensities);
-				shaders.setUniform("u_light.direction", normalize(light.direction));
+				shaders.setUniform("u_light.base.intensities",
+				                   lightIntensities);
+				shaders.setUniform("u_light.direction",
+				                   normalize(light.direction));
 
 				draw(&g_meshHolder.get("quad"));
 			}
@@ -207,15 +211,16 @@ SceneRenderer& SceneRenderer::lightPass()
 				lightIntensities.b = light.color.b / 255.0f;
 				lightIntensities *= light.intensity;
 
-				shaders.setUniform("u_light.base.intensities", lightIntensities);
+				shaders.setUniform("u_light.base.intensities",
+				                   lightIntensities);
 				shaders.setUniform("u_light.position", light.position);
 
 				shaders.setUniform("u_light.attenuation.constant",
-								   light.attenuation.constant);
+				                   light.attenuation.constant);
 				shaders.setUniform("u_light.attenuation.linear",
-								   light.attenuation.linear);
+				                   light.attenuation.linear);
 				shaders.setUniform("u_light.attenuation.quadratic",
-								   light.attenuation.quadratic);
+				                   light.attenuation.quadratic);
 
 				shaders.setUniform("u_light.range", light.range);
 
@@ -247,20 +252,22 @@ SceneRenderer& SceneRenderer::lightPass()
 				lightIntensities.b = light.color.b / 255.0f;
 				lightIntensities *= light.intensity;
 
-				shaders.setUniform("u_light.point.base.intensities", lightIntensities);
+				shaders.setUniform("u_light.point.base.intensities",
+				                   lightIntensities);
 				shaders.setUniform("u_light.point.position", light.position);
 
 				shaders.setUniform("u_light.point.attenuation.constant",
-								   light.attenuation.constant);
+				                   light.attenuation.constant);
 				shaders.setUniform("u_light.point.attenuation.linear",
-								   light.attenuation.linear);
+				                   light.attenuation.linear);
 				shaders.setUniform("u_light.point.attenuation.quadratic",
-								   light.attenuation.quadratic);
+				                   light.attenuation.quadratic);
 
 				shaders.setUniform("u_light.point.range", light.range);
 
 				shaders.setUniform("u_light.direction", light.direction);
-				shaders.setUniform("u_light.coneAngle", static_cast<f32>(light.coneAngle));
+				shaders.setUniform("u_light.coneAngle",
+				                   static_cast<f32>(light.coneAngle));
 
 				draw(&g_meshHolder.get("quad"));
 			}

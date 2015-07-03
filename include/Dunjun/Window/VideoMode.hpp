@@ -9,12 +9,12 @@ namespace Dunjun
 {
 struct VideoMode
 {
-	u32 width{0};
-	u32 height{0};
-	u32 bitsPerPixel{24};
+	u32 width        = 0;
+	u32 height       = 0;
+	u32 bitsPerPixel = 24;
 
 	VideoMode() = default;
-	VideoMode(u32 width, u32 height, u32 bitsPerPixel=24);
+	VideoMode(u32 width, u32 height, u32 bitsPerPixel = 24);
 
 	GLOBAL VideoMode getDesktopMode();
 	GLOBAL const std::vector<VideoMode>& getFullscreenModes();

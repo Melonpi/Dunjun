@@ -22,27 +22,27 @@ class SceneRenderer : private NonCopyable
 public:
 	struct ModelInstance
 	{
-		const MeshRenderer* meshRenderer{nullptr};
-		Transform transform{};
+		const MeshRenderer* meshRenderer = nullptr;
+		Transform transform;
 	};
 
-	World* world{nullptr};
+	World* world = nullptr;
 
-	u32 fbWidth{512};
-	u32 fbHeight{512};
+	u32 fbWidth = 512;
+	u32 fbHeight = 512;
 
-	GBuffer gBuffer{};
-	RenderTexture lBuffer{};
+	GBuffer gBuffer;
+	RenderTexture lBuffer;
 
-	RenderTexture outTexture{};
+	RenderTexture outTexture;
 
-	Color ambientColor{222, 227, 234};
-	f32   ambientIntensity{0.02f};
+	Color ambientColor = Color{222, 227, 234, 255};
+	f32   ambientIntensity = 0.02f;
 
-	const Camera* camera{nullptr};
-	const Material* currentMaterial{nullptr};
-	const ShaderProgram* currentShaders{nullptr};
-	const Texture* currentTexture{nullptr};
+	const Camera* camera = nullptr;
+	const Material* currentMaterial = nullptr;
+	const ShaderProgram* currentShaders = nullptr;
+	const Texture* currentTexture = nullptr;
 
 	std::deque<ModelInstance> modelInstances{};
 

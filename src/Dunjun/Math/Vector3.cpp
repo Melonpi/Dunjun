@@ -6,7 +6,7 @@ namespace Dunjun
 {
 bool operator==(const Vector3& a, const Vector3& b)
 {
-	for (usize i{0}; i < 3; i++)
+	for (usize i = 0; i < 3; i++)
 	{
 		if (a[i] != b[i])
 			return false;
@@ -46,7 +46,7 @@ Vector3 operator/(const Vector3& a, f32 scalar)
 Vector3 operator*(const Vector3& a, const Vector3& b)
 {
 	Vector3 result;
-	for (usize i{0}; i < 3; i++)
+	for (usize i = 0; i < 3; i++)
 		result[i] = a[i] * b[i];
 	return result;
 }
@@ -55,7 +55,7 @@ Vector3 operator*(const Vector3& a, const Vector3& b)
 Vector3 operator/(const Vector3& a, const Vector3& b)
 {
 	Vector3 result;
-	for (usize i{0}; i < 3; i++)
+	for (usize i = 0; i < 3; i++)
 		result[i] = a[i] / b[i];
 	return result;
 }

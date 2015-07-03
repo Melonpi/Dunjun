@@ -36,16 +36,15 @@ struct Material
 	    - color
 	 */
 
-
 	// TODO(bill): Restrict types/number of shaders and use an enum rather
 	// than a pointer?
-	ShaderProgram* shaders{nullptr};
+	ShaderProgram* shaders = nullptr;
 
-	Texture* diffuseMap{nullptr};
-	Color diffuseColor{0xFF, 0xFF, 0xFF};
+	Texture* diffuseMap = nullptr;
+	Color diffuseColor  = Color{255, 255, 255, 255};
 
-	Color specularColor{0xFF, 0xFF, 0xFF};
-	f32 specularExponent{80.0f};
+	Color specularColor  = Color{255, 255, 255, 255};
+	f32 specularExponent = 80.0f;
 };
 } // namespace Dunjun
 

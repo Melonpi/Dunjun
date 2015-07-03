@@ -4,12 +4,12 @@ namespace Dunjun
 {
 void Mesh::Data::generateNormals()
 {
-	u32 li{(u32)len(indices)};
-	for (u32 i{0}; i < li; i += 3)
+	u32 li = (u32)len(indices);
+	for (u32 i = 0; i < li; i += 3)
 	{
-		Vertex& v0{vertices[indices[i + 0]]};
-		Vertex& v1{vertices[indices[i + 1]]};
-		Vertex& v2{vertices[indices[i + 2]]};
+		Vertex& v0 = vertices[indices[i + 0]];
+		Vertex& v1 = vertices[indices[i + 1]];
+		Vertex& v2 = vertices[indices[i + 2]];
 
 		const Vector3 a = v1.position - v0.position;
 		const Vector3 b = v2.position - v1.position;
@@ -20,8 +20,8 @@ void Mesh::Data::generateNormals()
 		v1.normal += normal;
 		v2.normal += normal;
 	}
-	usize lv{len(vertices)};
-	for (usize i{0}; i < lv; i++)
+	usize lv = len(vertices);
+	for (usize i = 0; i < lv; i++)
 		vertices[i].normal = normalize(vertices[i].normal);
 }
 

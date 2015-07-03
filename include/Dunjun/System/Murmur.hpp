@@ -18,4 +18,3 @@ inline u64 stringHash(const char* str, u64 seed = 0x9747b28c)
 } // namespace Dunjun
 
 #endif
-

@@ -31,10 +31,10 @@ struct ModelInstance
 
 namespace
 {
-GLOBAL const Time TimeStep{seconds(1.0f / 60.0f)};
-GLOBAL const u32 FrameLimit{288};
+GLOBAL const Time TimeStep  = seconds(1.0f / 60.0f);
+GLOBAL const u32 FrameLimit = 288;
 
-GLOBAL bool g_running{true};
+GLOBAL bool g_running = true;
 } // namespace (anonymous)
 
 GLOBAL Window g_window;
@@ -79,27 +79,27 @@ INTERNAL void loadMaterials()
 	                               TextureFilter::Nearest);
 
 	{
-		auto mat = make_unique<Material>();
-		mat->shaders = &g_shaderHolder.get("geometryPass");
+		auto mat        = make_unique<Material>();
+		mat->shaders    = &g_shaderHolder.get("geometryPass");
 		mat->diffuseMap = &g_textureHolder.get("default");
 		g_materialHolder.insert("default", std::move(mat));
 	}
 	{
-		auto mat = make_unique<Material>();
-		mat->shaders = &g_shaderHolder.get("geometryPass");
-		mat->diffuseMap = &g_textureHolder.get("kitten");
+		auto mat              = make_unique<Material>();
+		mat->shaders          = &g_shaderHolder.get("geometryPass");
+		mat->diffuseMap       = &g_textureHolder.get("kitten");
 		mat->specularExponent = 1e5;
 		g_materialHolder.insert("cat", std::move(mat));
 	}
 	{
-		auto mat = make_unique<Material>();
-		mat->shaders = &g_shaderHolder.get("geometryPass");
+		auto mat        = make_unique<Material>();
+		mat->shaders    = &g_shaderHolder.get("geometryPass");
 		mat->diffuseMap = &g_textureHolder.get("stone");
 		g_materialHolder.insert("stone", std::move(mat));
 	}
 	{
-		auto mat = make_unique<Material>();
-		mat->shaders = &g_shaderHolder.get("geometryPass");
+		auto mat        = make_unique<Material>();
+		mat->shaders    = &g_shaderHolder.get("geometryPass");
 		mat->diffuseMap = &g_textureHolder.get("terrain");
 		g_materialHolder.insert("terrain", std::move(mat));
 	}
@@ -122,7 +122,7 @@ INTERNAL void loadSpriteAsset()
 		g_meshHolder.insert("sprite", make_unique<Mesh>(meshData));
 
 		g_sprite.material = &g_materialHolder.get("cat");
-		g_sprite.mesh = &g_meshHolder.get("sprite");
+		g_sprite.mesh     = &g_meshHolder.get("sprite");
 	}
 	{
 		Mesh::Data meshData;
@@ -170,29 +170,23 @@ INTERNAL void handleEvents()
 			std::exit(EXIT_SUCCESS); // TODO(bill): Remove this exit
 			break;
 		}
-
 		case Event::Resized:
 		{
 			glViewport(0, 0, event.size.width, event.size.height);
 			break;
 		}
-
 		case Event::ControllerConnected:
 		{
 			printf("Controller %d added\n", event.controller.index);
 			break;
 		}
-
 		case Event::ControllerDisconnected:
-		{
+	{
 			printf("Controller %d removed\n", event.controller.index);
 			break;
 		}
-
 		default:
-		{
 			break;
-		}
 		}
 
 		g_world.handleEvent(event);
@@ -205,18 +199,8 @@ void init(int /*argc*/, char** /*argv*/)
 {
 	Memory::init();
 
-	{
-		TempAllocator128 ta;
-		Array<s32> a{ta};
-		for (s32 i{0}; i < 64; i++)
-			pushBack(a, i);
-		assert(len(a) == 64);
-
-	}
-
-
-	u32 sdlFlags{SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK |
-	             SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC};
+	u32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK |
+	               SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC;
 
 	if (SDL_Init(sdlFlags) != 0)
 	{
@@ -252,15 +236,15 @@ void run()
 	TickCounter tc;
 
 	Time accumulator;
-	Time prevTime{Time::now()};
+	Time prevTime = Time::now();
 
-	usize frames{0};
+	usize frames = 0;
 
 	while (g_running)
 	{
-		Time currentTime{Time::now()};
-		Time dt{currentTime - prevTime};
-		prevTime = currentTime;
+		Time currentTime = Time::now();
+		Time dt          = currentTime - prevTime;
+		prevTime         = currentTime;
 		accumulator += dt;
 
 		if (accumulator > milliseconds(1200)) // remove loop of death

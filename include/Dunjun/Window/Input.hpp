@@ -19,7 +19,7 @@ namespace Input
 enum class Key
 {
 	Unknown = -1, // Unhandled key
-	A = 0,        // The A key
+	A       = 0,  // The A key
 	B,            // The B key
 	C,            // The C key
 	D,            // The D key
@@ -59,70 +59,72 @@ enum class Key
 	LControl,     // The left Control key
 	LShift,       // The left Shift key
 	LAlt,         // The left Alt key
-	LSystem,      // The left OS specific key: window (Windows and Linux), apple (MacOS X), ...
+	LSystem,      // The left OS specific key: window (Windows and Linux), apple
+                  // (MacOS X), ...
 	RControl,     // The right Control key
 	RShift,       // The right Shift key
 	RAlt,         // The right Alt key
-	RSystem,      // The right OS specific key: window (Windows and Linux), apple (MacOS X), ...
-	Menu,         // The Menu key
-	LBracket,     // The [ key
-	RBracket,     // The ] key
-	SemiColon,    // The ; key
-	Comma,        // The , key
-	Period,       // The . key
-	Apostrophe,   // The ' key
-	Slash,        // The / key
-	BackSlash,    // The \ key
-	Equal,        // The = key
-	Minus,        // The - key
-	Space,        // The Space key
-	Return,       // The Return key
-	BackSpace,    // The Backspace key
-	Tab,          // The Tabulation key
-	GraveAccent,  // The ` key
-	PageUp,       // The Page up key
-	PageDown,     // The Page down key
-	End,          // The End key
-	Home,         // The Home key
-	Insert,       // The Insert key
-	Delete,       // The Delete key
-	Add,          // The + key
-	Subtract,     // The - key
-	Multiply,     // The * key
-	Divide,       // The / key
-	Left,         // Left arrow
-	Right,        // Right arrow
-	Up,           // Up arrow
-	Down,         // Down arrow
-	Numpad0,      // The numpad 0 key
-	Numpad1,      // The numpad 1 key
-	Numpad2,      // The numpad 2 key
-	Numpad3,      // The numpad 3 key
-	Numpad4,      // The numpad 4 key
-	Numpad5,      // The numpad 5 key
-	Numpad6,      // The numpad 6 key
-	Numpad7,      // The numpad 7 key
-	Numpad8,      // The numpad 8 key
-	Numpad9,      // The numpad 9 key
-	NumpadEnter,  // The numpad Enter key
-	F1,           // The F1 key
-	F2,           // The F2 key
-	F3,           // The F3 key
-	F4,           // The F4 key
-	F5,           // The F5 key
-	F6,           // The F6 key
-	F7,           // The F7 key
-	F8,           // The F8 key
-	F9,           // The F9 key
-	F10,          // The F10 key
-	F11,          // The F11 key
-	F12,          // The F12 key
-	F13,          // The F13 key
-	F14,          // The F14 key
-	F15,          // The F15 key
-	Pause,        // The Pause key
+	RSystem,     // The right OS specific key: window (Windows and Linux), apple
+                 // (MacOS X), ...
+	Menu,        // The Menu key
+	LBracket,    // The [ key
+	RBracket,    // The ] key
+	SemiColon,   // The ; key
+	Comma,       // The , key
+	Period,      // The . key
+	Apostrophe,  // The ' key
+	Slash,       // The / key
+	BackSlash,   // The \ key
+	Equal,       // The = key
+	Minus,       // The - key
+	Space,       // The Space key
+	Return,      // The Return key
+	BackSpace,   // The Backspace key
+	Tab,         // The Tabulation key
+	GraveAccent, // The ` key
+	PageUp,      // The Page up key
+	PageDown,    // The Page down key
+	End,         // The End key
+	Home,        // The Home key
+	Insert,      // The Insert key
+	Delete,      // The Delete key
+	Add,         // The + key
+	Subtract,    // The - key
+	Multiply,    // The * key
+	Divide,      // The / key
+	Left,        // Left arrow
+	Right,       // Right arrow
+	Up,          // Up arrow
+	Down,        // Down arrow
+	Numpad0,     // The numpad 0 key
+	Numpad1,     // The numpad 1 key
+	Numpad2,     // The numpad 2 key
+	Numpad3,     // The numpad 3 key
+	Numpad4,     // The numpad 4 key
+	Numpad5,     // The numpad 5 key
+	Numpad6,     // The numpad 6 key
+	Numpad7,     // The numpad 7 key
+	Numpad8,     // The numpad 8 key
+	Numpad9,     // The numpad 9 key
+	NumpadEnter, // The numpad Enter key
+	F1,          // The F1 key
+	F2,          // The F2 key
+	F3,          // The F3 key
+	F4,          // The F4 key
+	F5,          // The F5 key
+	F6,          // The F6 key
+	F7,          // The F7 key
+	F8,          // The F8 key
+	F9,          // The F9 key
+	F10,         // The F10 key
+	F11,         // The F11 key
+	F12,         // The F12 key
+	F13,         // The F13 key
+	F14,         // The F14 key
+	F15,         // The F15 key
+	Pause,       // The Pause key
 
-	KeyCount      // Keep last -- the total number of keyboard keys
+	KeyCount // Keep last -- the total number of keyboard keys
 };
 
 enum class Mouse : u32
@@ -136,11 +138,10 @@ enum class Mouse : u32
 	Button7 = 7,
 	Button8 = 8,
 
-	ButtonLeft = Button1,
-	ButtonRight = Button2,
+	ButtonLeft   = Button1,
+	ButtonRight  = Button2,
 	ButtonMiddle = Button3,
 };
-
 
 enum class ControllerButton : u32
 {
@@ -207,17 +208,14 @@ bool isMouseButtonPressed(Mouse button);
 // Vector2 getScrollOffset();
 
 bool isControllerPresent(u32 controllerIndex);
-bool isControllerButtonPressed(u32 controllerIndex,
-							   ControllerButton button);
+bool isControllerButtonPressed(u32 controllerIndex, ControllerButton button);
 f32 getControllerAxis(u32 controllerIndex, ControllerAxis axis);
-
 
 // TODO(bill): Get type of gamepad rather than name
 // NOTE(bill): Strings are UTF-8
 std::string getControllerName(u32 controllerIndex);
 void setControllerVibration(u32 controllerIndex, f32 amount);
 void setControllerVibration(u32 controllerIndex, f32 amount, Time duration);
-
 
 // NOTE(bill): Strings are UTF-8
 bool hasClipboardString();

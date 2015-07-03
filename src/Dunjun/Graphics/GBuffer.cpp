@@ -15,7 +15,7 @@ bool GBuffer::create(u32 w, u32 h)
 	if (w == width && h == height) // GBuffer already exists
 		return true;
 
-	width = w;
+	width  = w;
 	height = h;
 
 	if (!fbo)
@@ -43,7 +43,7 @@ bool GBuffer::create(u32 w, u32 h)
 		             format,
 		             type,
 		             nullptr);
-		tex.width = w;
+		tex.width  = w;
 		tex.height = h;
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -51,8 +51,7 @@ bool GBuffer::create(u32 w, u32 h)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		glFramebufferTextureEXT(
-		    GL_FRAMEBUFFER_EXT, attachment, tex.handle, 0);
+		glFramebufferTextureEXT(GL_FRAMEBUFFER_EXT, attachment, tex.handle, 0);
 
 		if (attachment != GL_DEPTH_ATTACHMENT_EXT)
 			drawBuffers.emplace_back(attachment);

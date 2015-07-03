@@ -24,9 +24,9 @@ enum class ShaderType
 class ShaderProgram : public NonCopyable
 {
 public:
-	u32 handle{0};
-	bool isLinked{false};
-	std::string errorLog{};
+	u32 handle           = 0;
+	bool isLinked        = false;
+	std::string errorLog = {};
 
 	ShaderProgram() = default;
 	virtual ~ShaderProgram();

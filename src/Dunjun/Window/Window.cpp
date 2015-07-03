@@ -6,7 +6,7 @@ namespace Dunjun
 {
 namespace
 {
-GLOBAL const Window* fullscreenWindow{nullptr};
+GLOBAL const Window* fullscreenWindow = nullptr;
 
 INTERNAL u32 generateFlags(u32 style)
 {
@@ -34,7 +34,7 @@ INTERNAL u32 generateFlags(u32 style)
 Window::Window(VideoMode mode,
                const std::string& title,
                u32 style,
-			   const GLContextSettings& settings)
+               const GLContextSettings& settings)
 : m_impl{nullptr}
 , m_glContext{}
 , m_frameTimeLimit{Time::Zero}
@@ -47,7 +47,7 @@ Window::~Window() { close(); }
 void Window::create(VideoMode mode,
                     const std::string& title,
                     u32 style,
-					const GLContextSettings& settings)
+                    const GLContextSettings& settings)
 {
 	// Destroy the original window
 	close();
@@ -151,10 +151,7 @@ Window& Window::setSize(const Dimensions& size)
 	return *this;
 }
 
-const char* Window::getTitle() const
-{
-	return SDL_GetWindowTitle(m_impl);
-}
+const char* Window::getTitle() const { return SDL_GetWindowTitle(m_impl); }
 
 Window& Window::setTitle(const char* title)
 {
@@ -353,8 +350,8 @@ INTERNAL void convertEvent(SDL_Event& e, Event& event)
 	{
 		if (e.window.event == SDL_WINDOWEVENT_RESIZED)
 		{
-			event.type = Event::Resized;
-			event.size.width = e.window.data1;
+			event.type        = Event::Resized;
+			event.size.width  = e.window.data1;
 			event.size.height = e.window.data2;
 
 			return;
@@ -380,7 +377,7 @@ INTERNAL void convertEvent(SDL_Event& e, Event& event)
 
 		if (e.window.event == SDL_WINDOWEVENT_MOVED)
 		{
-			event.type = Event::Moved;
+			event.type   = Event::Moved;
 			event.move.x = e.window.data1;
 			event.move.y = e.window.data2;
 
@@ -390,7 +387,7 @@ INTERNAL void convertEvent(SDL_Event& e, Event& event)
 
 	case SDL_KEYDOWN:
 	{
-		event.type = Event::KeyPressed;
+		event.type     = Event::KeyPressed;
 		event.key.code = convertFromSDL_ScanCode(e.key.keysym.scancode);
 		u16 mod{e.key.keysym.mod};
 		if (mod & KMOD_ALT)
@@ -410,7 +407,7 @@ INTERNAL void convertEvent(SDL_Event& e, Event& event)
 
 	case SDL_KEYUP:
 	{
-		event.type = Event::KeyReleased;
+		event.type     = Event::KeyReleased;
 		event.key.code = convertFromSDL_ScanCode(e.key.keysym.scancode);
 		u16 mod{e.key.keysym.mod};
 		if (mod & KMOD_ALT)
@@ -430,7 +427,7 @@ INTERNAL void convertEvent(SDL_Event& e, Event& event)
 
 	case SDL_MOUSEMOTION:
 	{
-		event.type = Event::MouseMoved;
+		event.type        = Event::MouseMoved;
 		event.mouseMove.x = e.motion.x;
 		event.mouseMove.y = e.motion.y;
 
@@ -439,7 +436,7 @@ INTERNAL void convertEvent(SDL_Event& e, Event& event)
 
 	case SDL_MOUSEBUTTONDOWN:
 	{
-		event.type = Event::MouseButtonPressed;
+		event.type               = Event::MouseButtonPressed;
 		event.mouseButton.button = (Input::Mouse)e.button.button;
 		event.mouseButton.clicks = e.button.clicks;
 
@@ -451,7 +448,7 @@ INTERNAL void convertEvent(SDL_Event& e, Event& event)
 
 	case SDL_MOUSEBUTTONUP:
 	{
-		event.type = Event::MouseButtonReleased;
+		event.type               = Event::MouseButtonReleased;
 		event.mouseButton.button = (Input::Mouse)e.button.button;
 		event.mouseButton.clicks = e.button.clicks;
 
@@ -463,7 +460,7 @@ INTERNAL void convertEvent(SDL_Event& e, Event& event)
 
 	case SDL_MOUSEWHEEL:
 	{
-		event.type = Event::MouseWheelScrolled;
+		event.type                    = Event::MouseWheelScrolled;
 		event.mouseWheelScroll.deltaX = e.wheel.x;
 		event.mouseWheelScroll.deltaY = e.wheel.y;
 
@@ -472,7 +469,7 @@ INTERNAL void convertEvent(SDL_Event& e, Event& event)
 
 	case SDL_CONTROLLERBUTTONDOWN:
 	{
-		event.type = Event::ControllerButtonPressed;
+		event.type                   = Event::ControllerButtonPressed;
 		event.controllerButton.index = e.cbutton.which;
 		event.controllerButton.button =
 		    (Input::ControllerButton)e.cbutton.button;
@@ -482,7 +479,7 @@ INTERNAL void convertEvent(SDL_Event& e, Event& event)
 
 	case SDL_CONTROLLERBUTTONUP:
 	{
-		event.type = Event::ControllerButtonReleased;
+		event.type                   = Event::ControllerButtonReleased;
 		event.controllerButton.index = e.cbutton.which;
 		event.controllerButton.button =
 		    (Input::ControllerButton)e.cbutton.button;
@@ -492,7 +489,7 @@ INTERNAL void convertEvent(SDL_Event& e, Event& event)
 
 	case SDL_CONTROLLERDEVICEADDED:
 	{
-		event.type = Event::ControllerConnected;
+		event.type             = Event::ControllerConnected;
 		event.controller.index = e.cdevice.which;
 
 		return;
@@ -500,7 +497,7 @@ INTERNAL void convertEvent(SDL_Event& e, Event& event)
 
 	case SDL_CONTROLLERDEVICEREMOVED:
 	{
-		event.type = Event::ControllerDisconnected;
+		event.type             = Event::ControllerDisconnected;
 		event.controller.index = e.cdevice.which;
 
 		return;
@@ -508,7 +505,7 @@ INTERNAL void convertEvent(SDL_Event& e, Event& event)
 
 	case SDL_CONTROLLERDEVICEREMAPPED:
 	{
-		event.type = Event::ControllerRemapped;
+		event.type             = Event::ControllerRemapped;
 		event.controller.index = e.cdevice.which;
 
 		return;
@@ -516,9 +513,10 @@ INTERNAL void convertEvent(SDL_Event& e, Event& event)
 
 	case SDL_CONTROLLERAXISMOTION:
 	{
-		event.type = Event::ControllerAxisMoved;
+		event.type                 = Event::ControllerAxisMoved;
 		event.controllerAxis.index = e.caxis.which;
-		event.controllerAxis.axis = static_cast<Input::ControllerAxis>(e.caxis.axis);
+		event.controllerAxis.axis =
+		    static_cast<Input::ControllerAxis>(e.caxis.axis);
 
 		s16 value{e.caxis.value};
 		if (event.controllerAxis.axis == Input::ControllerAxis::LeftY)

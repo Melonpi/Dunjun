@@ -10,24 +10,24 @@ namespace Dunjun
 {
 enum class TextureFilter : s32
 {
-	Linear = GL_LINEAR,
+	Linear  = GL_LINEAR,
 	Nearest = GL_NEAREST,
 };
 
 enum class TextureWrapMode : s32
 {
-	Clamp = GL_CLAMP,
-	Repeat = GL_REPEAT,
-	ClampToEdge = GL_CLAMP_TO_EDGE,
-	ClampToBorder = GL_CLAMP_TO_BORDER,
+	Clamp          = GL_CLAMP,
+	Repeat         = GL_REPEAT,
+	ClampToEdge    = GL_CLAMP_TO_EDGE,
+	ClampToBorder  = GL_CLAMP_TO_BORDER,
 	MirroredRepeat = GL_MIRRORED_REPEAT,
 };
 
 struct Texture : private NonCopyable
 {
-	u32 handle{0};
-	s32 width{0};
-	s32 height{0};
+	u32 handle = 0;
+	s32 width  = 0;
+	s32 height = 0;
 
 	Texture() = default;
 	Texture(const Image& image,

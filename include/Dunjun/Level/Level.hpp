@@ -26,7 +26,6 @@ private:
 	void placeRooms(int floor);
 
 	Random m_random;
-
 };
 } // namespace Dunjun
 
