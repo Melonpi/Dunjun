@@ -19,7 +19,7 @@ public:
 
 	virtual void* allocate(usize size, usize align = DefaultAlign) = 0;
 	virtual void deallocate(void* ptr) = 0;
-	virtual usize allocatedSize(void* ptr) = 0;
+	virtual usize allocatedSize(const void* ptr) = 0;
 	virtual usize totalAllocated() = 0;
 
 	template <typename T, typename... Args>

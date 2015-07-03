@@ -10,42 +10,21 @@ namespace Dunjun
 {
 namespace Memory
 {
-struct Header
+namespace
 {
-	usize size;
-
-	GLOBAL const usize PadValue{(usize)(-1)};
-};
-
-INTERNAL inline void fill(Header* header, void* data, usize size)
-{
-	header->size = size;
-	usize* ptr = (usize*)(header + 1);
-	while (ptr < data)
-		*ptr++ = Header::PadValue;
-}
-
-INTERNAL inline Header* header(void* data)
-{
-	usize* v = (usize*)data;
-	while (*(v - 1) == Header::PadValue)
-		v--;
-
-	return (Header*)v - 1;
-}
-
 class HeapAllocator : public Allocator
 {
 public:
 	HeapAllocator()
 	: m_totalAllocated{0}
+	, m_allocationCount{0}
 	{
 	}
 
-	~HeapAllocator() override
+	~HeapAllocator()
 	{
-		// Check that all memory has been destroyed to prevent memory leaks
-		assert(m_totalAllocated == 0);
+		// Check that all memory has been freed to prevent memory leaks
+		assert(m_allocationCount == 0 && totalAllocated() == 0);
 	}
 
 	virtual void* allocate(usize size, usize align = DefaultAlign) override
@@ -54,11 +33,17 @@ public:
 		defer(m_mutex.unlock());
 
 		const usize total = size + align + sizeof(Header);
-		Header* header    = (Header*)malloc(total);
-		void* ptr         = header + 1;
-		ptr = Memory::alignForward(ptr, align);
-		fill(header, ptr, total);
+
+		Header* header = (Header*)malloc(total);
+		header->size = total;
+
+		void* ptr = alignForward(header + 1, align);
+
+		pad(header, ptr);
+
 		m_totalAllocated += total;
+		m_allocationCount++;
+
 		return ptr;
 	}
 
@@ -71,11 +56,14 @@ public:
 			return;
 
 		Header* h = header(ptr);
+
 		m_totalAllocated -= h->size;
+		m_allocationCount--;
+
 		free(h);
 	}
 
-	virtual usize allocatedSize(void* ptr) override
+	virtual usize allocatedSize(const void* ptr) override
 	{
 		m_mutex.lock();
 		defer(m_mutex.unlock());
@@ -92,8 +80,35 @@ public:
 	}
 
 private:
+	struct Header
+	{
+		usize size;
+
+		GLOBAL const usize PadValue = (usize)(-1);
+	};
+
 	std::mutex m_mutex;
 	usize m_totalAllocated;
+	usize m_allocationCount;
+
+	inline void pad(Header* header, void* data)
+	{
+		usize* ptr = (usize*)(header + 1);
+
+		while (ptr != data)
+			*ptr++ = Header::PadValue;
+	}
+
+	inline Header* header(const void* data)
+	{
+		const usize* ptr = (usize*)data;
+		ptr--;
+
+		while (*ptr == Header::PadValue)
+			ptr--;
+
+		return (Header*)ptr;
+	}
 };
 
 struct MemoryGlobals
@@ -109,14 +124,13 @@ struct MemoryGlobals
 	}
 };
 
-namespace
-{
 MemoryGlobals g_memoryGlobals;
 } // namespace (anonymous)
 
 void init()
 {
-	u8* ptr{g_memoryGlobals.buffer};
+	u8* ptr = g_memoryGlobals.buffer;
+
 	g_memoryGlobals.defaultAllocator = new (ptr) HeapAllocator;
 }
 

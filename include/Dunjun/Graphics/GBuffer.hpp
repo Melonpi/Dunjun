@@ -9,7 +9,6 @@ namespace Dunjun
 {
 struct GBuffer
 {
-public:
 	enum TextureType
 	{
 		Diffuse, // TODO(bill): Rename to albedo? (PBR Shaders...)
@@ -22,14 +21,11 @@ public:
 
 	u32 width;
 	u32 height;
-
 	u32 fbo;
-
 	Texture textures[TextureType::Count];
 
-	virtual ~GBuffer();
-
 	bool create(u32 width, u32 height);
+	void destroy();
 
 	GLOBAL void bind(const GBuffer* b);
 };

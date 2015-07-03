@@ -9,7 +9,7 @@
 #include <Dunjun/Context.hpp>
 #include <Dunjun/Level/Level.hpp>
 
-#include <vector>
+#include <Dunjun/System/Containers.hpp>
 
 namespace Dunjun
 {
@@ -28,9 +28,9 @@ public:
 	SceneNode* player = nullptr;
 	Level* level      = nullptr;
 
-	std::vector<PointLight> pointLights;
-	std::vector<DirectionalLight> directionalLights;
-	std::vector<SpotLight> spotLights;
+	Array<PointLight> pointLights;
+	Array<DirectionalLight> directionalLights;
+	Array<SpotLight> spotLights;
 
 	World();
 	virtual ~World();

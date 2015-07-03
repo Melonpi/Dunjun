@@ -5,7 +5,7 @@
 #include <Dunjun/Common.hpp>
 #include <Dunjun/Graphics/Vertex.hpp>
 
-#include <vector>
+#include <Dunjun/System/Containers.hpp>
 
 namespace Dunjun
 {
@@ -34,28 +34,18 @@ struct Mesh
 {
 	struct Data
 	{
-		DrawType drawType = DrawType::Triangles;
+		DrawType drawType;
 
-		VertexArray vertices;
-		std::vector<u32> indices;
+		Array<Vertex> vertices;
+		Array<u32> indices;
 
-		Data& addFace(u32 a, u32 b, u32 c)
-		{
-			indices.emplace_back(a);
-			indices.emplace_back(b);
-			indices.emplace_back(c);
+		Data();
+		Data(const Data& other) = default;
+		~Data() = default;
 
-			return *this;
-		}
+		Data& addFace(u32 a, u32 b, u32 c);
 
-		Data& addFace(u32 offset, u32 a, u32 b, u32 c)
-		{
-			indices.emplace_back(offset + a);
-			indices.emplace_back(offset + b);
-			indices.emplace_back(offset + c);
-
-			return *this;
-		}
+		Data& addFace(u32 offset, u32 a, u32 b, u32 c);
 
 		void generateNormals();
 	};

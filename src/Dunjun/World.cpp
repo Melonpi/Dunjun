@@ -7,9 +7,18 @@
 #include <Dunjun/Scene/MeshRenderer.hpp>
 #include <Dunjun/Scene/FaceCamera.hpp>
 
+#include <Dunjun/System/Memory.hpp>
+#include <Dunjun/System/Array.hpp>
+
 namespace Dunjun
 {
-World::World() { renderer.world = this; }
+World::World()
+: pointLights{defaultAllocator()}
+, directionalLights{defaultAllocator()}
+, spotLights{defaultAllocator()}
+{
+	renderer.world = this;
+}
 
 World::~World() {}
 
@@ -32,16 +41,16 @@ void World::init(Context context_)
 		sceneGraph.attachChild(std::move(player));
 	}
 
-	{
-		auto level = make_unique<Level>();
+	 {
+	 	auto level = make_unique<Level>();
 
-		level->material = &context.materialHolder->get("terrain");
-		level->generate();
+	 	level->material = &context.materialHolder->get("terrain");
+	 	level->generate();
 
-		this->level = level.get();
+	 	this->level = level.get();
 
-		sceneGraph.attachChild(std::move(level));
-	}
+	 	sceneGraph.attachChild(std::move(level));
+	 }
 
 	Random random = Random{1};
 	for (int i = 0; i < 20; i++)
@@ -60,7 +69,7 @@ void World::init(Context context_)
 		light.color.b = random.getInt(50, 255);
 		light.color.a = 1.0f;
 
-		pointLights.emplace_back(light);
+		append(pointLights, light);
 	}
 
 	{
@@ -69,7 +78,7 @@ void World::init(Context context_)
 		light.direction = Vector3{-1, -1, 0.5};
 		light.intensity = 0.1f;
 
-		directionalLights.emplace_back(light);
+		append(directionalLights, light);
 	}
 
 	{
@@ -80,21 +89,24 @@ void World::init(Context context_)
 		light.intensity = 2.0f;
 		light.coneAngle = Degree{50};
 
-		spotLights.emplace_back(light);
+		append(spotLights, light);
 	}
 
 	{
 		// Init Camera
+		playerCamera.transform = Transform{};
 		playerCamera.transform.position    = {5, 2, 5};
 		playerCamera.transform.orientation = angleAxis(Degree{45}, {0, 1, 0}) *
 		                                     angleAxis(Degree{-30}, {1, 0, 0});
 
 		playerCamera.fieldOfView = Degree{50.0f};
 		playerCamera.orthoScale  = 8;
+		playerCamera.nearPlane = 0.1f;
+		playerCamera.farPlane = 256.0f;
+		playerCamera.projectionType = ProjectionType::Orthographic;
 
 		mainCamera = playerCamera;
-
-		playerCamera.projectionType = ProjectionType::Orthographic;
+		mainCamera.projectionType = ProjectionType::Perspective;
 	}
 
 	currentCamera = &mainCamera;
@@ -129,7 +141,7 @@ void World::update(Time dt)
 			if (Math::abs(rts.y) < deadZone)
 				rts.y = 0;
 
-			mainCamera.offsetOrientation(
+			offsetOrientation(mainCamera.transform.orientation,
 			    lookSensitivity * Radian{-rts.x * dt.asSeconds()},
 			    lookSensitivity * Radian{-rts.y * dt.asSeconds()});
 
@@ -144,10 +156,10 @@ void World::update(Time dt)
 				lts = normalize(lts);
 			Vector3 velDir{0, 0, 0};
 
-			Vector3 forward = mainCamera.forward();
+			Vector3 forward = forwardVector(mainCamera.transform.orientation);
 			forward.y       = 0;
 			forward = normalize(forward);
-			velDir += lts.x * mainCamera.right();
+			velDir += lts.x * rightVector(mainCamera.transform.orientation);
 			velDir += lts.y * forward;
 
 			if (Input::isControllerButtonPressed(
@@ -160,7 +172,7 @@ void World::update(Time dt)
 			if (Input::isControllerButtonPressed(
 			        0, Input::ControllerButton::DpadUp))
 			{
-				Vector3 f = mainCamera.forward();
+				Vector3 f = forwardVector(mainCamera.transform.orientation);
 				f.y       = 0;
 				f         = normalize(f);
 				velDir += f;
@@ -168,7 +180,7 @@ void World::update(Time dt)
 			if (Input::isControllerButtonPressed(
 			        0, Input::ControllerButton::DpadDown))
 			{
-				Vector3 b = mainCamera.backward();
+				Vector3 b = backwardVector(mainCamera.transform.orientation);
 				b.y       = 0;
 				b         = normalize(b);
 				velDir += b;
@@ -177,7 +189,7 @@ void World::update(Time dt)
 			if (Input::isControllerButtonPressed(
 			        0, Input::ControllerButton::DpadLeft))
 			{
-				Vector3 l = mainCamera.left();
+				Vector3 l = leftVector(mainCamera.transform.orientation);
 				l.y       = 0;
 				l         = normalize(l);
 				velDir += l;
@@ -185,7 +197,7 @@ void World::update(Time dt)
 			if (Input::isControllerButtonPressed(
 			        0, Input::ControllerButton::DpadRight))
 			{
-				Vector3 r = mainCamera.right();
+				Vector3 r = rightVector(mainCamera.transform.orientation);
 				r.y       = 0;
 				r         = normalize(r);
 				velDir += r;
@@ -278,7 +290,7 @@ void World::update(Time dt)
 		// Distance Culling
 		if (dist < mainCamera.farPlane)
 		{
-			const Vector3 f = mainCamera.forward();
+			const Vector3 f = forwardVector(mainCamera.transform.orientation);
 
 			const f32 cosTheta = dot(f, normalize(dp));
 			const Radian theta = Math::acos(cosTheta);

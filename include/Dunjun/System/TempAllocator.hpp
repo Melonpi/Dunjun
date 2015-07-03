@@ -23,7 +23,7 @@ public:
 
 	void* allocate(usize size, usize align = DefaultAlign);
 	void deallocate(void* /*ptr*/) {}
-	usize allocatedSize(void* /*ptr*/) { return SizeNotTracked; }
+	usize allocatedSize(const void* /*ptr*/) { return SizeNotTracked; }
 	usize totalAllocated() { return SizeNotTracked; }
 
 private:

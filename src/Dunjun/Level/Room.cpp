@@ -2,6 +2,8 @@
 
 #include <Dunjun/Scene/MeshRenderer.hpp>
 
+#include <Dunjun/System/Array.hpp>
+
 namespace Dunjun
 {
 Room::Room(Random& random, const Room::Size& size)
@@ -209,53 +211,67 @@ void Room::addTileSurface(const Vector3& position,
 
 	u32 index = (u32)len(m_meshData.vertices);
 
+	auto& v = m_meshData.vertices;
+
 	// Right/Left
 	if ((u32)face / 2 == 0)
 	{
-		m_meshData.vertices.append(
-		    {position.x + 0.0f, position.y + 0.0f, position.z + 1.0f},
-		    {(tilePos.x + 1) * tileWidth, (tilePos.y + 0) * tileHeight});
-		m_meshData.vertices.append(
-		    {position.x + 0.0f, position.y + 0.0f, position.z + 0.0f},
-		    {(tilePos.x + 0) * tileWidth, (tilePos.y + 0) * tileHeight});
-		m_meshData.vertices.append(
-		    {position.x + 0.0f, position.y + 1.0f, position.z + 0.0f},
-		    {(tilePos.x + 0) * tileWidth, (tilePos.y + 1) * tileHeight});
-		m_meshData.vertices.append(
-		    {position.x + 0.0f, position.y + 1.0f, position.z + 1.0f},
-		    {(tilePos.x + 1) * tileWidth, (tilePos.y + 1) * tileHeight});
+		append(v,
+		       Vertex{{position.x + 0.0f, position.y + 0.0f, position.z + 1.0f},
+		              {(tilePos.x + 1) * tileWidth,
+		               (tilePos.y + 0) * tileHeight}});
+		append(v,
+		       Vertex{{position.x + 0.0f, position.y + 0.0f, position.z + 0.0f},
+		              {(tilePos.x + 0) * tileWidth,
+		               (tilePos.y + 0) * tileHeight}});
+		append(v,
+		       Vertex{{position.x + 0.0f, position.y + 1.0f, position.z + 0.0f},
+		              {(tilePos.x + 0) * tileWidth,
+		               (tilePos.y + 1) * tileHeight}});
+		append(v,
+		       Vertex{{position.x + 0.0f, position.y + 1.0f, position.z + 1.0f},
+		              {(tilePos.x + 1) * tileWidth,
+		               (tilePos.y + 1) * tileHeight}});
 	}
 	// Up/Down
 	else if ((u32)face / 2 == 1)
 	{
-		m_meshData.vertices.append(
-		    {position.x + 0.0f, position.y, position.z + 0.0f},
-		    {(tilePos.x + 0) * tileWidth, (tilePos.y + 1) * tileHeight});
-		m_meshData.vertices.append(
-		    {position.x + 0.0f, position.y, position.z + 1.0f},
-		    {(tilePos.x + 0) * tileWidth, (tilePos.y + 0) * tileHeight});
-		m_meshData.vertices.append(
-		    {position.x + 1.0f, position.y, position.z + 1.0f},
-		    {(tilePos.x + 1) * tileWidth, (tilePos.y + 0) * tileHeight});
-		m_meshData.vertices.append(
-		    {position.x + 1.0f, position.y, position.z + 0.0f},
-		    {(tilePos.x + 1) * tileWidth, (tilePos.y + 1) * tileHeight});
+		append(v,
+		       Vertex{{position.x + 0.0f, position.y, position.z + 0.0f},
+		              {(tilePos.x + 0) * tileWidth,
+		               (tilePos.y + 1) * tileHeight}});
+		append(v,
+		       Vertex{{position.x + 0.0f, position.y, position.z + 1.0f},
+		              {(tilePos.x + 0) * tileWidth,
+		               (tilePos.y + 0) * tileHeight}});
+		append(v,
+		       Vertex{{position.x + 1.0f, position.y, position.z + 1.0f},
+		              {(tilePos.x + 1) * tileWidth,
+		               (tilePos.y + 0) * tileHeight}});
+		append(v,
+		       Vertex{{position.x + 1.0f, position.y, position.z + 0.0f},
+		              {(tilePos.x + 1) * tileWidth,
+		               (tilePos.y + 1) * tileHeight}});
 	}
 	// Front/Back
 	else if ((u32)face / 2 == 2)
 	{
-		m_meshData.vertices.append(
-		    {position.x + 0.0f, position.y + 0.0f, position.z + 0.0f},
-		    {(tilePos.x + 1) * tileWidth, (tilePos.y + 0) * tileHeight});
-		m_meshData.vertices.append(
-		    {position.x + 1.0f, position.y + 0.0f, position.z + 0.0f},
-		    {(tilePos.x + 0) * tileWidth, (tilePos.y + 0) * tileHeight});
-		m_meshData.vertices.append(
-		    {position.x + 1.0f, position.y + 1.0f, position.z + 0.0f},
-		    {(tilePos.x + 0) * tileWidth, (tilePos.y + 1) * tileHeight});
-		m_meshData.vertices.append(
-		    {position.x + 0.0f, position.y + 1.0f, position.z + 0.0f},
-		    {(tilePos.x + 1) * tileWidth, (tilePos.y + 1) * tileHeight});
+		append(v,
+		       Vertex{{position.x + 0.0f, position.y + 0.0f, position.z + 0.0f},
+		              {(tilePos.x + 1) * tileWidth,
+		               (tilePos.y + 0) * tileHeight}});
+		append(v,
+		       Vertex{{position.x + 1.0f, position.y + 0.0f, position.z + 0.0f},
+		              {(tilePos.x + 0) * tileWidth,
+		               (tilePos.y + 0) * tileHeight}});
+		append(v,
+		       Vertex{{position.x + 1.0f, position.y + 1.0f, position.z + 0.0f},
+		              {(tilePos.x + 0) * tileWidth,
+		               (tilePos.y + 1) * tileHeight}});
+		append(v,
+		       Vertex{{position.x + 0.0f, position.y + 1.0f, position.z + 0.0f},
+		              {(tilePos.x + 1) * tileWidth,
+		               (tilePos.y + 1) * tileHeight}});
 	}
 
 	if ((u32)face % 2 == 0)

@@ -40,6 +40,7 @@ struct Queue
 	usize offset;
 
 	Queue(Allocator& a);
+	~Queue() = default;
 
 	T& operator[](usize index);
 	const T& operator[](usize index) const;
@@ -64,6 +65,7 @@ struct HashMap
 	Array<Entry> data;
 
 	HashMap(Allocator& a);
+	~HashMap() = default;
 };
 } // namespace Dunjun
 

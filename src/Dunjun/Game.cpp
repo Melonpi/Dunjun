@@ -41,7 +41,13 @@ GLOBAL Window g_window;
 
 GLOBAL ModelAsset g_sprite;
 
-GLOBAL World g_world;
+GLOBAL World* g_world;
+
+GLOBAL Texture g_defaultTexture;
+GLOBAL Texture g_kittenTexture;
+GLOBAL Texture g_stoneTexture;
+GLOBAL Texture g_terrainTexture;
+
 
 namespace Game
 {
@@ -71,51 +77,50 @@ INTERNAL void loadShaders()
 }
 INTERNAL void loadMaterials()
 {
-	g_textureHolder.insertFromFile("default", "default.png");
-	g_textureHolder.insertFromFile("kitten", "kitten.jpg");
-	g_textureHolder.insertFromFile("stone", "stone.png");
-	g_textureHolder.insertFromFile("terrain",
-	                               "terrain.png", //
-	                               TextureFilter::Nearest);
+	g_defaultTexture = loadTextureFromFile("data/textures/default.png");
+	g_kittenTexture = loadTextureFromFile("data/textures/kitten.jpg");
+	g_stoneTexture = loadTextureFromFile("data/textures/stone.png");
+	g_terrainTexture = loadTextureFromFile("data/textures/terrain.png",
+										   TextureFilter::Nearest);
 
 	{
 		auto mat        = make_unique<Material>();
 		mat->shaders    = &g_shaderHolder.get("geometryPass");
-		mat->diffuseMap = &g_textureHolder.get("default");
+		mat->diffuseMap = &g_defaultTexture;
 		g_materialHolder.insert("default", std::move(mat));
 	}
 	{
 		auto mat              = make_unique<Material>();
 		mat->shaders          = &g_shaderHolder.get("geometryPass");
-		mat->diffuseMap       = &g_textureHolder.get("kitten");
+		mat->diffuseMap       = &g_kittenTexture;
 		mat->specularExponent = 1e5;
 		g_materialHolder.insert("cat", std::move(mat));
 	}
 	{
 		auto mat        = make_unique<Material>();
 		mat->shaders    = &g_shaderHolder.get("geometryPass");
-		mat->diffuseMap = &g_textureHolder.get("stone");
+		mat->diffuseMap = &g_stoneTexture;
 		g_materialHolder.insert("stone", std::move(mat));
 	}
 	{
 		auto mat        = make_unique<Material>();
 		mat->shaders    = &g_shaderHolder.get("geometryPass");
-		mat->diffuseMap = &g_textureHolder.get("terrain");
+		mat->diffuseMap = &g_terrainTexture;
 		g_materialHolder.insert("terrain", std::move(mat));
 	}
 }
 INTERNAL void loadSpriteAsset()
 {
 	{
-		Mesh::Data meshData;
-		meshData.vertices.reserve(4); // There will be 4 vertices
-		meshData.vertices             //
-		    .append({-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f})
-		    .append({+0.5f, -0.5f, 0.0f}, {1.0f, 0.0f})
-		    .append({+0.5f, +0.5f, 0.0f}, {1.0f, 1.0f})
-		    .append({-0.5f, +0.5f, 0.0f}, {0.0f, 1.0f});
+		Mesh::Data meshData = {};
 
-		meshData.indices.reserve(6);
+		reserve(meshData.vertices, 4);
+		append(meshData.vertices, Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}});
+		append(meshData.vertices, Vertex{{+0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}});
+		append(meshData.vertices, Vertex{{+0.5f, +0.5f, 0.0f}, {1.0f, 1.0f}});
+		append(meshData.vertices, Vertex{{-0.5f, +0.5f, 0.0f}, {0.0f, 1.0f}});
+
+		reserve(meshData.indices, 6);
 		meshData.addFace(0, 1, 2).addFace(2, 3, 0);
 		meshData.generateNormals();
 
@@ -125,15 +130,15 @@ INTERNAL void loadSpriteAsset()
 		g_sprite.mesh     = &g_meshHolder.get("sprite");
 	}
 	{
-		Mesh::Data meshData;
-		meshData.vertices.reserve(4); // There will be 4 vertices
-		meshData.vertices             //
-		    .append({-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f})
-		    .append({+1.0f, -1.0f, 0.0f}, {1.0f, 0.0f})
-		    .append({+1.0f, +1.0f, 0.0f}, {1.0f, 1.0f})
-		    .append({-1.0f, +1.0f, 0.0f}, {0.0f, 1.0f});
+		Mesh::Data meshData = {};
 
-		meshData.indices.reserve(6);
+		reserve(meshData.vertices, 4);
+		append(meshData.vertices, Vertex{{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}});
+		append(meshData.vertices, Vertex{{+1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}});
+		append(meshData.vertices, Vertex{{+1.0f, +1.0f, 0.0f}, {1.0f, 1.0f}});
+		append(meshData.vertices, Vertex{{-1.0f, +1.0f, 0.0f}, {0.0f, 1.0f}});
+
+		reserve(meshData.indices, 6);
 		meshData.addFace(0, 1, 2).addFace(2, 3, 0);
 		meshData.generateNormals();
 
@@ -143,11 +148,7 @@ INTERNAL void loadSpriteAsset()
 
 INTERNAL void update(Time dt)
 {
-	g_world.update(dt);
-
-	if (!g_window.isOpen() || Input::isKeyPressed(Input::Key::Escape))
-		g_running = false;
-
+	g_world->update(dt);
 	if (Input::isKeyPressed(Input::Key::F11))
 	{
 		// TODO(bill): Toggle fullscreen
@@ -167,7 +168,6 @@ INTERNAL void handleEvents()
 		case Event::Closed:
 		{
 			g_window.close();
-			std::exit(EXIT_SUCCESS); // TODO(bill): Remove this exit
 			break;
 		}
 		case Event::Resized:
@@ -181,19 +181,33 @@ INTERNAL void handleEvents()
 			break;
 		}
 		case Event::ControllerDisconnected:
-	{
+		{
 			printf("Controller %d removed\n", event.controller.index);
+			break;
+		}
+		case Event::KeyPressed:
+		{
+			switch (event.key.code)
+			{
+			case Input::Key::Escape:
+			{
+				g_window.close();
+				break;
+			}
+			default:
+				break;
+			}
 			break;
 		}
 		default:
 			break;
 		}
 
-		g_world.handleEvent(event);
+		g_world->handleEvent(event);
 	}
 }
 
-INTERNAL void render() { g_world.render(); }
+INTERNAL void render() { g_world->render(); }
 
 void init(int /*argc*/, char** /*argv*/)
 {
@@ -209,7 +223,7 @@ void init(int /*argc*/, char** /*argv*/)
 		std::exit(EXIT_FAILURE);
 	}
 
-	g_window.create({854, 480, 32}, "Dunjun");
+	g_window.create({854, 480, 24}, "Dunjun");
 	g_window.setFramerateLimit(FrameLimit);
 
 	glewInit();
@@ -224,11 +238,12 @@ void init(int /*argc*/, char** /*argv*/)
 	loadMaterials();
 	loadSpriteAsset();
 
-	g_world.init(Context{g_window,
-	                     g_textureHolder,
-	                     g_shaderHolder,
-	                     g_meshHolder,
-	                     g_materialHolder});
+	g_world = defaultAllocator().makeNew<World>();
+
+	g_world->init(Context{g_window,
+	                      g_shaderHolder,
+	                      g_meshHolder,
+	                      g_materialHolder});
 }
 
 void run()
@@ -277,6 +292,7 @@ void run()
 
 void shutdown()
 {
+	defaultAllocator().makeDelete<World>(g_world);
 	Input::shutdown();
 	g_window.close();
 	SDL_Quit();

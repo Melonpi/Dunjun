@@ -9,7 +9,7 @@
 #include <Dunjun/Graphics/GBuffer.hpp>
 #include <Dunjun/Window.hpp>
 
-#include <deque>
+#include <Dunjun/System/Containers.hpp>
 
 namespace Dunjun
 {
@@ -44,11 +44,10 @@ public:
 	const ShaderProgram* currentShaders = nullptr;
 	const Texture* currentTexture = nullptr;
 
-	std::deque<ModelInstance> modelInstances{};
+	Array<ModelInstance> modelInstances;
 
-	virtual ~SceneRenderer()
-	{
-	}
+	SceneRenderer();
+	~SceneRenderer();
 
 	SceneRenderer& reset(); // Reset all pointers
 	SceneRenderer& clearAll(); // clear all containers

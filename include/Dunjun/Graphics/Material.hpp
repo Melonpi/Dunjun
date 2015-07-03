@@ -7,6 +7,8 @@
 
 namespace Dunjun
 {
+// TODO(bill): Make PBR style Material
+// TODO(bill): Make POD
 struct Material
 {
 	/*

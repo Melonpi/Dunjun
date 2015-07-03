@@ -4,6 +4,9 @@
 #include <Dunjun/Scene/MeshRenderer.hpp>
 #include <Dunjun/World.hpp>
 
+#include <Dunjun/System/Memory.hpp>
+#include <Dunjun/System/Array.hpp>
+
 #include <string>
 
 #include <algorithm>
@@ -11,6 +14,16 @@
 
 namespace Dunjun
 {
+SceneRenderer::SceneRenderer()
+: modelInstances{defaultAllocator()}
+{
+}
+
+SceneRenderer::~SceneRenderer()
+{
+	gBuffer.destroy();
+}
+
 SceneRenderer& SceneRenderer::reset()
 {
 	if (currentShaders)
@@ -27,7 +40,7 @@ SceneRenderer& SceneRenderer::reset()
 
 SceneRenderer& SceneRenderer::clearAll()
 {
-	modelInstances.clear();
+	clear(modelInstances);
 
 	return *this;
 }
@@ -51,7 +64,7 @@ void SceneRenderer::addModelInstance(const MeshRenderer& meshRenderer,
 	ModelInstance mi;
 	mi.meshRenderer = &meshRenderer;
 	mi.transform = t;
-	modelInstances.push_back(mi);
+	append(modelInstances, mi);
 }
 
 void SceneRenderer::render()
@@ -69,8 +82,8 @@ void SceneRenderer::render()
 SceneRenderer& SceneRenderer::geometryPass()
 {
 	// TODO(bill): Sort by mesh? - Instancing?
-	std::sort(std::begin(modelInstances),
-	          std::end(modelInstances),
+	std::sort(begin(modelInstances),
+	          end(modelInstances),
 	          [](const ModelInstance& a, const ModelInstance& b) -> bool
 	          {
 		          const auto* A = a.meshRenderer->material;
@@ -94,7 +107,7 @@ SceneRenderer& SceneRenderer::geometryPass()
 
 		shaders.use();
 
-		shaders.setUniform("u_camera", camera->getMatrix());
+		shaders.setUniform("u_camera", cameraMatrix(*camera));
 		shaders.setUniform("u_cameraPosition", camera->transform.position);
 		for (const auto& inst : modelInstances)
 		{
@@ -198,7 +211,8 @@ SceneRenderer& SceneRenderer::lightPass()
 			shaders.setUniform("u_normal", 2);
 			shaders.setUniform("u_depth", 3);
 
-			shaders.setUniform("u_cameraInverse", inverse(camera->getMatrix()));
+			shaders.setUniform("u_cameraInverse",
+			                   inverse(cameraMatrix(*camera)));
 
 			for (const PointLight& light : world->pointLights)
 			{
@@ -239,7 +253,7 @@ SceneRenderer& SceneRenderer::lightPass()
 			shaders.setUniform("u_normal", 2);
 			shaders.setUniform("u_depth", 3);
 
-			shaders.setUniform("u_cameraInverse", inverse(camera->getMatrix()));
+			shaders.setUniform("u_cameraInverse", inverse(cameraMatrix(*camera)));
 
 			for (const SpotLight& light : world->spotLights)
 			{

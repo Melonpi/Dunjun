@@ -1,5 +1,5 @@
 #include <Dunjun/Graphics/Texture.hpp>
-
+#include <Dunjun/Graphics/Image.hpp>
 #include <Dunjun/Common.hpp>
 
 #include <cassert>
@@ -26,43 +26,31 @@ INTERNAL GLenum getInteralFormat(ImageFormat format, bool srgb)
 	}
 }
 
-Texture::Texture(const Image& image,
-                 TextureFilter minMagFilter,
-                 TextureWrapMode wrapMode)
-: handle{0}
-, width{(s32)image.width}
-, height{(s32)image.height}
-{
-	if (!loadFromImage(image, minMagFilter, wrapMode))
-		panic("Could not create texture from image.");
-}
-
-bool Texture::loadFromFile(const std::string& filename,
-                           TextureFilter minMagFilter,
-                           TextureWrapMode wrapMode)
-{
-	Image image;
-	if (!image.loadFromFile(filename))
-		return false;
-	image.flipVertically();
-
-	return loadFromImage(image, minMagFilter, wrapMode);
-}
-
-bool Texture::loadFromImage(const Image& image,
+Texture loadTextureFromFile(const char* filename,
                             TextureFilter minMagFilter,
                             TextureWrapMode wrapMode)
 {
+	Image image = loadImageFromFile(filename);
+	defer(destroyImage(image));
+	flipImageVertically(image);
+
+	return loadTextureFromImage(image, minMagFilter, wrapMode);
+}
+
+Texture loadTextureFromImage(const Image& image,
+                             TextureFilter minMagFilter,
+                             TextureWrapMode wrapMode)
+{
 	if (image.format == ImageFormat::None)
-		return false;
+		return Texture{};
 
-	width  = image.width;
-	height = image.height;
+	Texture tex = Texture{0, image.width, image.height};
 
-	if (!handle)
-		glGenTextures(1, &handle);
+	glGenTextures(1, &tex.handle);
 
-	glBindTexture(GL_TEXTURE_2D, handle);
+	glBindTexture(GL_TEXTURE_2D, tex.handle);
+	defer(glBindTexture(GL_TEXTURE_2D, 0));
+
 	glTexParameteri(
 	    GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<s32>(wrapMode));
 	glTexParameteri(
@@ -75,22 +63,20 @@ bool Texture::loadFromImage(const Image& image,
 	glTexImage2D(GL_TEXTURE_2D,
 	             0,
 	             getInteralFormat(image.format, true),
-	             width,
-	             height,
+	             tex.width,
+	             tex.height,
 	             0,
 	             getInteralFormat(image.format, false),
 	             GL_UNSIGNED_BYTE,
 	             image.pixels);
 
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	return true;
+	return tex;
 }
 
-Texture::~Texture()
+void destroyTexture(Texture& t)
 {
-	if (handle)
-		glDeleteTextures(1, &handle);
+	if (t.handle)
+		glDeleteTextures(1, &t.handle);
 }
 
 void Texture::bind(const Texture* tex, u32 position)

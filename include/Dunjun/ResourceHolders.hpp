@@ -3,9 +3,10 @@
 
 #include <Dunjun/ResourceHolder.hpp>
 #include <Dunjun/Graphics.hpp>
+#include <Dunjun/Graphics/Texture.hpp>
 
 namespace Dunjun
-{
+{/*
 class TextureHolder : public ResourceHolder<Texture, std::string>
 {
 public:
@@ -14,28 +15,21 @@ public:
 	                    TextureFilter minMagFilter = TextureFilter::Linear,
 	                    TextureWrapMode wrapMode = TextureWrapMode::ClampToEdge)
 	{
-		std::unique_ptr<Texture> tex = make_unique<Texture>();
-		bool t = tex->loadFromFile(
-		    BaseDirectory::Textures + filename, minMagFilter, wrapMode);
+		Texture tex = loadTextureFromFile(
+		    std::string{BaseDirectory::Textures + filename}.c_str(),
+		    minMagFilter,
+		    wrapMode);
+
+		bool t = true;
+
+		if (!tex.handle || !tex.width || !tex.height)
+			t = false;
+
 		if (t)
-			insert(id, std::move(tex));
+			insert(id, std::unique_ptr<Texture>{new Texture{tex}});
 		return t;
 	}
-
-	bool
-	    insertFromImage(const std::string& id,
-	                    const Image& image,
-	                    TextureFilter minMagFilter = TextureFilter::Linear,
-	                    TextureWrapMode wrapMode = TextureWrapMode::ClampToEdge)
-	{
-		std::unique_ptr<Texture> tex = make_unique<Texture>();
-		bool t = tex->loadFromImage(image, minMagFilter, wrapMode);
-		if (t)
-			insert(id, std::move(tex));
-
-		return t;
-	}
-};
+};*/
 
 class ShaderHolder : public ResourceHolder<ShaderProgram, std::string>
 {
@@ -87,7 +81,7 @@ public:
 using MeshHolder     = ResourceHolder<Mesh, std::string>;
 using MaterialHolder = ResourceHolder<Material, std::string>;
 
-extern TextureHolder g_textureHolder;
+// extern TextureHolder g_textureHolder;
 extern ShaderHolder g_shaderHolder;
 extern MeshHolder g_meshHolder;
 extern MaterialHolder g_materialHolder;

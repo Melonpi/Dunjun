@@ -3,7 +3,7 @@
 
 #include <Dunjun/System/Containers.hpp>
 
-#include <cstring>
+#include <cstring> // memcpy
 
 namespace Dunjun
 {
@@ -85,7 +85,7 @@ void grow(Array<T>& a, usize minCapacity = 0);
 template <typename T>
 inline usize append(Array<T>& a, const T& item)
 {
-	if (a.length == a.capacity)
+	if (a.length + 1 > a.capacity)
 		grow(a);
 	a.data[a.length++] = item;
 
@@ -208,7 +208,6 @@ inline void setCapacity(Array<T>& a, usize capacity)
 	T* data = nullptr;
 	if (capacity > 0)
 	{
-
 		data = (T*)a.allocator->allocate(capacity * sizeof(T), alignof(T));
 		memcpy(data, a.data, a.length * sizeof(T));
 	}

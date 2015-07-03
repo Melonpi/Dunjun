@@ -15,36 +15,37 @@ enum class ProjectionType
 
 struct Camera
 {
-	Transform transform           = Transform{};
-	Radian fieldOfView            = Degree{50};
-	f32 orthoScale                = 1.0f;
-	f32 nearPlane                 = 0.1f;
-	f32 farPlane                  = 256.0f;
-	f32 viewportAspectRatio       = (4.0f / 3.0f);
-	ProjectionType projectionType = ProjectionType::Perspective;
-
-	Camera() = default;
-	Camera(const Camera& other) = default;
-
-	void lookAt(const Vector3& position, const Vector3& up = {0, 1, 0});
-
-	// NOTE(bill): +ve == ccw => +ve yaw == face up, +ve pitch == face left
-	// Using Right-Handed Coordinate System
-	void offsetOrientation(const Radian& yaw, const Radian& pitch);
-
-	Vector3 forward() const;
-	Vector3 backward() const;
-
-	Vector3 right() const;
-	Vector3 left() const;
-
-	Vector3 up() const;
-	Vector3 down() const;
-
-	Matrix4 getMatrix() const;
-	Matrix4 getProjection() const;
-	Matrix4 getView() const;
+	Transform transform;
+	Radian fieldOfView;
+	f32 orthoScale;
+	f32 nearPlane;
+	f32 farPlane;
+	f32 viewportAspectRatio;
+	ProjectionType projectionType;
 };
+
+void cameraLookAt(Camera& camera,
+                  const Vector3& position,
+                  const Vector3& up = {0, 1, 0});
+
+// NOTE(bill): +ve == ccw => +ve yaw == face up, +ve pitch == face left
+// Using Right-Handed Coordinate System
+void offsetOrientation(Quaternion& orientation,
+                       const Radian& yaw,
+                       const Radian& pitch);
+
+Vector3 forwardVector(const Quaternion& orientation);
+Vector3 backwardVector(const Quaternion& orientation);
+
+Vector3 rightVector(const Quaternion& orientation);
+Vector3 leftVector(const Quaternion& orientation);
+
+Vector3 upVector(const Quaternion& orientation);
+Vector3 downVector(const Quaternion& orientation);
+
+Matrix4 cameraMatrix(const Camera& camera);
+Matrix4 cameraProjection(const Camera& camera);
+Matrix4 cameraView(const Camera& camera);
 } // namespace Dunjun
 
 #endif
