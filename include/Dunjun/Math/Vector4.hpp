@@ -1,43 +1,11 @@
 #ifndef DUNJUN_MATH_VECTOR4_HPP
 #define DUNJUN_MATH_VECTOR4_HPP
 
-#include <Dunjun/Types.hpp>
-
-#include <Dunjun/Math/Vector3.hpp>
+#include <Dunjun/Math/Types.hpp>
+#include <ostream>
 
 namespace Dunjun
 {
-union Vector4
-{
-	struct
-	{
-		f32 x, y, z, w;
-	};
-	struct
-	{
-		f32 r, g, b, a;
-	};
-	f32 data[4];
-
-	struct
-	{
-		Vector2 xy;
-		Vector2 zw;
-	};
-
-	struct
-	{
-		Vector2 rg;
-		Vector2 ba;
-	};
-
-	Vector3 xyz;
-	Vector3 rgb;
-
-	inline f32& operator[](usize index) { return data[index]; }
-	inline const f32& operator[](usize index) const { return data[index]; }
-};
-
 bool operator==(const Vector4& a, const Vector4& b);
 bool operator!=(const Vector4& a, const Vector4& b);
 

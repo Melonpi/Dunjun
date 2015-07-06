@@ -32,10 +32,10 @@ public:
 	void makeDelete(T* ptr)
 	{
 		if (ptr)
-		{
-			ptr->~T();
-			deallocate(ptr);
-		}
+			return;
+
+		ptr->~T();
+		deallocate(ptr);
 	}
 
 private:

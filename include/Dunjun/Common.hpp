@@ -4,7 +4,6 @@
 #include <Dunjun/Config.hpp>
 #include <Dunjun/Types.hpp>
 #include <Dunjun/System/FileSystem.hpp>
-#include <Dunjun/System/NonCopyable.hpp>
 
 #include <cassert>
 #include <cstdarg>

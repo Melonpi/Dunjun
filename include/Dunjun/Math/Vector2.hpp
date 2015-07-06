@@ -1,23 +1,11 @@
 #ifndef DUNJUN_MATH_VECTOR2_HPP
 #define DUNJUN_MATH_VECTOR2_HPP
 
-#include <Dunjun/Common.hpp>
-#include <iostream>
+#include <Dunjun/Math/Types.hpp>
+#include <ostream>
 
 namespace Dunjun
 {
-union Vector2
-{
-	struct
-	{
-		f32 x, y;
-	};
-	f32 data[2];
-
-	inline f32& operator[](usize index) { return data[index]; }
-	inline const f32& operator[](usize index) const { return data[index]; }
-};
-
 bool operator==(const Vector2& a, const Vector2& b);
 bool operator!=(const Vector2& a, const Vector2& b);
 

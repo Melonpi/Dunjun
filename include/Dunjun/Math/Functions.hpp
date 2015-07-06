@@ -5,11 +5,8 @@
 // Common
 ////////////////////////////////
 
-#include <Dunjun/Common.hpp>
+#include <Dunjun/Math/Types.hpp>
 #include <Dunjun/Math/Angle.hpp>
-#include <Dunjun/Math/Vector3.hpp>
-#include <Dunjun/Math/Matrix4.hpp>
-#include <Dunjun/Math/Quaternion.hpp>
 
 #include <algorithm>
 #include <cassert>

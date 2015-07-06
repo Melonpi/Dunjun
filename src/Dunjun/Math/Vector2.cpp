@@ -4,6 +4,8 @@
 
 namespace Dunjun
 {
+const Vector2 Vector2::Zero = {0, 0};
+
 bool operator==(const Vector2& a, const Vector2& b)
 {
 	for (usize i = 0; i < 2; i++)

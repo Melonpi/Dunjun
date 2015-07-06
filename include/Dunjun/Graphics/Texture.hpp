@@ -1,7 +1,6 @@
 #ifndef DUNJUN_GRAPHICS_TEXTURE_HPP
 #define DUNJUN_GRAPHICS_TEXTURE_HPP
 
-#include <Dunjun/System/NonCopyable.hpp>
 #include <Dunjun/Graphics/Image.hpp>
 #include <Dunjun/System/OpenGL.hpp>
 #include <Dunjun/Common.hpp>

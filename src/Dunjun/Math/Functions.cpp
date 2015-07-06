@@ -1,4 +1,6 @@
 #include <Dunjun/Math/Functions.hpp>
+#include <Dunjun/Math/Matrix4.hpp>
+#include <Dunjun/Math/Quaternion.hpp>
 
 #include <cmath>
 #include <cfenv>

@@ -3,6 +3,7 @@
 // This reduces the compile time by ~90%
 
 #include "Dunjun/Graphics/Camera.cpp"
+#include "Dunjun/Graphics/Color.cpp"
 #include "Dunjun/Graphics/GBuffer.cpp"
 #include "Dunjun/Graphics/Image.cpp"
 #include "Dunjun/Graphics/Mesh.cpp"

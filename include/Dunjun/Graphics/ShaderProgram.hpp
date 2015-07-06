@@ -1,9 +1,6 @@
 #ifndef DUNJUN_GRAPHICS_SHADERPROGRAM_HPP
 #define DUNJUN_GRAPHICS_SHADERPROGRAM_HPP
 
-#include <Dunjun/System/OpenGL.hpp>
-#include <Dunjun/System/NonCopyable.hpp>
-
 #include <Dunjun/Common.hpp>
 
 #include <Dunjun/Math.hpp>
@@ -21,7 +18,7 @@ enum class ShaderType
 	Fragment,
 };
 
-class ShaderProgram : public NonCopyable
+class ShaderProgram
 {
 public:
 	u32 handle           = 0;
@@ -64,6 +61,9 @@ public:
 private:
 	mutable std::unordered_map<std::string, s32> m_attribLocations;
 	mutable std::unordered_map<std::string, s32> m_uniformLocations;
+
+	ShaderProgram(const ShaderProgram&) = delete;
+	ShaderProgram& operator=(const ShaderProgram&) = delete;
 };
 } // namespace Dunjun
 

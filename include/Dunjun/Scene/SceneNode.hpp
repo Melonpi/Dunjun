@@ -5,7 +5,6 @@
 #include <Dunjun/Graphics/Transform.hpp>
 #include <Dunjun/Scene/NodeComponent.hpp>
 #include <Dunjun/Scene/SceneRenderer.hpp>
-#include <Dunjun/System/NonCopyable.hpp>
 #include <Dunjun/System/Time.hpp>
 #include <Dunjun/Window/Event.hpp>
 
@@ -40,7 +39,7 @@ inline ComponentId getComponentTypeId()
 	return s_typeId;
 }
 
-class SceneNode : private NonCopyable
+class SceneNode
 {
 public:
 	using UPtr = std::unique_ptr<SceneNode>;
@@ -137,6 +136,9 @@ protected:
 
 	virtual void drawCurrent(SceneRenderer& renderer, Transform t) const;
 	void drawChildren(SceneRenderer& renderer, Transform t) const;
+private:
+	SceneNode(const SceneNode&) = delete;
+	SceneNode& operator=(const SceneNode&) = delete;
 };
 } // namespace Dunjun
 

@@ -1,29 +1,11 @@
 #ifndef DUNJUN_MATH_MATRIX4_HPP
 #define DUNJUN_MATH_MATRIX4_HPP
 
-#include <Dunjun/Math/Vector4.hpp>
-
-#include <Dunjun/Common.hpp>
+#include <Dunjun/Math/Types.hpp>
+#include <ostream>
 
 namespace Dunjun
 {
-struct Matrix4
-{
-	union
-	{
-		struct
-		{
-			Vector4 x, y, z, w;
-		};
-		Vector4 data[4];
-	};
-
-	GLOBAL const Matrix4 Identity;
-
-	inline Vector4& operator[](usize index) { return data[index]; }
-	inline const Vector4& operator[](usize index) const { return data[index]; }
-};
-
 bool operator==(const Matrix4& a, const Matrix4& b);
 bool operator!=(const Matrix4& a, const Matrix4& b);
 
@@ -56,7 +38,13 @@ inline std::ostream& operator<<(std::ostream& os, const Matrix4& m)
 	os << "Matrix4(";
 	for (usize i = 0; i < 4; i++)
 	{
-		os << "\n\t" << m[i];
+		os << "\n\t";
+		for (usize j = 0; j < 4; j++)
+		{
+			os << m[i][j];
+			if (j < 3)
+				os << ", ";
+		}
 		if (i < 3)
 			os << ", ";
 	}

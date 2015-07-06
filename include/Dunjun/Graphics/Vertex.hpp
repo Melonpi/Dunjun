@@ -8,15 +8,15 @@ namespace Dunjun
 {
 struct Vertex
 {
-	Vector3 position = Vector3{0, 0, 0};
-	Vector2 texCoord = Vector2{0, 0};
-	Color color      = Color{255, 255, 255, 255};
-	Vector3 normal   = Vector3{0, 0, 0};
+	Vector3 position = Vector3::Zero;
+	Vector2 texCoord = Vector2::Zero;
+	Color color      = Color::White;
+	Vector3 normal   = Vector3::Zero;
 
-	Vertex(const Vector3& position = Vector3{0, 0, 0},
-	       const Vector2& texCoord = Vector2{0, 0},
-	       const Color& color      = {255, 255, 255, 255},
-	       const Vector3& normal   = Vector3{0, 0, 0})
+	Vertex(const Vector3& position = Vector3::Zero,
+	       const Vector2& texCoord = Vector2::Zero,
+	       const Color& color      = Color::White,
+	       const Vector3& normal   = Vector3::Zero)
 	: position(position)
 	, texCoord(texCoord)
 	, color(color)

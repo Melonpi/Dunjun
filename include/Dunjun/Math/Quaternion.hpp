@@ -1,8 +1,7 @@
 #ifndef DUNJUN_MATH_QUATERNION_HPP
 #define DUNJUN_MATH_QUATERNION_HPP
 
-#include <Dunjun/Math/Vector3.hpp>
-#include <Dunjun/Math/Matrix4.hpp>
+#include <Dunjun/Math/Types.hpp>
 #include <Dunjun/Math/Angle.hpp>
 #include <Dunjun/Math/Constants.hpp>
 
@@ -10,16 +9,6 @@
 
 namespace Dunjun
 {
-union Quaternion
-{
-	struct
-	{
-		f32 x, y, z, w;
-	};
-	Vector3 xyz;
-	f32 data[4];
-};
-
 Quaternion operator-(const Quaternion& a);
 Quaternion operator+(const Quaternion& a, const Quaternion& b);
 Quaternion operator-(const Quaternion& a, const Quaternion& b);

@@ -2,8 +2,8 @@
 #define DUNJUN_MATH_ANGLE_HPP
 
 #include <Dunjun/Types.hpp>
-#include <Dunjun/Math/Constants.hpp>
 #include <Dunjun/Math/Unit.hpp>
+#include <Dunjun/Math/Constants.hpp>
 
 #include <ostream>
 

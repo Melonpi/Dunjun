@@ -1,30 +1,11 @@
 #ifndef DUNJUN_MATH_VECTOR3_HPP
 #define DUNJUN_MATH_VECTOR3_HPP
 
-#include <Dunjun/Types.hpp>
-
-#include <Dunjun/Math/Vector2.hpp>
+#include <Dunjun/Math/Types.hpp>
+#include <ostream>
 
 namespace Dunjun
 {
-union Vector3
-{
-	struct
-	{
-		f32 x, y, z;
-	};
-	struct
-	{
-		f32 r, g, b;
-	};
-	f32 data[3];
-
-	Vector2 xy;
-
-	inline f32& operator[](usize index) { return data[index]; }
-	inline const f32& operator[](usize index) const { return data[index]; }
-};
-
 bool operator==(const Vector3& a, const Vector3& b);
 bool operator!=(const Vector3& a, const Vector3& b);
 

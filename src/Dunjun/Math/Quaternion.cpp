@@ -3,6 +3,8 @@
 
 namespace Dunjun
 {
+const Quaternion Quaternion::Identity = {0, 0, 0, 1};
+
 Quaternion operator-(const Quaternion& a)
 {
 	return Quaternion{-a.x, -a.y, -a.z, -a.w};

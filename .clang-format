@@ -1,30 +1,37 @@
 {
+    ColumnLimit: 80,
     TabWidth: 4,
+    IndentWidth: 4, # 1 tab
     UseTab: ForIndentation,
-    BasedOnStyle: LLVM,
+    BreakBeforeBraces: Allman,
+    PointerBindsToType: true,
+    ###
+    AlwaysBreakAfterDefinitionReturnType: false,
+    AlwaysBreakTemplateDeclarations: true,
+    AlwaysBreakBeforeMultilineStrings: true,
+    IndentFunctionDeclarationAfterType: false,
+    #
     AccessModifierOffset: -4, # 1 tab
-    AlignTrailingComments: true,
+    AlignAfterOpenBracket: true,
     AlignConsecutiveAssignments: true,
-    AllowAllParametersOfDeclarationOnNextLine: false,
+    AlignTrailingComments: true,
+    #
+    AllowAllParametersOfDeclarationOnNextLine: true,
     AllowShortBlocksOnASingleLine: false,
     AllowShortIfStatementsOnASingleLine: false,
     AllowShortLoopsOnASingleLine: false,
-    AlwaysBreakBeforeMultilineStrings: false,
-    AlwaysBreakTemplateDeclarations: true,
+    #
     BinPackArguments: false,
     BinPackParameters: false,
-    BreakBeforeBraces: Allman,
+    #
     BreakConstructorInitializersBeforeComma: true,
-    ColumnLimit: 80,
     ConstructorInitializerIndentWidth: 0,
-    ContinuationIndentWidth: 4,
-    Cpp11BracedListStyle: true,
+    #
     IndentCaseLabels: false,
-    IndentFunctionDeclarationAfterType: true,
-    IndentWidth: 4, # 1 tab
+    #
     MaxEmptyLinesToKeep: 1,
     NamespaceIndentation: None,
-    PointerBindsToType: true,
+    #
     SpaceBeforeAssignmentOperators: true,
     SpaceInEmptyParentheses: false,
     SpacesBeforeTrailingComments: 1,
@@ -32,5 +39,7 @@
     SpacesInCStyleCastParentheses: false,
     SpacesInParentheses: false,
     SpacesInSquareBrackets: false,
+    #
+    Cpp11BracedListStyle: true,
     Standard: Cpp11,
 }

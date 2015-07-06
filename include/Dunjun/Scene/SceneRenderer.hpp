@@ -17,12 +17,12 @@ class SceneNode;
 class MeshRenderer;
 class World;
 
-class SceneRenderer : private NonCopyable
+class SceneRenderer
 {
 public:
 	struct ModelInstance
 	{
-		const MeshRenderer* meshRenderer = nullptr;
+		const MeshRenderer* meshRenderer;
 		Transform transform;
 	};
 

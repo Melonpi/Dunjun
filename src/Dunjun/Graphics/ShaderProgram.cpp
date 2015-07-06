@@ -1,6 +1,6 @@
 #include <Dunjun/Graphics/ShaderProgram.hpp>
 
-#include <Dunjun/Common.hpp>
+#include <Dunjun/System/OpenGL.hpp>
 
 #include <fstream>
 #include <iostream>

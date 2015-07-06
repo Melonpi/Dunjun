@@ -1,16 +1,14 @@
 #ifndef DUNJUN_TRANSFORM_HPP
 #define DUNJUN_TRANSFORM_HPP
 
-#include <Dunjun/Math/Vector3.hpp>
-#include <Dunjun/Math/Quaternion.hpp>
-#include <Dunjun/Math/Matrix4.hpp>
+#include <Dunjun/Math/Types.hpp>
 
 namespace Dunjun
 {
 struct Transform
 {
-	Vector3 position       = Vector3{0, 0, 0};
-	Quaternion orientation = Quaternion{0, 0, 0, 1};
+	Vector3 position       = Vector3::Zero;
+	Quaternion orientation = Quaternion::Identity;
 	Vector3 scale          = Vector3{1, 1, 1};
 };
 

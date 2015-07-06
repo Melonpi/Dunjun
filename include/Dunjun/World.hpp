@@ -13,7 +13,7 @@
 
 namespace Dunjun
 {
-class World : private NonCopyable
+class World
 {
 public:
 	Context context;
@@ -40,6 +40,10 @@ public:
 	void update(Time dt);
 	void handleEvent(const Event& event);
 	void render();
+
+private:
+	World(const World&) = delete;
+	World& operator=(const World&) = delete;
 };
 } // namespace Dunjun
 
