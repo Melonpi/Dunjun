@@ -44,5 +44,6 @@
 #include "Dunjun/Game.cpp"
 
 #include "Dunjun/Entity.cpp"
+#include "Dunjun/SceneGraph.cpp"
 
 #include "main.cpp"

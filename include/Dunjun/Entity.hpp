@@ -10,7 +10,7 @@ namespace Dunjun
 {
 using EntityId = u32;
 
-enum ComponentMasks
+enum ComponentMasks : u32
 {
 	Component_None     = 0x00000000,
 	Component_Position = 0x00000001,
