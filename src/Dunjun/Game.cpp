@@ -4,7 +4,7 @@
 #include <Dunjun/System.hpp>
 #include <Dunjun/Window.hpp>
 #include <Dunjun/ResourceHolders.hpp>
-#include <Dunjun/World.hpp>
+// #include <Dunjun/World.hpp>
 
 #include <cassert>
 #include <cstdlib>
@@ -43,7 +43,7 @@ GLOBAL Window g_window;
 
 GLOBAL ModelAsset g_sprite;
 
-GLOBAL World* g_world;
+// GLOBAL World* g_world;
 
 GLOBAL Texture g_defaultTexture;
 GLOBAL Texture g_kittenTexture;
@@ -84,72 +84,72 @@ INTERNAL void loadMaterials()
 	g_terrainTexture = loadTextureFromFile("data/textures/terrain.png",
 	                                       TextureFilter::Nearest);
 
-	{
-		auto mat        = make_unique<Material>();
-		mat->shaders    = &g_shaderHolder.get("geometryPass");
-		mat->diffuseMap = &g_defaultTexture;
-		g_materialHolder.insert("default", std::move(mat));
-	}
-	{
-		auto mat              = make_unique<Material>();
-		mat->shaders          = &g_shaderHolder.get("geometryPass");
-		mat->diffuseMap       = &g_kittenTexture;
-		mat->specularExponent = 1e5;
-		g_materialHolder.insert("cat", std::move(mat));
-	}
-	{
-		auto mat        = make_unique<Material>();
-		mat->shaders    = &g_shaderHolder.get("geometryPass");
-		mat->diffuseMap = &g_stoneTexture;
-		g_materialHolder.insert("stone", std::move(mat));
-	}
-	{
-		auto mat        = make_unique<Material>();
-		mat->shaders    = &g_shaderHolder.get("geometryPass");
-		mat->diffuseMap = &g_terrainTexture;
-		g_materialHolder.insert("terrain", std::move(mat));
-	}
+	// {
+	// 	auto mat        = make_unique<Material>();
+	// 	mat->shaders    = &g_shaderHolder.get("geometryPass");
+	// 	mat->diffuseMap = &g_defaultTexture;
+	// 	g_materialHolder.insert("default", std::move(mat));
+	// }
+	// {
+	// 	auto mat              = make_unique<Material>();
+	// 	mat->shaders          = &g_shaderHolder.get("geometryPass");
+	// 	mat->diffuseMap       = &g_kittenTexture;
+	// 	mat->specularExponent = 1e5;
+	// 	g_materialHolder.insert("cat", std::move(mat));
+	// }
+	// {
+	// 	auto mat        = make_unique<Material>();
+	// 	mat->shaders    = &g_shaderHolder.get("geometryPass");
+	// 	mat->diffuseMap = &g_stoneTexture;
+	// 	g_materialHolder.insert("stone", std::move(mat));
+	// }
+	// {
+	// 	auto mat        = make_unique<Material>();
+	// 	mat->shaders    = &g_shaderHolder.get("geometryPass");
+	// 	mat->diffuseMap = &g_terrainTexture;
+	// 	g_materialHolder.insert("terrain", std::move(mat));
+	// }
 }
 INTERNAL void loadSpriteAsset()
 {
-	{
-		Mesh::Data meshData = {};
+	// {
+	// 	Mesh::Data meshData = {};
 
-		reserve(meshData.vertices, 4);
-		append(meshData.vertices, Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}});
-		append(meshData.vertices, Vertex{{+0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}});
-		append(meshData.vertices, Vertex{{+0.5f, +0.5f, 0.0f}, {1.0f, 1.0f}});
-		append(meshData.vertices, Vertex{{-0.5f, +0.5f, 0.0f}, {0.0f, 1.0f}});
+	// 	reserve(meshData.vertices, 4);
+	// 	append(meshData.vertices, Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}});
+	// 	append(meshData.vertices, Vertex{{+0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}});
+	// 	append(meshData.vertices, Vertex{{+0.5f, +0.5f, 0.0f}, {1.0f, 1.0f}});
+	// 	append(meshData.vertices, Vertex{{-0.5f, +0.5f, 0.0f}, {0.0f, 1.0f}});
 
-		reserve(meshData.indices, 6);
-		meshData.addFace(0, 1, 2).addFace(2, 3, 0);
-		meshData.generateNormals();
+	// 	reserve(meshData.indices, 6);
+	// 	meshData.addFace(0, 1, 2).addFace(2, 3, 0);
+	// 	meshData.generateNormals();
 
-		g_meshHolder.insert("sprite", make_unique<Mesh>(meshData));
+	// 	g_meshHolder.insert("sprite", make_unique<Mesh>(meshData));
 
-		g_sprite.material = &g_materialHolder.get("cat");
-		g_sprite.mesh     = &g_meshHolder.get("sprite");
-	}
-	{
-		Mesh::Data meshData = {};
+	// 	g_sprite.material = &g_materialHolder.get("cat");
+	// 	g_sprite.mesh     = &g_meshHolder.get("sprite");
+	// }
+	// {
+	// 	Mesh::Data meshData = {};
 
-		reserve(meshData.vertices, 4);
-		append(meshData.vertices, Vertex{{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}});
-		append(meshData.vertices, Vertex{{+1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}});
-		append(meshData.vertices, Vertex{{+1.0f, +1.0f, 0.0f}, {1.0f, 1.0f}});
-		append(meshData.vertices, Vertex{{-1.0f, +1.0f, 0.0f}, {0.0f, 1.0f}});
+	// 	reserve(meshData.vertices, 4);
+	// 	append(meshData.vertices, Vertex{{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}});
+	// 	append(meshData.vertices, Vertex{{+1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}});
+	// 	append(meshData.vertices, Vertex{{+1.0f, +1.0f, 0.0f}, {1.0f, 1.0f}});
+	// 	append(meshData.vertices, Vertex{{-1.0f, +1.0f, 0.0f}, {0.0f, 1.0f}});
 
-		reserve(meshData.indices, 6);
-		meshData.addFace(0, 1, 2).addFace(2, 3, 0);
-		meshData.generateNormals();
+	// 	reserve(meshData.indices, 6);
+	// 	meshData.addFace(0, 1, 2).addFace(2, 3, 0);
+	// 	meshData.generateNormals();
 
-		g_meshHolder.insert("quad", make_unique<Mesh>(meshData));
-	}
+	// 	g_meshHolder.insert("quad", make_unique<Mesh>(meshData));
+	// }
 }
 
 INTERNAL void update(Time dt)
 {
-	g_world->update(dt);
+	// g_world->update(dt);
 	if (Input::isKeyPressed(Input::Key::F11))
 	{
 		// TODO(bill): Toggle fullscreen
@@ -193,6 +193,7 @@ INTERNAL void handleEvents()
 			case Input::Key::Escape:
 			{
 				g_window.close();
+				std::exit(0);
 				break;
 			}
 			default:
@@ -204,11 +205,14 @@ INTERNAL void handleEvents()
 			break;
 		}
 
-		g_world->handleEvent(event);
+		// g_world->handleEvent(event);
 	}
 }
 
-INTERNAL void render() { g_world->render(); }
+INTERNAL void render()
+{
+	// g_world->render();
+}
 
 void init(int /*argc*/, char** /*argv*/)
 {
@@ -239,10 +243,10 @@ void init(int /*argc*/, char** /*argv*/)
 	loadMaterials();
 	loadSpriteAsset();
 
-	g_world = defaultAllocator().makeNew<World>();
+	// g_world = defaultAllocator().makeNew<World>();
 
-	g_world->init(
-	    Context{g_window, g_shaderHolder, g_meshHolder, g_materialHolder});
+	// g_world->init(
+	    // Context{g_window, g_shaderHolder, g_meshHolder, g_materialHolder});
 }
 
 void run()
@@ -314,7 +318,7 @@ void run()
 
 void shutdown()
 {
-	defaultAllocator().makeDelete<World>(g_world);
+	// defaultAllocator().makeDelete<World>(g_world);
 	Input::shutdown();
 	g_window.close();
 	SDL_Quit();

@@ -30,57 +30,41 @@ enum class DrawType : s32
 	// Quads      = GL_QUADS, // Disabled by default
 };
 
+struct MeshData
+{
+	DrawType drawType;
+
+	Array<Vertex> vertices;
+	Array<u32> indices;
+
+	MeshData(Allocator& a);
+	MeshData(const MeshData& other) = default;
+	~MeshData() = default;
+
+	MeshData& addFace(u32 a, u32 b, u32 c);
+	MeshData& addFace(u32 offset, u32 a, u32 b, u32 c);
+
+	void generateNormals();
+};
+
 struct Mesh
 {
-	struct Data
-	{
-		DrawType drawType;
-
-		Array<Vertex> vertices;
-		Array<u32> indices;
-
-		Data();
-		Data(const Data& other) = default;
-		~Data() = default;
-
-		Data& addFace(u32 a, u32 b, u32 c);
-
-		Data& addFace(u32 offset, u32 a, u32 b, u32 c);
-
-		void generateNormals();
-	};
-
-	Data data;
-	// NOTE(bill): These mutables are a little bit of a hack but it works and
-	// is semi-const correct
-
-	mutable u32 vbo = 0;
-	mutable u32 ibo = 0;
-
-	mutable bool generated = false;
-
-	DrawType drawType = DrawType::Triangles;
-	s32 drawCount     = 0;
-
-	Mesh();
-	Mesh(const Data& data);
-
-	virtual ~Mesh() { destroy(); }
-
-	void addData(const Data& data);
-
-	void generate() const;
-
-	void draw() const;
-
-	inline void destroy() const
-	{
-		if (vbo)
-			glDeleteBuffers(1, &vbo);
-		if (ibo)
-			glDeleteBuffers(1, &ibo);
-	}
+	u32 vbo;
+	u32 ibo;
+	DrawType drawType;
+	s32 drawCount;
 };
+
+Mesh generateMesh(const MeshData& data);
+
+void drawMesh(const Mesh& mesh);
+
+inline void destroyMesh(Mesh& mesh)
+{
+	glDeleteBuffers(1, &mesh.vbo);
+	glDeleteBuffers(1, &mesh.ibo);
+}
+
 } // namespace Dunjun
 
 #endif

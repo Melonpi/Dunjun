@@ -12,9 +12,6 @@
 #include "Dunjun/Graphics/Texture.cpp"
 #include "Dunjun/Graphics/Transform.cpp"
 
-#include "Dunjun/Level/Level.cpp"
-#include "Dunjun/Level/Room.cpp"
-
 #include "Dunjun/Math/Constants.cpp"
 #include "Dunjun/Math/Functions.cpp"
 #include "Dunjun/Math/Matrix4.cpp"
@@ -24,9 +21,13 @@
 #include "Dunjun/Math/Vector3.cpp"
 #include "Dunjun/Math/Vector4.cpp"
 
-#include "Dunjun/Scene/FaceCamera.cpp"
-#include "Dunjun/Scene/SceneNode.cpp"
-#include "Dunjun/Scene/SceneRenderer.cpp"
+// #include "Dunjun/Level/Level.cpp"
+// #include "Dunjun/Level/Room.cpp"
+
+// #include "Dunjun/Scene/FaceCamera.cpp"
+// #include "Dunjun/Scene/SceneNode.cpp"
+// #include "Dunjun/Scene/SceneRenderer.cpp"
+// #include "Dunjun/World.cpp"
 
 #include "Dunjun/System/Filesystem.cpp"
 #include "Dunjun/System/Memory.cpp"
@@ -40,10 +41,10 @@
 
 #include "Dunjun/Common.cpp"
 #include "Dunjun/ResourceHolders.cpp"
-#include "Dunjun/World.cpp"
 #include "Dunjun/Game.cpp"
 
 #include "Dunjun/Entity.cpp"
 #include "Dunjun/SceneGraph.cpp"
+#include "Dunjun/RenderSystem.cpp"
 
 #include "main.cpp"

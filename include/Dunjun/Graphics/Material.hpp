@@ -1,7 +1,6 @@
 #ifndef DUNJUN_GRAPHICS_MATERIAL_HPP
 #define DUNJUN_GRAPHICS_MATERIAL_HPP
 
-#include <Dunjun/Graphics/ShaderProgram.hpp>
 #include <Dunjun/Graphics/Texture.hpp>
 #include <Dunjun/Graphics/Color.hpp>
 
@@ -13,8 +12,6 @@ struct Material
 {
 	/*
 	  What a final material will look like
-	    shaders
-
 	    diffuse / albedo
 	    - map
 	    - color
@@ -37,11 +34,6 @@ struct Material
 	    - map
 	    - color
 	 */
-
-	// TODO(bill): Restrict types/number of shaders and use an enum rather
-	// than a pointer?
-	ShaderProgram* shaders = nullptr;
-
 	Texture* diffuseMap = nullptr;
 	Color diffuseColor  = Color::White;
 

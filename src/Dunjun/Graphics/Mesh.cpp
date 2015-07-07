@@ -5,14 +5,14 @@
 
 namespace Dunjun
 {
-Mesh::Data::Data()
+MeshData::MeshData(Allocator& a)
 : drawType{DrawType::Triangles}
-, vertices{defaultAllocator()}
-, indices{defaultAllocator()}
+, vertices{a}
+, indices{a}
 {
 }
 
-Mesh::Data& Mesh::Data::addFace(u32 a, u32 b, u32 c)
+MeshData& MeshData::addFace(u32 a, u32 b, u32 c)
 {
 	append(indices, a);
 	append(indices, b);
@@ -21,7 +21,7 @@ Mesh::Data& Mesh::Data::addFace(u32 a, u32 b, u32 c)
 	return *this;
 }
 
-Mesh::Data& Mesh::Data::addFace(u32 offset, u32 a, u32 b, u32 c)
+MeshData& MeshData::addFace(u32 offset, u32 a, u32 b, u32 c)
 {
 	append(indices, offset + a);
 	append(indices, offset + b);
@@ -30,7 +30,7 @@ Mesh::Data& Mesh::Data::addFace(u32 offset, u32 a, u32 b, u32 c)
 	return *this;
 }
 
-void Mesh::Data::generateNormals()
+void MeshData::generateNormals()
 {
 	usize li = len(indices);
 	for (usize i = 0; i < li; i += 3)
@@ -53,67 +53,34 @@ void Mesh::Data::generateNormals()
 		vertices[i].normal = normalize(vertices[i].normal);
 }
 
-Mesh::Mesh()
-: data{}
-, generated{false}
-, vbo{0}
-, ibo{0}
-, drawType{DrawType::Triangles}
-, drawCount{0}
+Mesh generateMesh(const MeshData& data)
 {
-}
+	Mesh mesh;
+	mesh.drawType  = data.drawType;
+	mesh.drawCount = (s32)len(data.indices);
 
-Mesh::Mesh(const Data& data)
-: data{data}
-, generated{false}
-, vbo{0}
-, ibo{0}
-, drawType{data.drawType}
-, drawCount{(s32)len(data.indices)}
-{
-	generate();
-}
+	glGenBuffers(1, &mesh.vbo);
+	glGenBuffers(1, &mesh.ibo);
 
-void Mesh::addData(const Data& data_)
-{
-	data      = data_;
-	drawType  = data.drawType;
-	drawCount = (u32)len(data.indices);
-	generated = false;
-}
-
-void Mesh::generate() const
-{
-	if (generated)
-		return;
-
-	if (!vbo)
-		glGenBuffers(1, &vbo);
-	if (!ibo)
-		glGenBuffers(1, &ibo);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
 	defer(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	glBufferData(GL_ARRAY_BUFFER,
 	             sizeof(Vertex) * len(data.vertices),
 	             &data.vertices[0],
 	             GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
 	defer(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,
 	             sizeof(u32) * len(data.indices),
 	             &data.indices[0],
 	             GL_STATIC_DRAW);
 
-	generated = true;
+	return mesh;
 }
 
-void Mesh::draw() const
+void drawMesh(const Mesh& mesh)
 {
-	if (!generated)
-		generate();
-
 	glEnableVertexAttribArray((u32)AtrribLocation::Position);
 	glEnableVertexAttribArray((u32)AtrribLocation::TexCoord);
 	glEnableVertexAttribArray((u32)AtrribLocation::Color);
@@ -123,8 +90,8 @@ void Mesh::draw() const
 	defer(glDisableVertexAttribArray((u32)AtrribLocation::Color));
 	defer(glDisableVertexAttribArray((u32)AtrribLocation::Normal));
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
 	defer(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	defer(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
@@ -159,6 +126,7 @@ void Mesh::draw() const
 	                                    sizeof(Vector2) + //
 	                                    sizeof(Color)));
 
-	glDrawElements((GLenum)drawType, (s32)drawCount, GL_UNSIGNED_INT, nullptr);
+	glDrawElements(
+	    (GLenum)mesh.drawType, mesh.drawCount, GL_UNSIGNED_INT, nullptr);
 }
 } // namespace Dunjun
