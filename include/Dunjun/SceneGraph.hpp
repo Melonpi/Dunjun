@@ -16,9 +16,9 @@ struct SceneGraph
 
 	struct InstanceData
 	{
-		usize length   = 0;
-		usize capacity = 0;
-		void* buffer   = nullptr;
+		u32 length   = 0;
+		u32 capacity = 0;
+		void* buffer = nullptr;
 
 		EntityId* entityId  = nullptr;
 		Transform* local    = nullptr;
@@ -31,26 +31,54 @@ struct SceneGraph
 
 	Allocator& allocator;
 	InstanceData data;
-	Hashmap<NodeId> map;
+	HashMap<NodeId> map;
+
+	// Code
 
 	SceneGraph(Allocator& a);
 	~SceneGraph();
 
-	void allocate(usize capacity);
+	void allocate(u32 capacity);
 
-	void create(EntityId id, const Transform& t);
+	NodeId create(EntityId id, const Transform& t);
 	void destroy(NodeId id);
 
-	NodeId getTransformId(EntityId id) const;
-
+	NodeId getNodeId(EntityId id) const;
 	bool isValid(NodeId id) const;
+	u32 nodeCount() const;
 
-	void link(NodeId parent, NodeId child);
-	void unlink(NodeId child);
+	void link(NodeId parentId, NodeId childId);
+	void unlink(NodeId childId);
 
-	void transformChild(NodeId child, const Transform& t);
+	void transformChild(NodeId childId, const Transform& t);
 
+	// Helper Functions
 
+	void updateLocal(NodeId id);
+	void updateWorld(NodeId id);
+
+	Transform getLocalTransform(NodeId id) const;
+	Transform getWorldTransform(NodeId id) const;
+
+	Vector3 getLocalPosition(NodeId id) const;
+	Quaternion getLocalOrientation(NodeId id) const;
+	Vector3 getLocalScale(NodeId id) const;
+
+	Vector3 getWorldPosition(NodeId id) const;
+	Quaternion getWorldOrientation(NodeId id) const;
+	Vector3 getWorldScale(NodeId id) const;
+
+	void setLocalTransform(NodeId id, const Transform& t);
+	void setWorldTransform(NodeId id, const Transform& t);
+
+	void setLocalPosition(NodeId id, const Vector3& position);
+	void setLocalOrientation(NodeId id, const Quaternion& orientation);
+	void setLocalScale(NodeId id, const Vector3& scale);
+
+	void setWorldPosition(NodeId id, const Vector3& position);
+	void setWorldOrientation(NodeId id, const Quaternion& orientation);
+	void setWorldScale(NodeId id, const Vector3& scale);
+};
 } // namespace Dunjun
 
 #endif

@@ -98,7 +98,7 @@ usize addEntry(HashMap<T>& h, u64 key)
 	e.key        = key;
 	e.next       = Impl::EndOfList;
 	usize eIndex = len(h.data);
-	pushBack(h.data, e);
+	append(h.data, e);
 
 	return eIndex;
 }
@@ -330,7 +330,7 @@ inline void get(const HashMap<T>& h, u64 key, Array<T>& items)
 
 	while (e)
 	{
-		pushBack(items, e->value);
+		append(items, e->value);
 		e = findNext(h, e);
 	}
 }

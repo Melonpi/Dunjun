@@ -20,7 +20,8 @@
 #include <Dunjun/System/Murmur.hpp>
 #include <Dunjun/System/TempAllocator.hpp>
 
-#include <Dunjun/Entity.hpp>
+#include <Dunjun/EntityWorld.hpp>
+#include <Dunjun/SceneGraph.hpp>
 
 namespace Dunjun
 {
@@ -248,45 +249,24 @@ void run()
 {
 	{
 		EntityWorld world = {};
-		world.init();
-
+		SceneGraph& sg    = world.sceneGraph;
+		sg.allocate(16);
 		EntityId crate, player;
 
-		{
-			crate = world.createEntity();
+		crate              = world.createEntity();
+		world.names[crate] = NameComponent{"crate"};
 
-			world.components[crate] = Component_Position;
-			world.positions[crate]  = PositionComponent{{1, 2, 3}};
-		}
-		{
-			player = world.createEntity();
-
-			world.components[player] = Component_Position | Component_Name;
-			world.positions[player]  = PositionComponent{{0, 5, 1}};
-			world.names[player]      = NameComponent{"Bob"};
-		}
-
+		player              = world.createEntity();
+		world.names[player] = NameComponent{"Bob"};
 
 		{
-			PositionComponent* p;
-			for (EntityId e = 0; e < MaxEntities; e++)
-			{
-				// Move Positions
-				if (world.components[e] & Component_Position)
-				{
-					p = &world.positions[e];
+			SceneGraph::NodeId p = sg.create(player, Transform{});
+			SceneGraph::NodeId c = sg.create(crate, Transform{});
+			sg.link(c, p);
 
-					p->position.y += 1;
+			sg.setWorldPosition(c, {1, 2, 3});
 
-					printf("%.0f %.0f %.0f\n",
-					       p->position.x, p->position.y, p->position.z);
-				}
-
-				if (world.components[e] & Component_Name)
-				{
-					printf("%s\n", world.names[e].name.c_str());
-				}
-			}
+			std::cout << sg.getWorldPosition(p) << "\n";
 		}
 	}
 

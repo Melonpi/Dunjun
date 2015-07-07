@@ -12,13 +12,9 @@ SceneGraph::SceneGraph(Allocator& a)
 {
 }
 
-SceneGraph::~SceneGraph()
-{
-	allocator.deallocate(data.buffer);
-	map.~Array();
-}
+SceneGraph::~SceneGraph() { allocator.deallocate(data.buffer); }
 
-void SceneGraph::allocate(usize capacity)
+void SceneGraph::allocate(u32 capacity)
 {
 	if (capacity <= data.length)
 		return;
@@ -53,9 +49,9 @@ void SceneGraph::allocate(usize capacity)
 	data = newData;
 }
 
-void SceneGraph::create(EntityId id, const Transform& t)
+SceneGraph::NodeId SceneGraph::create(EntityId id, const Transform& t)
 {
-	if (data.capacity = data.length) // grow
+	if (data.capacity == data.length) // grow
 		allocate(2 * data.length + 1);
 
 	const NodeId last = data.length;
@@ -71,6 +67,8 @@ void SceneGraph::create(EntityId id, const Transform& t)
 	set(map, id, last);
 
 	data.length++;
+
+	return last;
 }
 
 void SceneGraph::destroy(NodeId id)
@@ -88,61 +86,199 @@ void SceneGraph::destroy(NodeId id)
 	data.nextSibling[id] = data.nextSibling[last];
 
 	set(map, lastEntity, id);
-	set(map, entitym EmptyNodeId);
+	set(map, entity, EmptyNodeId);
 
 	data.length--;
 }
 
-NodeId SceneGraph::getNodeId(EntityId id) const
+SceneGraph::NodeId SceneGraph::getNodeId(EntityId id) const
 {
 	return get(map, id, EmptyNodeId);
 }
 
-bool SceneGraph::isValid(NodeId id) const
-{
-	return id != EmptyNodeId;
-}
+bool SceneGraph::isValid(NodeId id) const { return id != EmptyNodeId; }
 
-void SceneGraph::link(NodeId parent, NodeId child)
-{
-	unlink(child);
+u32 SceneGraph::nodeCount() const { return data.length; }
 
-	if (!isValid(data.firstChild[parent]))
+void SceneGraph::link(NodeId parentId, NodeId childId)
+{
+	unlink(childId);
+
+	if (!isValid(data.firstChild[parentId]))
 	{
-		data.firstChild[parent] = child;
-		data.parent[child] = parent;
+		data.firstChild[parentId] = childId;
+		data.parent[parentId]     = parentId;
 	}
 	else
 	{
 		NodeId prev = EmptyNodeId;
-		NodeId curr = data.firstChild[parent];
+		NodeId curr = data.firstChild[parentId];
 		while (isValid(curr))
 		{
 			prev = curr;
 			curr = data.nextSibling[curr];
 		}
 
-		data.nextSibling[prev] = child;
+		data.nextSibling[prev] = childId;
 
-		data.firstChild[child] = EmptyNodeId;
-		data.nextSibling[child] = EmptyNodeId;
-		data.prevSibling[child] = prev;
+		data.firstChild[childId]  = EmptyNodeId;
+		data.nextSibling[childId] = EmptyNodeId;
+		data.prevSibling[childId] = prev;
 	}
 
-	const Transform parentTransform = data.world[parent];
-	const Transform childTransform = data.world[child];
+	const Transform parentTransform = data.world[parentId];
+	const Transform childTransform  = data.world[childId];
 
 	// TODO(bill): check to see if this is correct
 	const Transform localTransform = parentTransform / childTransform;
 
-	data.local[child] = localTransform;
-	data.parent[child] = parent;
+	data.local[childId]  = localTransform;
+	data.parent[childId] = parentId;
 
-	transformChild(child, parentTransform);
+	transformChild(childId, parentTransform);
 }
 
-void SceneGraph::unlink(NodeId child)
+void SceneGraph::unlink(NodeId childId)
 {
-	// TODO(bill):
+	if (!isValid(data.parent[childId]))
+		return;
+
+	if (!isValid(data.prevSibling[childId]))
+		data.firstChild[data.parent[childId]] = data.nextSibling[childId];
+	else
+		data.nextSibling[data.prevSibling[childId]] = data.nextSibling[childId];
+
+	if (isValid(data.nextSibling[childId]))
+		data.prevSibling[data.nextSibling[childId]] = data.prevSibling[childId];
+
+	data.parent[childId]      = EmptyNodeId;
+	data.nextSibling[childId] = EmptyNodeId;
+	data.prevSibling[childId] = EmptyNodeId;
 }
+
+void SceneGraph::transformChild(NodeId id, const Transform& t)
+{
+	data.world[id] = data.local[id] * t;
+
+	NodeId child = data.firstChild[id];
+	while (isValid(child))
+	{
+		transformChild(child, data.world[id]);
+		child = data.nextSibling[child];
+	}
+}
+
+void SceneGraph::updateLocal(NodeId id)
+{
+	NodeId parentId           = data.parent[id];
+	Transform parentTransform = {};
+	if (isValid(parentId))
+		parentTransform = data.world[parentId];
+	transformChild(id, parentTransform);
+}
+
+void SceneGraph::updateWorld(NodeId id)
+{
+	NodeId parentId           = data.parent[id];
+	Transform parentTransform = {};
+	if (isValid(parentId))
+		parentTransform = data.world[parentId];
+	data.local[id] = data.world[id] / parentTransform;
+	transformChild(id, parentTransform);
+}
+
+////////////////
+
+Transform SceneGraph::getLocalTransform(NodeId id) const
+{
+	return data.local[id];
+}
+
+Transform SceneGraph::getWorldTransform(NodeId id) const
+{
+	return data.world[id];
+}
+
+////////////////
+
+Vector3 SceneGraph::getLocalPosition(NodeId id) const
+{
+	return getLocalTransform(id).position;
+}
+
+Quaternion SceneGraph::getLocalOrientation(NodeId id) const
+{
+	return getLocalTransform(id).orientation;
+}
+
+Vector3 SceneGraph::getLocalScale(NodeId id) const
+{
+	return getLocalTransform(id).scale;
+}
+
+Vector3 SceneGraph::getWorldPosition(NodeId id) const
+{
+	return getWorldTransform(id).position;
+}
+
+Quaternion SceneGraph::getWorldOrientation(NodeId id) const
+{
+	return getWorldTransform(id).orientation;
+}
+
+Vector3 SceneGraph::getWorldScale(NodeId id) const
+{
+	return getWorldTransform(id).scale;
+}
+
+////////////////
+
+void SceneGraph::setLocalTransform(NodeId id, const Transform& t)
+{
+	data.local[id] = t;
+	updateLocal(id);
+}
+
+void SceneGraph::setWorldTransform(NodeId id, const Transform& t)
+{
+	data.world[id] = t;
+	updateWorld(id);
+}
+
+void SceneGraph::setLocalPosition(NodeId id, const Vector3& position)
+{
+	data.local[id].position = position;
+	updateLocal(id);
+}
+
+void SceneGraph::setLocalOrientation(NodeId id, const Quaternion& orientation)
+{
+	data.local[id].orientation = orientation;
+	updateLocal(id);
+}
+
+void SceneGraph::setLocalScale(NodeId id, const Vector3& scale)
+{
+	data.local[id].scale = scale;
+	updateLocal(id);
+}
+
+void SceneGraph::setWorldPosition(NodeId id, const Vector3& position)
+{
+	data.world[id].position = position;
+	updateWorld(id);
+}
+
+void SceneGraph::setWorldOrientation(NodeId id, const Quaternion& orientation)
+{
+	data.world[id].orientation = orientation;
+	updateWorld(id);
+}
+
+void SceneGraph::setWorldScale(NodeId id, const Vector3& scale)
+{
+	data.world[id].scale = scale;
+	updateWorld(id);
+}
+
 } // namespace Dunjun

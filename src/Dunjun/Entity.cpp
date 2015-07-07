@@ -1,10 +1,13 @@
-#include <Dunjun/Entity.hpp>
+#include <Dunjun/EntityWorld.hpp>
+#include <Dunjun/SceneGraph.hpp>
+#include <Dunjun/System/Memory.hpp>
 
 #include <cstdio>
 
 namespace Dunjun
 {
-void EntityWorld::init()
+EntityWorld::EntityWorld()
+: sceneGraph{defaultAllocator()}
 {
 	for (auto& c : components)
 		c = Component_None;
