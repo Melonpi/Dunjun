@@ -12,7 +12,6 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <vector>
 
 #include <Dunjun/System/Containers.hpp>
 #include <Dunjun/System/Array.hpp>
@@ -20,6 +19,8 @@
 #include <Dunjun/System/HashMap.hpp>
 #include <Dunjun/System/Murmur.hpp>
 #include <Dunjun/System/TempAllocator.hpp>
+
+#include <Dunjun/Entity.hpp>
 
 namespace Dunjun
 {
@@ -47,7 +48,6 @@ GLOBAL Texture g_defaultTexture;
 GLOBAL Texture g_kittenTexture;
 GLOBAL Texture g_stoneTexture;
 GLOBAL Texture g_terrainTexture;
-
 
 namespace Game
 {
@@ -78,10 +78,10 @@ INTERNAL void loadShaders()
 INTERNAL void loadMaterials()
 {
 	g_defaultTexture = loadTextureFromFile("data/textures/default.png");
-	g_kittenTexture = loadTextureFromFile("data/textures/kitten.jpg");
-	g_stoneTexture = loadTextureFromFile("data/textures/stone.png");
+	g_kittenTexture  = loadTextureFromFile("data/textures/kitten.jpg");
+	g_stoneTexture   = loadTextureFromFile("data/textures/stone.png");
 	g_terrainTexture = loadTextureFromFile("data/textures/terrain.png",
-										   TextureFilter::Nearest);
+	                                       TextureFilter::Nearest);
 
 	{
 		auto mat        = make_unique<Material>();
@@ -240,14 +240,56 @@ void init(int /*argc*/, char** /*argv*/)
 
 	g_world = defaultAllocator().makeNew<World>();
 
-	g_world->init(Context{g_window,
-	                      g_shaderHolder,
-	                      g_meshHolder,
-	                      g_materialHolder});
+	g_world->init(
+	    Context{g_window, g_shaderHolder, g_meshHolder, g_materialHolder});
 }
 
 void run()
 {
+	{
+		EntityWorld world = {};
+		world.init();
+
+		EntityId crate, player;
+
+		{
+			crate = world.createEntity();
+
+			world.components[crate] = Component_Position;
+			world.positions[crate]  = PositionComponent{{1, 2, 3}};
+		}
+		{
+			player = world.createEntity();
+
+			world.components[player] = Component_Position | Component_Name;
+			world.positions[player]  = PositionComponent{{0, 5, 1}};
+			world.names[player]      = NameComponent{"Bob"};
+		}
+
+
+		{
+			PositionComponent* p;
+			for (EntityId e = 0; e < MaxEntities; e++)
+			{
+				// Move Positions
+				if (world.components[e] & Component_Position)
+				{
+					p = &world.positions[e];
+
+					p->position.y += 1;
+
+					printf("%.0f %.0f %.0f\n",
+					       p->position.x, p->position.y, p->position.z);
+				}
+
+				if (world.components[e] & Component_Name)
+				{
+					printf("%s\n", world.names[e].name.c_str());
+				}
+			}
+		}
+	}
+
 	TickCounter tc;
 
 	Time accumulator;

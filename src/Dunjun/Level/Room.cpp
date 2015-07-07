@@ -3,6 +3,7 @@
 #include <Dunjun/Scene/MeshRenderer.hpp>
 
 #include <Dunjun/System/Array.hpp>
+#include <Dunjun/System/Memory.hpp>
 
 namespace Dunjun
 {
@@ -20,7 +21,7 @@ Room::Room(Random& random, const Room::Size& size)
 Room::~Room()
 {
 	if (m_mesh)
-		delete m_mesh;
+		defaultAllocator().makeDelete(m_mesh);
 }
 
 void Room::generate(bool northDoor,
@@ -32,7 +33,7 @@ void Room::generate(bool northDoor,
 		return;
 
 	if (!m_mesh)
-		m_mesh = new Mesh();
+		m_mesh = defaultAllocator().makeNew<Mesh>();
 
 	std::vector<std::vector<TileId>> mapGrid(size.x,
 	                                         std::vector<TileId>(size.y));

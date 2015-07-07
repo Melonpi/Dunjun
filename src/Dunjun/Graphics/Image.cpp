@@ -47,16 +47,12 @@ Image loadImageFromMemory(u32 w, u32 h, ImageFormat f, const u8* p)
 
 	usize imageSize = img.width * img.height * (usize)img.format;
 
-	//Allocator& a = defaultAllocator();
+	Allocator& a = defaultAllocator();
 
-	//if (img.pixels)
-	//	a.deallocate(img.pixels);
-
-	//img.pixels = (u8*)a.allocate(imageSize * sizeof(u8));
 	if (img.pixels)
-		delete[] img.pixels;
+		a.deallocate(img.pixels);
 
-	img.pixels = new u8[imageSize];
+	img.pixels = (u8*)a.allocate(imageSize * sizeof(u8));
 
 	if (p != nullptr)
 		memcpy(img.pixels, p, imageSize);
@@ -71,11 +67,8 @@ void flipImageVertically(Image& img)
 	const usize pitch   = img.width * (usize)img.format;
 	const u32 halfRows  = img.height / 2;
 
-	//u8* rowBuffer = (u8*)a.allocate(pitch * sizeof(u8), alignof(u8));
-	//defer(a.deallocate(rowBuffer));
-	u8* rowBuffer = new u8[pitch];
-	defer(delete[] rowBuffer);
-
+	u8* rowBuffer = (u8*)a.allocate(pitch * sizeof(u8));
+	defer(a.deallocate(rowBuffer));
 
 	for (u32 i{0}; i < halfRows; i++)
 	{
@@ -91,8 +84,7 @@ void flipImageVertically(Image& img)
 
 void destroyImage(Image& image)
 {
-	delete[] image.pixels;
-	//defaultAllocator().deallocate(image.pixels);
+	defaultAllocator().deallocate(image.pixels);
 }
 
 } // namespace Dunjun

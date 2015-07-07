@@ -43,9 +43,9 @@ struct Material
 	ShaderProgram* shaders = nullptr;
 
 	Texture* diffuseMap = nullptr;
-	Color diffuseColor  = Color{255, 255, 255, 255};
+	Color diffuseColor  = Color::White;
 
-	Color specularColor  = Color{255, 255, 255, 255};
+	Color specularColor  = Color::White;
 	f32 specularExponent = 80.0f;
 };
 } // namespace Dunjun

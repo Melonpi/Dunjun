@@ -1,6 +1,7 @@
 #include <Dunjun/Graphics/ShaderProgram.hpp>
 
 #include <Dunjun/System/OpenGL.hpp>
+#include <Dunjun/System/Memory.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -162,8 +163,11 @@ bool ShaderProgram::attachShaderFromMemory(ShaderType type,
 		s32 infoLogLength;
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
 
-		char* strInfoLog = new char[infoLogLength + 1];
-		defer(delete[] strInfoLog);
+		Allocator& a = defaultAllocator();
+
+		char* strInfoLog =
+		    (char*)a.allocate((infoLogLength + 1) * sizeof(char));
+		defer(a.deallocate(strInfoLog));
 
 		glGetShaderInfoLog(shader, infoLogLength, nullptr, strInfoLog);
 
@@ -225,8 +229,11 @@ bool ShaderProgram::link()
 			s32 infoLogLength;
 			glGetProgramiv(handle, GL_INFO_LOG_LENGTH, &infoLogLength);
 
-			char* strInfoLog = new char[infoLogLength + 1];
-			defer(delete[] strInfoLog);
+			Allocator& a = defaultAllocator();
+
+			char* strInfoLog =
+			    (char*)a.allocate((infoLogLength + 1) * sizeof(char));
+			defer(a.deallocate(strInfoLog));
 
 			glGetProgramInfoLog(handle, infoLogLength, nullptr, strInfoLog);
 
@@ -259,7 +266,7 @@ s32 ShaderProgram::getAttribLocation(const std::string& name) const
 	if (found != std::end(m_attribLocations))
 		return found->second;
 
-	s32 loc = glGetAttribLocation(handle, name.c_str());
+	s32 loc                 = glGetAttribLocation(handle, name.c_str());
 	m_attribLocations[name] = loc;
 	return loc;
 }
@@ -270,7 +277,7 @@ s32 ShaderProgram::getUniformLocation(const std::string& name) const
 	if (found != std::end(m_uniformLocations))
 		return found->second;
 
-	s32 loc = glGetUniformLocation(handle, name.c_str());
+	s32 loc                  = glGetUniformLocation(handle, name.c_str());
 	m_uniformLocations[name] = loc;
 	return loc;
 }
@@ -305,11 +312,8 @@ void ShaderProgram::setUniform(const std::string& name,
 	glUniform3f(loc, x, y, z);
 }
 
-void ShaderProgram::setUniform(const std::string& name,
-                               f32 x,
-                               f32 y,
-                               f32 z,
-                               f32 w) const
+void ShaderProgram::setUniform(
+    const std::string& name, f32 x, f32 y, f32 z, f32 w) const
 {
 	checkInUse();
 	s32 loc = getUniformLocation(name);

@@ -43,4 +43,6 @@
 #include "Dunjun/World.cpp"
 #include "Dunjun/Game.cpp"
 
+#include "Dunjun/Entity.cpp"
+
 #include "main.cpp"
