@@ -29,15 +29,15 @@ void SceneGraph::allocate(u32 capacity)
 
 	newData.entityId    = (EntityId*)(newData.buffer);
 	newData.local       = (Transform*)(newData.entityId + capacity);
-	newData.world       = (Transform*)(newData.local + capacity);
-	newData.parent      = (NodeId*)(newData.world + capacity);
+	newData.global      = (Transform*)(newData.local + capacity);
+	newData.parent      = (NodeId*)(newData.global + capacity);
 	newData.firstChild  = (NodeId*)(newData.parent + capacity);
 	newData.prevSibling = (NodeId*)(newData.firstChild + capacity);
 	newData.nextSibling = (NodeId*)(newData.prevSibling + capacity);
 
 	memcpy(newData.entityId, data.entityId, data.length * sizeof(EntityId));
 	memcpy(newData.local, data.local, data.length * sizeof(Transform));
-	memcpy(newData.world, data.world, data.length * sizeof(Transform));
+	memcpy(newData.global, data.global, data.length * sizeof(Transform));
 	memcpy(newData.parent, data.parent, data.length * sizeof(NodeId));
 	memcpy(newData.firstChild, //
 	       data.firstChild,
@@ -58,7 +58,7 @@ SceneGraph::NodeId SceneGraph::create(EntityId id, const Transform& t)
 
 	data.entityId[last]    = id;
 	data.local[last]       = t;
-	data.world[last]       = t;
+	data.global[last]      = t;
 	data.parent[last]      = EmptyNodeId;
 	data.firstChild[last]  = EmptyNodeId;
 	data.prevSibling[last] = EmptyNodeId;
@@ -79,7 +79,7 @@ void SceneGraph::destroy(NodeId id)
 
 	data.entityId[id]    = data.entityId[last];
 	data.local[id]       = data.local[last];
-	data.world[id]       = data.world[last];
+	data.global[id]      = data.global[last];
 	data.parent[id]      = data.parent[last];
 	data.firstChild[id]  = data.firstChild[last];
 	data.prevSibling[id] = data.prevSibling[last];
@@ -126,8 +126,8 @@ void SceneGraph::link(NodeId parentId, NodeId childId)
 		data.prevSibling[childId] = prev;
 	}
 
-	const Transform parentTransform = data.world[parentId];
-	const Transform childTransform  = data.world[childId];
+	const Transform parentTransform = data.global[parentId];
+	const Transform childTransform  = data.global[childId];
 
 	// TODO(bill): check to see if this is correct
 	const Transform localTransform = parentTransform / childTransform;
@@ -158,12 +158,12 @@ void SceneGraph::unlink(NodeId childId)
 
 void SceneGraph::transformChild(NodeId id, const Transform& t)
 {
-	data.world[id] = data.local[id] * t;
+	data.global[id] = data.local[id] * t;
 
 	NodeId child = data.firstChild[id];
 	while (isValid(child))
 	{
-		transformChild(child, data.world[id]);
+		transformChild(child, data.global[id]);
 		child = data.nextSibling[child];
 	}
 }
@@ -173,17 +173,17 @@ void SceneGraph::updateLocal(NodeId id)
 	NodeId parentId           = data.parent[id];
 	Transform parentTransform = {};
 	if (isValid(parentId))
-		parentTransform = data.world[parentId];
+		parentTransform = data.global[parentId];
 	transformChild(id, parentTransform);
 }
 
-void SceneGraph::updateWorld(NodeId id)
+void SceneGraph::updateGlobal(NodeId id)
 {
 	NodeId parentId           = data.parent[id];
 	Transform parentTransform = {};
 	if (isValid(parentId))
-		parentTransform = data.world[parentId];
-	data.local[id] = data.world[id] / parentTransform;
+		parentTransform = data.global[parentId];
+	data.local[id] = data.global[id] / parentTransform;
 	transformChild(id, parentTransform);
 }
 
@@ -194,9 +194,9 @@ Transform SceneGraph::getLocalTransform(NodeId id) const
 	return data.local[id];
 }
 
-Transform SceneGraph::getWorldTransform(NodeId id) const
+Transform SceneGraph::getGlobalTransform(NodeId id) const
 {
-	return data.world[id];
+	return data.global[id];
 }
 
 ////////////////
@@ -216,19 +216,19 @@ Vector3 SceneGraph::getLocalScale(NodeId id) const
 	return getLocalTransform(id).scale;
 }
 
-Vector3 SceneGraph::getWorldPosition(NodeId id) const
+Vector3 SceneGraph::getGlobalPosition(NodeId id) const
 {
-	return getWorldTransform(id).position;
+	return getGlobalTransform(id).position;
 }
 
-Quaternion SceneGraph::getWorldOrientation(NodeId id) const
+Quaternion SceneGraph::getGlobalOrientation(NodeId id) const
 {
-	return getWorldTransform(id).orientation;
+	return getGlobalTransform(id).orientation;
 }
 
-Vector3 SceneGraph::getWorldScale(NodeId id) const
+Vector3 SceneGraph::getGlobalScale(NodeId id) const
 {
-	return getWorldTransform(id).scale;
+	return getGlobalTransform(id).scale;
 }
 
 ////////////////
@@ -239,10 +239,10 @@ void SceneGraph::setLocalTransform(NodeId id, const Transform& t)
 	updateLocal(id);
 }
 
-void SceneGraph::setWorldTransform(NodeId id, const Transform& t)
+void SceneGraph::setGlobalTransform(NodeId id, const Transform& t)
 {
-	data.world[id] = t;
-	updateWorld(id);
+	data.global[id] = t;
+	updateGlobal(id);
 }
 
 void SceneGraph::setLocalPosition(NodeId id, const Vector3& position)
@@ -263,22 +263,22 @@ void SceneGraph::setLocalScale(NodeId id, const Vector3& scale)
 	updateLocal(id);
 }
 
-void SceneGraph::setWorldPosition(NodeId id, const Vector3& position)
+void SceneGraph::setGlobalPosition(NodeId id, const Vector3& position)
 {
-	data.world[id].position = position;
-	updateWorld(id);
+	data.global[id].position = position;
+	updateGlobal(id);
 }
 
-void SceneGraph::setWorldOrientation(NodeId id, const Quaternion& orientation)
+void SceneGraph::setGlobalOrientation(NodeId id, const Quaternion& orientation)
 {
-	data.world[id].orientation = orientation;
-	updateWorld(id);
+	data.global[id].orientation = orientation;
+	updateGlobal(id);
 }
 
-void SceneGraph::setWorldScale(NodeId id, const Vector3& scale)
+void SceneGraph::setGlobalScale(NodeId id, const Vector3& scale)
 {
-	data.world[id].scale = scale;
-	updateWorld(id);
+	data.global[id].scale = scale;
+	updateGlobal(id);
 }
 
 } // namespace Dunjun

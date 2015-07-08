@@ -4,7 +4,6 @@
 #include <Dunjun/System.hpp>
 #include <Dunjun/Window.hpp>
 #include <Dunjun/ResourceHolders.hpp>
-// #include <Dunjun/World.hpp>
 
 #include <cassert>
 #include <cstdlib>
@@ -22,15 +21,10 @@
 
 #include <Dunjun/EntityWorld.hpp>
 #include <Dunjun/SceneGraph.hpp>
+#include <Dunjun/RenderSystem.hpp>
 
 namespace Dunjun
 {
-struct ModelInstance
-{
-	ModelAsset* asset;
-	Transform transform;
-};
-
 namespace
 {
 GLOBAL const Time TimeStep  = seconds(1.0f / 60.0f);
@@ -43,12 +37,14 @@ GLOBAL Window g_window;
 
 GLOBAL ModelAsset g_sprite;
 
-// GLOBAL World* g_world;
+GLOBAL EntityWorld* g_world;
 
 GLOBAL Texture g_defaultTexture;
 GLOBAL Texture g_kittenTexture;
 GLOBAL Texture g_stoneTexture;
 GLOBAL Texture g_terrainTexture;
+
+GLOBAL Material g_kittenMaterial;
 
 namespace Game
 {
@@ -84,6 +80,9 @@ INTERNAL void loadMaterials()
 	g_terrainTexture = loadTextureFromFile("data/textures/terrain.png",
 	                                       TextureFilter::Nearest);
 
+	g_kittenMaterial            = Material{};
+	g_kittenMaterial.diffuseMap = &g_kittenTexture;
+
 	// {
 	// 	auto mat        = make_unique<Material>();
 	// 	mat->shaders    = &g_shaderHolder.get("geometryPass");
@@ -112,44 +111,58 @@ INTERNAL void loadMaterials()
 }
 INTERNAL void loadSpriteAsset()
 {
-	// {
-	// 	Mesh::Data meshData = {};
+	{
+		MeshData meshData{defaultAllocator()};
+		meshData.drawType = DrawType::Triangles;
 
-	// 	reserve(meshData.vertices, 4);
-	// 	append(meshData.vertices, Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}});
-	// 	append(meshData.vertices, Vertex{{+0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}});
-	// 	append(meshData.vertices, Vertex{{+0.5f, +0.5f, 0.0f}, {1.0f, 1.0f}});
-	// 	append(meshData.vertices, Vertex{{-0.5f, +0.5f, 0.0f}, {0.0f, 1.0f}});
+		reserve(meshData.vertices, 4);
+		append(meshData.vertices, Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}});
+		append(meshData.vertices, Vertex{{+0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}});
+		append(meshData.vertices, Vertex{{+0.5f, +0.5f, 0.0f}, {1.0f, 1.0f}});
+		append(meshData.vertices, Vertex{{-0.5f, +0.5f, 0.0f}, {0.0f, 1.0f}});
 
-	// 	reserve(meshData.indices, 6);
-	// 	meshData.addFace(0, 1, 2).addFace(2, 3, 0);
-	// 	meshData.generateNormals();
+		reserve(meshData.indices, 6);
+		meshData.addFace(0, 1, 2).addFace(2, 3, 0);
+		meshData.generateNormals();
 
-	// 	g_meshHolder.insert("sprite", make_unique<Mesh>(meshData));
+		g_meshHolder.insert(
+		    "sprite", std::unique_ptr<Mesh>(new Mesh(generateMesh(meshData))));
+	}
+	{
+		MeshData meshData{defaultAllocator()};
+		meshData.drawType = DrawType::Triangles;
 
-	// 	g_sprite.material = &g_materialHolder.get("cat");
-	// 	g_sprite.mesh     = &g_meshHolder.get("sprite");
-	// }
-	// {
-	// 	Mesh::Data meshData = {};
+		reserve(meshData.vertices, 4);
+		append(meshData.vertices, Vertex{{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}});
+		append(meshData.vertices, Vertex{{+1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}});
+		append(meshData.vertices, Vertex{{+1.0f, +1.0f, 0.0f}, {1.0f, 1.0f}});
+		append(meshData.vertices, Vertex{{-1.0f, +1.0f, 0.0f}, {0.0f, 1.0f}});
 
-	// 	reserve(meshData.vertices, 4);
-	// 	append(meshData.vertices, Vertex{{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}});
-	// 	append(meshData.vertices, Vertex{{+1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}});
-	// 	append(meshData.vertices, Vertex{{+1.0f, +1.0f, 0.0f}, {1.0f, 1.0f}});
-	// 	append(meshData.vertices, Vertex{{-1.0f, +1.0f, 0.0f}, {0.0f, 1.0f}});
+		reserve(meshData.indices, 6);
+		meshData.addFace(0, 1, 2).addFace(2, 3, 0);
+		meshData.generateNormals();
 
-	// 	reserve(meshData.indices, 6);
-	// 	meshData.addFace(0, 1, 2).addFace(2, 3, 0);
-	// 	meshData.generateNormals();
-
-	// 	g_meshHolder.insert("quad", make_unique<Mesh>(meshData));
-	// }
+		g_meshHolder.insert(
+		    "quad", std::unique_ptr<Mesh>(new Mesh(generateMesh(meshData))));
+	}
 }
 
 INTERNAL void update(Time dt)
 {
-	// g_world->update(dt);
+	g_world->update(dt);
+
+	{
+		SceneGraph& sg = g_world->sceneGraph;
+		auto node      = sg.getNodeId(g_world->player);
+		Vector3 pos    = sg.getGlobalPosition(node);
+		f32 wt         = 1.0f * Time::now().asSeconds();
+		f32 a          = 1.0f;
+		pos.x          = a * Math::cos(Radian{wt});
+		pos.z          = a * Math::sin(Radian{wt});
+
+		sg.setGlobalPosition(node, pos);
+	}
+
 	if (Input::isKeyPressed(Input::Key::F11))
 	{
 		// TODO(bill): Toggle fullscreen
@@ -169,6 +182,7 @@ INTERNAL void handleEvents()
 		case Event::Closed:
 		{
 			g_window.close();
+			std::exit(0);
 			break;
 		}
 		case Event::Resized:
@@ -205,13 +219,43 @@ INTERNAL void handleEvents()
 			break;
 		}
 
-		// g_world->handleEvent(event);
+		g_world->handleEvent(event);
 	}
 }
 
 INTERNAL void render()
 {
-	// g_world->render();
+	//
+	g_world->render();
+}
+
+INTERNAL void initWorld()
+{
+	SceneGraph& sg   = g_world->sceneGraph;
+	RenderSystem& rs = g_world->renderSystem;
+	sg.allocate(16);
+	rs.allocate(16);
+
+	EntityId crate  = g_world->createEntity();
+	EntityId player = g_world->player = g_world->createEntity();
+
+	g_world->components[crate]  = Component_Name;
+	g_world->components[player] = Component_Name | Component_Render;
+
+	g_world->names[crate]  = NameComponent{"crate"};
+	g_world->names[player] = NameComponent{"Bob"};
+
+	auto playerNode = sg.create(player, Transform{});
+	auto crateNode = sg.create(crate, Transform{});
+	sg.link(crateNode, playerNode);
+
+	(void)rs.create(playerNode, {g_meshHolder.get("sprite"), g_kittenMaterial});
+
+	{
+		DirectionalLight light;
+		light.direction = normalize(Vector3{0, -1, 1});
+		append(rs.directionalLights, light);
+	}
 }
 
 void init(int /*argc*/, char** /*argv*/)
@@ -243,37 +287,13 @@ void init(int /*argc*/, char** /*argv*/)
 	loadMaterials();
 	loadSpriteAsset();
 
-	// g_world = defaultAllocator().makeNew<World>();
+	g_world = defaultAllocator().makeNew<EntityWorld>();
 
-	// g_world->init(
-	    // Context{g_window, g_shaderHolder, g_meshHolder, g_materialHolder});
+	initWorld();
 }
 
 void run()
 {
-	{
-		EntityWorld world = {};
-		SceneGraph& sg    = world.sceneGraph;
-		sg.allocate(16);
-		EntityId crate, player;
-
-		crate              = world.createEntity();
-		world.names[crate] = NameComponent{"crate"};
-
-		player              = world.createEntity();
-		world.names[player] = NameComponent{"Bob"};
-
-		{
-			SceneGraph::NodeId p = sg.create(player, Transform{});
-			SceneGraph::NodeId c = sg.create(crate, Transform{});
-			sg.link(c, p);
-
-			sg.setWorldPosition(c, {1, 2, 3});
-
-			std::cout << sg.getWorldPosition(p) << "\n";
-		}
-	}
-
 	TickCounter tc;
 
 	Time accumulator;
@@ -318,7 +338,7 @@ void run()
 
 void shutdown()
 {
-	// defaultAllocator().makeDelete<World>(g_world);
+	defaultAllocator().makeDelete(g_world);
 	Input::shutdown();
 	g_window.close();
 	SDL_Quit();
@@ -329,8 +349,8 @@ void shutdown()
 
 void glInit()
 {
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+	// glEnable(GL_CULL_FACE);
+	// glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 }

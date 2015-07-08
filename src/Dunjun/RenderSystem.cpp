@@ -2,6 +2,9 @@
 
 #include <Dunjun/ResourceHolders.hpp>
 
+#include <Dunjun/System/Array.hpp>
+#include <Dunjun/System/HashMap.hpp>
+
 namespace Dunjun
 {
 
@@ -10,10 +13,17 @@ RenderSystem::RenderSystem(Allocator& a, SceneGraph& sg)
 , data{}
 , map{a}
 , sceneGraph{sg}
+
 , gbuffer{}
 , lbuffer{}
+
 , ambientColor({222, 227, 234, 255})
 , ambientIntensity{0.02f}
+
+, directionalLights{allocator}
+, pointLights{allocator}
+, spotLights{allocator}
+
 , camera{nullptr}
 , currentTexture{nullptr}
 {
@@ -93,260 +103,240 @@ void RenderSystem::resetAllPointers()
 
 void RenderSystem::render()
 {
-	resetAllPointers();
-
 	gbuffer.create(fbSize.x, fbSize.y);
 
 	geometryPass();
+	lightPass();
+	outPass();
 }
 
 void RenderSystem::geometryPass()
 {
-	auto& shaders = g_shaderHolder.get("geometryPass");
+	if (!camera)
+	{
+		fprintf(stderr, "No Camera* for RenderSystem\n");
+		return;
+	}
+
+	ShaderProgram& shaders = g_shaderHolder.get("geometryPass");
 
 	GBuffer::bind(&gbuffer);
+	defer(GBuffer::bind(nullptr));
 	{
 		glViewport(0, 0, gbuffer.width, gbuffer.height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		shaders.use();
-
-		if (!camera)
-			return;
+		defer(shaders.stopUsing());
 
 		shaders.setUniform("u_camera", cameraMatrix(*camera));
 		shaders.setUniform("u_cameraPosition", camera->transform.position);
 
 		for (u32 i = 0; i < data.length; i++)
 		{
-			EntityId& entityId         = data.entityId[i];
-			RenderComponent& component = data.component[i];
-			shaders.setUniform("u_material.diffuseColor",
-			                   component.material.diffuseColor);
-			shaders.setUniform("u_material.specularColor",
-			                   component.material.specularColor);
-			shaders.setUniform("u_material.specularExponent",
-			                   component.material.specularExponent);
+			EntityId entityId                = data.entityId[i];
+			const RenderComponent& component = data.component[i];
+			const Material& material         = component.material;
 
+			shaders.setUniform("u_material.diffuseColor",
+			                   material.diffuseColor);
 			shaders.setUniform("u_material.diffuseMap", (int)0);
-			setTexture(component.material.diffuseMap, 0);
+			setTexture(material.diffuseMap, 0);
 
 			// TODO(bill): improve performance - set at render time
 			shaders.setUniform(
 			    "u_transform",
-			    sceneGraph.getWorldTransform(sceneGraph.getNodeId(entityId)));
+			    sceneGraph.getGlobalTransform(sceneGraph.getNodeId(entityId)));
 
 			drawMesh(component.mesh);
 		}
-		// for (const auto& inst : modelInstances)
-		// {
-		// 	if (inst.meshRenderer->material == nullptr)
-		// 		continue;
-
-		// 	{
-		// 		shaders.setUniform("u_material.diffuseMap", (int)0);
-		// 		shaders.setUniform("u_material.diffuseColor",
-		// 		                   inst.meshRenderer->material->diffuseColor);
-		// 		shaders.setUniform("u_material.specularColor",
-		// 		                   inst.meshRenderer->material->specularColor);
-		// 		shaders.setUniform(
-		// 		    "u_material.specularExponent",
-		// 		    inst.meshRenderer->material->specularExponent);
-		// 	}
-		// 	setTexture(inst.meshRenderer->material->diffuseMap, 0);
-
-		// 	shaders.setUniform("u_transform", inst.transform);
-
-		// 	draw(inst.meshRenderer->mesh);
-		// }
 
 		glFlush();
 	}
-	GBuffer::bind(nullptr);
 }
 
 void RenderSystem::lightPass()
 {
-	// lbuffer.create(gbuffer.width, gbuffer.height, RenderTexture::Lighting);
+	lbuffer.create(gbuffer.width, gbuffer.height, RenderTexture::Lighting);
 
-	// Texture::bind(&gbuffer.textures[GBuffer::Diffuse], 0);
-	// Texture::bind(&gbuffer.textures[GBuffer::Specular], 1);
-	// Texture::bind(&gbuffer.textures[GBuffer::Normal], 2);
-	// Texture::bind(&gbuffer.textures[GBuffer::Depth], 3);
+	Texture::bind(&gbuffer.textures[GBuffer::Diffuse], 0);
+	Texture::bind(&gbuffer.textures[GBuffer::Specular], 1);
+	Texture::bind(&gbuffer.textures[GBuffer::Normal], 2);
+	Texture::bind(&gbuffer.textures[GBuffer::Depth], 3);
 
-	// RenderTexture::bind(&lbuffer);
-	// {
-	// 	glClearColor(0, 0, 0, 0);
-	// 	glViewport(0, 0, lbuffer.width, lbuffer.height);
-	// 	glClear(GL_COLOR_BUFFER_BIT);
+	RenderTexture::bind(&lbuffer);
+	defer(RenderTexture::bind(nullptr));
+	{
+		glClearColor(0, 0, 0, 0);
+		glViewport(0, 0, lbuffer.width, lbuffer.height);
+		glClear(GL_COLOR_BUFFER_BIT);
 
-	// 	glDepthMask(false);
-	// 	glEnable(GL_BLEND);
-	// 	glBlendFunc(GL_ONE, GL_ONE);
+		glDepthMask(false);
+		defer(glDepthMask(true));
 
-	// 	// Ambient Light
-	// 	{
-	// 		auto& shaders = g_shaderHolder.get("ambientLight");
+		glEnable(GL_BLEND);
+		defer(glDisable(GL_BLEND));
+		glBlendFunc(GL_ONE, GL_ONE);
 
-	// 		shaders.use();
+		// Ambient Light
+		{
+			auto& shaders = g_shaderHolder.get("ambientLight");
 
-	// 		Vector3 intensities;
-	// 		intensities.r = ambientColor.r * ambientIntensity;
-	// 		intensities.g = ambientColor.g * ambientIntensity;
-	// 		intensities.b = ambientColor.b * ambientIntensity;
-	// 		intensities /= 255.0f;
+			shaders.use();
+			defer(shaders.stopUsing());
 
-	// 		shaders.setUniform("u_light.intensities", intensities);
+			Vector3 intensities;
+			intensities.r = ambientColor.r * ambientIntensity;
+			intensities.g = ambientColor.g * ambientIntensity;
+			intensities.b = ambientColor.b * ambientIntensity;
+			intensities /= 255.0f;
 
-	// 		draw(&g_meshHolder.get("quad"));
+			shaders.setUniform("u_light.intensities", intensities);
 
-	// 		shaders.stopUsing();
-	// 	}
-	// 	// Directional Lights
-	// 	{
-	// 		auto& shaders = g_shaderHolder.get("directionalLight");
+			drawMesh(g_meshHolder.get("quad"));
+		}
+		// Directional Lights
+		{
+			auto& shaders = g_shaderHolder.get("directionalLight");
 
-	// 		shaders.use();
-	// 		shaders.setUniform("u_specular", 1);
-	// 		shaders.setUniform("u_normal", 2);
+			shaders.use();
+			defer(shaders.stopUsing());
 
-	// 		for (const auto& light : world->directionalLights)
-	// 		{
-	// 			Vector3 lightIntensities;
+			shaders.setUniform("u_specular", 1);
+			shaders.setUniform("u_normal", 2);
 
-	// 			lightIntensities.r = light.color.r / 255.0f;
-	// 			lightIntensities.g = light.color.g / 255.0f;
-	// 			lightIntensities.b = light.color.b / 255.0f;
-	// 			lightIntensities *= light.intensity;
+			for (const auto& light : directionalLights)
+			{
+				Vector3 lightIntensities;
 
-	// 			shaders.setUniform("u_light.base.intensities",
-	// 			                   lightIntensities);
-	// 			shaders.setUniform("u_light.direction",
-	// 			                   normalize(light.direction));
+				lightIntensities.r = light.color.r / 255.0f;
+				lightIntensities.g = light.color.g / 255.0f;
+				lightIntensities.b = light.color.b / 255.0f;
+				lightIntensities *= light.intensity;
 
-	// 			draw(&g_meshHolder.get("quad"));
-	// 		}
-	// 		shaders.stopUsing();
-	// 	}
-	// 	// Point Lights
-	// 	{
-	// 		auto& shaders = g_shaderHolder.get("pointLight");
+				shaders.setUniform("u_light.base.intensities",
+				                   lightIntensities);
+				shaders.setUniform("u_light.direction",
+				                   normalize(light.direction));
 
-	// 		shaders.use();
-	// 		shaders.setUniform("u_diffuse", 0);
-	// 		shaders.setUniform("u_specular", 1);
-	// 		shaders.setUniform("u_normal", 2);
-	// 		shaders.setUniform("u_depth", 3);
+				drawMesh(g_meshHolder.get("quad"));
+			}
+		}
+		// Point Lights
+		{
+			auto& shaders = g_shaderHolder.get("pointLight");
 
-	// 		shaders.setUniform("u_cameraInverse",
-	// 		                   inverse(cameraMatrix(*camera)));
+			shaders.use();
+			defer(shaders.stopUsing());
 
-	// 		for (const PointLight& light : world->pointLights)
-	// 		{
-	// 			light.range = calculateLightRange(light);
+			shaders.setUniform("u_diffuse", 0);
+			shaders.setUniform("u_specular", 1);
+			shaders.setUniform("u_normal", 2);
+			shaders.setUniform("u_depth", 3);
 
-	// 			Vector3 lightIntensities;
+			shaders.setUniform("u_cameraInverse",
+			                   inverse(cameraMatrix(*camera)));
 
-	// 			lightIntensities.r = light.color.r / 255.0f;
-	// 			lightIntensities.g = light.color.g / 255.0f;
-	// 			lightIntensities.b = light.color.b / 255.0f;
-	// 			lightIntensities *= light.intensity;
+			for (const PointLight& light : pointLights)
+			{
+				light.range = calculateLightRange(light);
 
-	// 			shaders.setUniform("u_light.base.intensities",
-	// 			                   lightIntensities);
-	// 			shaders.setUniform("u_light.position", light.position);
+				Vector3 lightIntensities;
 
-	// 			shaders.setUniform("u_light.attenuation.constant",
-	// 			                   light.attenuation.constant);
-	// 			shaders.setUniform("u_light.attenuation.linear",
-	// 			                   light.attenuation.linear);
-	// 			shaders.setUniform("u_light.attenuation.quadratic",
-	// 			                   light.attenuation.quadratic);
+				lightIntensities.r = light.color.r / 255.0f;
+				lightIntensities.g = light.color.g / 255.0f;
+				lightIntensities.b = light.color.b / 255.0f;
+				lightIntensities *= light.intensity;
 
-	// 			shaders.setUniform("u_light.range", light.range);
+				shaders.setUniform("u_light.base.intensities",
+				                   lightIntensities);
+				shaders.setUniform("u_light.position", light.position);
 
-	// 			draw(&g_meshHolder.get("quad"));
-	// 		}
+				shaders.setUniform("u_light.attenuation.constant",
+				                   light.attenuation.constant);
+				shaders.setUniform("u_light.attenuation.linear",
+				                   light.attenuation.linear);
+				shaders.setUniform("u_light.attenuation.quadratic",
+				                   light.attenuation.quadratic);
 
-	// 		shaders.stopUsing();
-	// 	}
-	// 	// Spot Lights
-	// 	{
-	// 		auto& shaders = g_shaderHolder.get("spotLight");
+				shaders.setUniform("u_light.range", light.range);
 
-	// 		shaders.use();
-	// 		shaders.setUniform("u_diffuse", 0);
-	// 		shaders.setUniform("u_specular", 1);
-	// 		shaders.setUniform("u_normal", 2);
-	// 		shaders.setUniform("u_depth", 3);
+				drawMesh(g_meshHolder.get("quad"));
+			}
+		}
+		// Spot Lights
+		{
+			auto& shaders = g_shaderHolder.get("spotLight");
 
-	// 		shaders.setUniform("u_cameraInverse",
-	// 		                   inverse(cameraMatrix(*camera)));
+			shaders.use();
+			defer(shaders.stopUsing());
 
-	// 		for (const SpotLight& light : world->spotLights)
-	// 		{
-	// 			light.range = calculateLightRange(light);
+			shaders.setUniform("u_diffuse", 0);
+			shaders.setUniform("u_specular", 1);
+			shaders.setUniform("u_normal", 2);
+			shaders.setUniform("u_depth", 3);
 
-	// 			Vector3 lightIntensities;
+			shaders.setUniform("u_cameraInverse",
+			                   inverse(cameraMatrix(*camera)));
 
-	// 			lightIntensities.r = light.color.r / 255.0f;
-	// 			lightIntensities.g = light.color.g / 255.0f;
-	// 			lightIntensities.b = light.color.b / 255.0f;
-	// 			lightIntensities *= light.intensity;
+			for (const SpotLight& light : spotLights)
+			{
+				light.range = calculateLightRange(light);
 
-	// 			shaders.setUniform("u_light.point.base.intensities",
-	// 			                   lightIntensities);
-	// 			shaders.setUniform("u_light.point.position", light.position);
+				Vector3 lightIntensities;
 
-	// 			shaders.setUniform("u_light.point.attenuation.constant",
-	// 			                   light.attenuation.constant);
-	// 			shaders.setUniform("u_light.point.attenuation.linear",
-	// 			                   light.attenuation.linear);
-	// 			shaders.setUniform("u_light.point.attenuation.quadratic",
-	// 			                   light.attenuation.quadratic);
+				lightIntensities.r = light.color.r / 255.0f;
+				lightIntensities.g = light.color.g / 255.0f;
+				lightIntensities.b = light.color.b / 255.0f;
+				lightIntensities *= light.intensity;
 
-	// 			shaders.setUniform("u_light.point.range", light.range);
+				shaders.setUniform("u_light.point.base.intensities",
+				                   lightIntensities);
+				shaders.setUniform("u_light.point.position", light.position);
 
-	// 			shaders.setUniform("u_light.direction", light.direction);
-	// 			shaders.setUniform("u_light.coneAngle",
-	// 			                   static_cast<f32>(light.coneAngle));
+				shaders.setUniform("u_light.point.attenuation.constant",
+				                   light.attenuation.constant);
+				shaders.setUniform("u_light.point.attenuation.linear",
+				                   light.attenuation.linear);
+				shaders.setUniform("u_light.point.attenuation.quadratic",
+				                   light.attenuation.quadratic);
 
-	// 			draw(&g_meshHolder.get("quad"));
-	// 		}
+				shaders.setUniform("u_light.point.range", light.range);
 
-	// 		shaders.stopUsing();
-	// 	}
+				shaders.setUniform("u_light.direction", light.direction);
+				shaders.setUniform("u_light.coneAngle",
+				                   static_cast<f32>(light.coneAngle));
 
-	// 	glDisable(GL_BLEND);
-	// 	glDepthMask(true);
-	// }
-	// RenderTexture::bind(nullptr);
+				drawMesh(g_meshHolder.get("quad"));
+			}
+		}
+	}
 }
 
 void RenderSystem::outPass()
 {
-	// outTexture.create(gbuffer.width, gbuffer.height, RenderTexture::Color);
+	outTexture.create(gbuffer.width, gbuffer.height, RenderTexture::Color);
 
-	// Texture::bind(&gbuffer.textures[GBuffer::Diffuse], 0);
-	// Texture::bind(&lbuffer.colorTexture, 1);
+	Texture::bind(&gbuffer.textures[GBuffer::Diffuse], 0);
+	Texture::bind(&lbuffer.colorTexture, 1);
 
-	// RenderTexture::bind(&outTexture);
-	// {
-	// 	glClearColor(1, 1, 1, 1);
-	// 	glViewport(0, 0, outTexture.width, outTexture.height);
-	// 	glClear(GL_COLOR_BUFFER_BIT);
+	RenderTexture::bind(&outTexture);
+	defer(RenderTexture::bind(nullptr));
+	{
+		glClearColor(1, 1, 1, 1);
+		glViewport(0, 0, outTexture.width, outTexture.height);
+		glClear(GL_COLOR_BUFFER_BIT);
 
-	// 	auto& shaders = g_shaderHolder.get("out");
+		auto& shaders = g_shaderHolder.get("out");
 
-	// 	shaders.use();
-	// 	shaders.setUniform("u_diffuse", 0);
-	// 	shaders.setUniform("u_lighting", 1);
+		shaders.use();
+		defer(shaders.stopUsing());
 
-	// 	draw(&g_meshHolder.get("quad"));
+		shaders.setUniform("u_diffuse", 0);
+		shaders.setUniform("u_lighting", 1);
 
-	// 	shaders.stopUsing();
-	// }
-	// RenderTexture::bind(nullptr);
+		drawMesh(g_meshHolder.get("quad"));
+	}
 }
 
 bool RenderSystem::setTexture(const Texture* texture, u32 position)

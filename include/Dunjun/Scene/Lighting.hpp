@@ -27,11 +27,9 @@ struct DirectionalLight : BaseLight
 
 struct PointLight : BaseLight
 {
-	Vector3 position = Vector3{0, 0, 0};
-
-	Attenuation attenuation;
-
-	mutable f32 range = 16.0f;
+	Vector3 position        = Vector3{0, 0, 0};
+	Attenuation attenuation = {};
+	mutable f32 range       = 16.0f;
 };
 
 inline f32 calculateLightRange(const PointLight& l)

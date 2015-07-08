@@ -43,7 +43,7 @@
 #include "Dunjun/ResourceHolders.cpp"
 #include "Dunjun/Game.cpp"
 
-#include "Dunjun/Entity.cpp"
+#include "Dunjun/EntityWorld.cpp"
 #include "Dunjun/SceneGraph.cpp"
 #include "Dunjun/RenderSystem.cpp"
 

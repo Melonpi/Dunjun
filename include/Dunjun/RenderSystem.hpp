@@ -10,6 +10,7 @@
 #include <Dunjun/Graphics/Color.hpp>
 #include <Dunjun/Graphics/Camera.hpp>
 #include <Dunjun/Graphics/Texture.hpp>
+#include <Dunjun/Scene/Lighting.hpp>
 
 #include <Dunjun/System/Containers.hpp>
 
@@ -45,8 +46,11 @@ public:
 	Color ambientColor;
 	f32 ambientIntensity;
 
+	Array<DirectionalLight> directionalLights;
+	Array<PointLight> pointLights;
+	Array<SpotLight> spotLights;
+
 	const Camera* camera;
-	const Texture* currentTexture;
 
 	RenderSystem(Allocator& a, SceneGraph& sg);
 	~RenderSystem() = default;
@@ -68,6 +72,7 @@ public:
 	void outPass();
 
 private:
+	const Texture* currentTexture;
 	bool setTexture(const Texture* texture, u32 position);
 	// bool setShaders(const ShaderProgram* shaders);
 };

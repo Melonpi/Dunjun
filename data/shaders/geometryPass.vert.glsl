@@ -30,4 +30,6 @@ void main()
 	v_position_ws = pos;
 
 	gl_Position = u_camera * vec4(pos, 1.0);
+	//gl_Position = vec4(pos, 1.0);
+
 }

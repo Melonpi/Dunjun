@@ -16,13 +16,13 @@ enum class ProjectionType
 
 struct Camera
 {
-	Transform transform;
-	Radian fieldOfView;
-	f32 orthoScale;
-	f32 nearPlane;
-	f32 farPlane;
-	f32 viewportAspectRatio;
-	ProjectionType projectionType;
+	Transform transform           = Transform{};
+	Radian fieldOfView            = Degree{50};
+	f32 orthoScale                = 1.0f;
+	f32 nearPlane                 = 0.1f;
+	f32 farPlane                  = 256.0f;
+	f32 viewportAspectRatio       = 4.0f / 3.0f;
+	ProjectionType projectionType = ProjectionType::Perspective;
 };
 
 void cameraLookAt(Camera& camera,

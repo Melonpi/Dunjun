@@ -22,7 +22,7 @@ struct SceneGraph
 
 		EntityId* entityId  = nullptr;
 		Transform* local    = nullptr;
-		Transform* world    = nullptr;
+		Transform* global   = nullptr;
 		NodeId* parent      = nullptr;
 		NodeId* firstChild  = nullptr;
 		NodeId* prevSibling = nullptr;
@@ -55,29 +55,29 @@ struct SceneGraph
 	// Helper Functions
 
 	void updateLocal(NodeId id);
-	void updateWorld(NodeId id);
+	void updateGlobal(NodeId id);
 
 	Transform getLocalTransform(NodeId id) const;
-	Transform getWorldTransform(NodeId id) const;
+	Transform getGlobalTransform(NodeId id) const;
 
 	Vector3 getLocalPosition(NodeId id) const;
 	Quaternion getLocalOrientation(NodeId id) const;
 	Vector3 getLocalScale(NodeId id) const;
 
-	Vector3 getWorldPosition(NodeId id) const;
-	Quaternion getWorldOrientation(NodeId id) const;
-	Vector3 getWorldScale(NodeId id) const;
+	Vector3 getGlobalPosition(NodeId id) const;
+	Quaternion getGlobalOrientation(NodeId id) const;
+	Vector3 getGlobalScale(NodeId id) const;
 
 	void setLocalTransform(NodeId id, const Transform& t);
-	void setWorldTransform(NodeId id, const Transform& t);
+	void setGlobalTransform(NodeId id, const Transform& t);
 
 	void setLocalPosition(NodeId id, const Vector3& position);
 	void setLocalOrientation(NodeId id, const Quaternion& orientation);
 	void setLocalScale(NodeId id, const Vector3& scale);
 
-	void setWorldPosition(NodeId id, const Vector3& position);
-	void setWorldOrientation(NodeId id, const Quaternion& orientation);
-	void setWorldScale(NodeId id, const Vector3& scale);
+	void setGlobalPosition(NodeId id, const Vector3& position);
+	void setGlobalOrientation(NodeId id, const Quaternion& orientation);
+	void setGlobalScale(NodeId id, const Vector3& scale);
 };
 } // namespace Dunjun
 
