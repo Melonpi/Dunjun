@@ -73,6 +73,7 @@ public:
 
 private:
 	const Texture* currentTexture;
+
 	bool setTexture(const Texture* texture, u32 position);
 	// bool setShaders(const ShaderProgram* shaders);
 };

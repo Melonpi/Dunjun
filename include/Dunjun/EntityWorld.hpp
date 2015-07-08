@@ -43,7 +43,10 @@ struct EntityWorld
 	EntityWorld();
 	~EntityWorld() = default;
 
-	EntityId createEntity();
+	EntityWorld(const EntityWorld&) = delete;
+	EntityWorld& operator=(const EntityWorld&) = delete;
+
+	EntityId createEntity(u32 components);
 	bool isAlive(EntityId e) const;
 	void destroy(EntityId e);
 

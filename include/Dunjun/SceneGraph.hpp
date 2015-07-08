@@ -38,6 +38,9 @@ struct SceneGraph
 	SceneGraph(Allocator& a);
 	~SceneGraph();
 
+	SceneGraph(const SceneGraph&) = delete;
+	SceneGraph& operator=(const SceneGraph&) = delete;
+
 	void allocate(u32 capacity);
 
 	NodeId create(EntityId id, const Transform& t);

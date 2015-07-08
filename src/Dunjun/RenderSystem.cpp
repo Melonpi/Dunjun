@@ -103,6 +103,12 @@ void RenderSystem::resetAllPointers()
 
 void RenderSystem::render()
 {
+	if (!camera)
+	{
+		fprintf(stderr, "No Camera* for RenderSystem\n");
+		return;
+	}
+
 	gbuffer.create(fbSize.x, fbSize.y);
 
 	geometryPass();
@@ -112,12 +118,6 @@ void RenderSystem::render()
 
 void RenderSystem::geometryPass()
 {
-	if (!camera)
-	{
-		fprintf(stderr, "No Camera* for RenderSystem\n");
-		return;
-	}
-
 	ShaderProgram& shaders = g_shaderHolder.get("geometryPass");
 
 	GBuffer::bind(&gbuffer);
@@ -134,19 +134,20 @@ void RenderSystem::geometryPass()
 
 		for (u32 i = 0; i < data.length; i++)
 		{
-			EntityId entityId                = data.entityId[i];
+			const EntityId entityId          = data.entityId[i];
 			const RenderComponent& component = data.component[i];
 			const Material& material         = component.material;
 
 			shaders.setUniform("u_material.diffuseColor",
 			                   material.diffuseColor);
-			shaders.setUniform("u_material.diffuseMap", (int)0);
+			shaders.setUniform("u_material.diffuseMap", (s32)0);
 			setTexture(material.diffuseMap, 0);
 
 			// TODO(bill): improve performance - set at render time
+			auto node = sceneGraph.getNodeId(entityId);
 			shaders.setUniform(
 			    "u_transform",
-			    sceneGraph.getGlobalTransform(sceneGraph.getNodeId(entityId)));
+			    sceneGraph.getGlobalTransform(node));
 
 			drawMesh(component.mesh);
 		}

@@ -11,21 +11,25 @@ namespace Dunjun
 EntityWorld::EntityWorld()
 : sceneGraph{defaultAllocator()}
 , renderSystem{defaultAllocator(), sceneGraph}
-, components{} // Init all to zero
+, components{}
 , camera{}
 {
 	camera.transform.position = {0, 1, 3};
 	cameraLookAt(camera, {0, 0, 0});
+	camera.fieldOfView = Degree{90};
 	camera.projectionType = ProjectionType::Perspective;
 }
 
-EntityId EntityWorld::createEntity()
+EntityId EntityWorld::createEntity(u32 c)
 {
 	EntityId e;
 	for (e = 0; e < MaxEntities; e++)
 	{
 		if (components[e] == Component_None)
+		{
+			components[e] = c;
 			return e;
+		}
 	}
 
 	fprintf(stderr, "No more entities available.\n");

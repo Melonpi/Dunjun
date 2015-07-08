@@ -156,9 +156,9 @@ void SceneGraph::unlink(NodeId childId)
 	data.prevSibling[childId] = EmptyNodeId;
 }
 
-void SceneGraph::transformChild(NodeId id, const Transform& t)
+void SceneGraph::transformChild(NodeId id, const Transform& parentTransform)
 {
-	data.global[id] = data.local[id] * t;
+	data.global[id] = parentTransform * data.local[id];
 
 	NodeId child = data.firstChild[id];
 	while (isValid(child))

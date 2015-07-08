@@ -45,6 +45,7 @@ GLOBAL Texture g_stoneTexture;
 GLOBAL Texture g_terrainTexture;
 
 GLOBAL Material g_kittenMaterial;
+GLOBAL Material g_terrainMaterial;
 
 namespace Game
 {
@@ -82,6 +83,9 @@ INTERNAL void loadMaterials()
 
 	g_kittenMaterial            = Material{};
 	g_kittenMaterial.diffuseMap = &g_kittenTexture;
+
+	g_terrainMaterial            = Material{};
+	g_terrainMaterial.diffuseMap = &g_terrainTexture;
 
 	// {
 	// 	auto mat        = make_unique<Material>();
@@ -236,25 +240,38 @@ INTERNAL void initWorld()
 	sg.allocate(16);
 	rs.allocate(16);
 
-	EntityId crate  = g_world->createEntity();
-	EntityId player = g_world->player = g_world->createEntity();
+	EntityId crate  = g_world->createEntity(Component_Name | Component_Render);
+	EntityId player = g_world->player =
+	    g_world->createEntity(Component_Name | Component_Render);
 
-	g_world->components[crate]  = Component_Name;
-	g_world->components[player] = Component_Name | Component_Render;
+	printf("crate:  %d\n", crate);
+	printf("player: %d\n", player);
 
 	g_world->names[crate]  = NameComponent{"crate"};
 	g_world->names[player] = NameComponent{"Bob"};
 
+	Transform crateTransform;
+	crateTransform.orientation = angleAxis(-Degree{90}, {1, 0, 0});
+	crateTransform.scale = {4, 4, 4};
+	auto crateNode = sg.create(crate, crateTransform);
 	auto playerNode = sg.create(player, Transform{});
-	auto crateNode = sg.create(crate, Transform{});
 	sg.link(crateNode, playerNode);
 
-	(void)rs.create(playerNode, {g_meshHolder.get("sprite"), g_kittenMaterial});
+	rs.create(crate, {g_meshHolder.get("sprite"), g_kittenMaterial});
+	rs.create(player, {g_meshHolder.get("sprite"), g_kittenMaterial});
 
 	{
 		DirectionalLight light;
-		light.direction = normalize(Vector3{0, -1, 1});
+		light.direction = normalize(Vector3{0, 1, -1});
 		append(rs.directionalLights, light);
+	}
+
+	{
+		PointLight light;
+		light.position = {0, 1.5, 0};
+		light.intensity = 10.0f;
+		light.color = Color::Red;
+		append(rs.pointLights, light);
 	}
 }
 
