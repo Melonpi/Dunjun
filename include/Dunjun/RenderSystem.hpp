@@ -10,7 +10,7 @@
 #include <Dunjun/Graphics/Color.hpp>
 #include <Dunjun/Graphics/Camera.hpp>
 #include <Dunjun/Graphics/Texture.hpp>
-#include <Dunjun/Scene/Lighting.hpp>
+#include <Dunjun/Graphics/Lighting.hpp>
 
 #include <Dunjun/Core/ContainerTypes.hpp>
 

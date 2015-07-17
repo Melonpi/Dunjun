@@ -279,4 +279,13 @@ std::istream& operator>>(std::istream& is, String& str)
 	}
 	return is;
 }
+
+std::istream& getline(std::istream& is, String& s)
+{
+	char c;
+	clear(s);
+	while (is.get(c) && c != '\n')
+		append(s, c);
+	return is;
+}
 } // namespace Dunjun

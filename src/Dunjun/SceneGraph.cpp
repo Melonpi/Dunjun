@@ -10,6 +10,7 @@ SceneGraph::SceneGraph(Allocator& a)
 , data{}
 , map{allocator}
 {
+	allocate(16);
 }
 
 SceneGraph::~SceneGraph() { allocator.deallocate(data.buffer); }

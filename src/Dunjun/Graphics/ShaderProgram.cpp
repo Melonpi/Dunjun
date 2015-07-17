@@ -11,6 +11,8 @@
 #include <Dunjun/Core/StringFunctions.hpp>
 #include <Dunjun/Core/Murmur.hpp>
 
+#include <fstream>
+
 #include <cstdlib>
 
 namespace Dunjun
@@ -19,25 +21,23 @@ INTERNAL String shaderSourceFromFile(const String& filename)
 {
 	String filePath = BaseDirectory::Shaders + filename;
 
-	const char* cstr = cString(filePath);
-
-	FILE* file = fopen(cstr, "rb");
-	if (!file) // If failed, panic
+	std::ifstream file;
+	file.open(cString(filePath), std::ios::in | std::ios::binary);
+	if (!file.is_open())
 	{
 		panic("Failed to open shader file: " + filePath);
 		return {};
 	}
-	defer(fclose(file));
+	defer(file.close());
 
 	String output;
 
-	const usize bufferSize = 4096;
-	char lineBuffer[bufferSize];
 	String line;
 
-	while (fgets(lineBuffer, sizeof(lineBuffer), file))
+	while (file.good())
 	{
-		line = Strings::trimSpace(lineBuffer);
+		getline(file, line);
+		line = Strings::trimSpace(line);
 
 		if (Strings::hasPrefix(line, "#include"))
 		{
@@ -80,14 +80,14 @@ ShaderProgram::~ShaderProgram()
 		glDeleteProgram(handle);
 }
 
-bool ShaderProgram::attachShaderFromFile(ShaderType type,
+b32 ShaderProgram::attachShaderFromFile(ShaderType type,
                                          const String& filename)
 {
-	String source = shaderSourceFromFile(filename);
-	return attachShaderFromMemory(type, cString(source));
+	const String source = shaderSourceFromFile(filename);
+	return attachShaderFromMemory(type, source);
 }
 
-bool ShaderProgram::attachShaderFromMemory(ShaderType type,
+b32 ShaderProgram::attachShaderFromMemory(ShaderType type,
                                            const String& shaderSource)
 {
 	if (!handle)
@@ -149,7 +149,7 @@ void ShaderProgram::use() const
 		glUseProgram(handle);
 }
 
-bool ShaderProgram::isInUse() const
+b32 ShaderProgram::isInUse() const
 {
 	s32 currentProgram = 0;
 	glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
@@ -166,10 +166,10 @@ void ShaderProgram::stopUsing() const
 void ShaderProgram::checkInUse() const
 {
 	if (!isInUse())
-		panic("ShaderProgram not is use.");
+		panic("ShaderProgram not in use.");
 }
 
-bool ShaderProgram::link()
+b32 ShaderProgram::link()
 {
 	if (!handle)
 		handle = glCreateProgram();
@@ -201,8 +201,8 @@ bool ShaderProgram::link()
 
 			glDeleteProgram(handle);
 			handle = 0;
-
 			isLinked = false;
+
 			return isLinked;
 		}
 
@@ -355,19 +355,19 @@ void ShaderProgram::setUniform(const String& name, const Transform& t) const
 {
 	checkInUse();
 	{
-		s32 loc = getUniformLocation(cString(name + ".position"));
+		s32 loc = getUniformLocation(name + ".position");
 		if (loc == -1)
 			return;
 		glUniform3fv(loc, 1, &t.position[0]);
 	}
 	{
-		s32 loc = getUniformLocation(cString(name + ".orientation"));
+		s32 loc = getUniformLocation(name + ".orientation");
 		if (loc == -1)
 			return;
 		glUniform4fv(loc, 1, &t.orientation.x);
 	}
 	{
-		s32 loc = getUniformLocation(cString(name + ".scale"));
+		s32 loc = getUniformLocation(name + ".scale");
 		if (loc == -1)
 			return;
 		glUniform3fv(loc, 1, &t.scale[0]);

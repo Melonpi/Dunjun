@@ -29,9 +29,6 @@ void init()
 		    SDL_GameControllerOpen(joystickIndex);
 		controllerIndex++;
 	}
-
-	setStickyKeys(true);
-	setStickyMouseButtons(true);
 }
 
 void shutdown()
@@ -42,47 +39,25 @@ void shutdown()
 			setControllerVibration(i, 0);
 	}
 
-	for (SDL_GameController* gamepad : g_controllerHandles)
+	for (auto& gamepad : g_controllerHandles)
 	{
 		if (gamepad)
 			SDL_GameControllerClose(gamepad);
 	}
 
-	for (SDL_Haptic* rumble : g_rumbleHandles)
+	for (auto& rumble : g_rumbleHandles)
 	{
 		if (rumble)
 			SDL_HapticClose(rumble);
 	}
 }
 
-void setCursorMode(CursorMode mode)
-{
-	/*if (mode == CursorMode::Normal)
-	    glfwSetInputMode(Window::getHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	if (mode == CursorMode::Hidden)
-	    glfwSetInputMode(Window::getHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-	if (mode == CursorMode::Disabled)
-	    glfwSetInputMode(Window::getHandle(), GLFW_CURSOR,
-	GLFW_CURSOR_DISABLED);*/
-}
-
-void setStickyKeys(bool sticky)
-{
-	// glfwSetInputMode(Window::getHandle(), GLFW_STICKY_KEYS, sticky);
-}
-
-void setStickyMouseButtons(bool sticky)
-{
-	// glfwSetInputMode(Window::getHandle(), GLFW_STICKY_MOUSE_BUTTONS, sticky);
-}
-
 // Keyboard
 bool isKeyPressed(Key key)
 {
-	// clang-format off
-
 	usize code = 0;
 
+	// clang-format off
 	switch (key)
 	{
 	default:               code = 0;                         break;
@@ -188,6 +163,7 @@ bool isKeyPressed(Key key)
 	case Key::F15:         code = SDL_SCANCODE_F15;          break;
 	case Key::Pause:       code = SDL_SCANCODE_PAUSE;        break;
 	}
+	// clang-format on
 
 	if (code == 0)
 		return false;
@@ -196,7 +172,6 @@ bool isKeyPressed(Key key)
 
 	return state[code] != 0;
 
-	// clang-format on
 }
 
 // Cursor

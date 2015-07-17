@@ -1,9 +1,7 @@
 #ifndef DUNJUN_GRAPHICS_SHADERPROGRAM_HPP
 #define DUNJUN_GRAPHICS_SHADERPROGRAM_HPP
 
-#include <Dunjun/Common.hpp>
-
-#include <Dunjun/Math.hpp>
+#include <Dunjun/Math/Types.hpp>
 #include <Dunjun/Graphics/Transform.hpp>
 #include <Dunjun/Graphics/Color.hpp>
 
@@ -28,15 +26,15 @@ public:
 	ShaderProgram();
 	~ShaderProgram();
 
-	bool attachShaderFromFile(ShaderType type, const String& filename);
-	bool attachShaderFromMemory(ShaderType type, const String& filename);
+	b32 attachShaderFromFile(ShaderType type, const String& filename);
+	b32 attachShaderFromMemory(ShaderType type, const String& filename);
 
 	void use() const;
-	bool isInUse() const;
+	b32 isInUse() const;
 	void stopUsing() const;
 	void checkInUse() const;
 
-	bool link();
+	b32 link();
 
 	void bindAttribLocation(s32 location, const String& name);
 

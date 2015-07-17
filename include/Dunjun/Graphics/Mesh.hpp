@@ -1,8 +1,8 @@
 #ifndef DUNJUN_GRAPHICS_MESH_HPP
 #define DUNJUN_GRAPHICS_MESH_HPP
 
+#include <Dunjun/Types.hpp>
 #include <Dunjun/Core/OpenGL.hpp>
-#include <Dunjun/Common.hpp>
 #include <Dunjun/Graphics/Vertex.hpp>
 
 #include <Dunjun/Core/ContainerTypes.hpp>

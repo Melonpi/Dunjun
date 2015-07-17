@@ -1,5 +1,5 @@
-#ifndef DUNJUN_SCENE_LIGHTING_HPP
-#define DUNJUN_SCENE_LIGHTING_HPP
+#ifndef DUNJUN_GRAPHICS_LIGHTING_HPP
+#define DUNJUN_GRAPHICS_LIGHTING_HPP
 
 #include <Dunjun/Math/Types.hpp>
 #include <Dunjun/Math/Functions.hpp>
@@ -16,7 +16,7 @@ struct Attenuation
 
 struct BaseLight
 {
-	Color color   = Color{255, 255, 255, 255};
+	Color color   = Color::White;
 	f32 intensity = 1.0f;
 };
 

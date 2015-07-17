@@ -143,7 +143,7 @@ GitHub: [Dunjun GitHub](https://github.com/gingerBill/Dunjun)
 ### Scene/World Architecture
 
 * [080 - handleEvent(...), World, GameContext](https://www.youtube.com/watch?v=VST5OImUhM4)
-* [081 - World::init(..)](https://www.youtube.com/watch?v=tsTlDJg7Wck)
+* [081 - World::init(...)](https://www.youtube.com/watch?v=tsTlDJg7Wck)
 * [082 - SceneRenderer{World&}; Try Rumble w/ SDL2](https://www.youtube.com/watch?v=I1TTT3M7q6s)
 * [083 - Class Function Changes; Helper Functions](https://www.youtube.com/watch?v=9YBgDJLcyeE)
 
@@ -151,14 +151,20 @@ GitHub: [Dunjun GitHub](https://github.com/gingerBill/Dunjun)
 
 * 084 - Remove get/set methods (Prefer Data)
 * 085 - Public Member Variables
-* 086 - POD Math Types
+* 086 - POD Math Types1
 * 087 - Data Oriented Design
 * 088 - Custom Allocators
 * 089 - Allocator Types and Array<T>
 * 090 - Queue<T>
 * 091 - Start Implementing HashMap<T>
 * 092 - Finish HashMap<T> & MutliHashMap funcs
-
+* 093 - Murmur Hash Function
+* 094 - TempAllocator
+* 095 - Implementing an Entity Component System
+* 096 - Data-Oriented Scene Graph
+* 097 - Finish SceneGraph
+* 098 - Data-Oriented RenderSystem
+* 099 - Fix Entity Creation & RenderSystem
 
 
 ## Contact

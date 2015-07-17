@@ -18,7 +18,7 @@
 #include <Dunjun/Core/Murmur.hpp>
 #include <Dunjun/Core/TempAllocator.hpp>
 
-#include <Dunjun/EntityWorld.hpp>
+#include <Dunjun/World.hpp>
 #include <Dunjun/SceneGraph.hpp>
 #include <Dunjun/RenderSystem.hpp>
 
@@ -36,7 +36,7 @@ GLOBAL Window g_window;
 
 GLOBAL ModelAsset g_sprite;
 
-GLOBAL EntityWorld* g_world;
+GLOBAL World* g_world;
 
 GLOBAL Texture g_defaultTexture;
 GLOBAL Texture g_kittenTexture;
@@ -159,16 +159,30 @@ INTERNAL void update(Time dt)
 {
 	g_world->update(dt);
 
+	SceneGraph& sg = g_world->sceneGraph;
+
 	{
-		SceneGraph& sg = g_world->sceneGraph;
-		auto node      = sg.getNodeId(g_world->player);
-		Vector3 pos    = sg.getGlobalPosition(node);
-		f32 wt         = 1.0f * Time::now().asSeconds();
-		f32 a          = 2.0f;
-		pos.x          = a * Math::cos(Radian{wt});
-		pos.z          = a * Math::sin(Radian{wt});
+		auto node   = sg.getNodeId(0); // crate
+		Vector3 pos = sg.getGlobalPosition(node);
+
+		f32 wt = 3.0f * Time::now().asSeconds();
+		f32 a  = 0.5f;
+		pos.y  = a * Math::sin(Radian{wt});
+
 
 		sg.setGlobalPosition(node, pos);
+	}
+
+	{
+		auto node   = sg.getNodeId(g_world->player);
+		Vector3 pos = sg.getLocalPosition(node);
+
+		f32 wt = 1.0f * Time::now().asSeconds();
+		f32 a  = 2.0f;
+		pos.x  = a * Math::cos(Radian{wt});
+		pos.z  = a * Math::sin(Radian{wt});
+
+		sg.setLocalPosition(node, pos);
 	}
 }
 
@@ -237,30 +251,28 @@ INTERNAL void render()
 
 INTERNAL void initWorld()
 {
-	SceneGraph& sg   = g_world->sceneGraph;
-	RenderSystem& rs = g_world->renderSystem;
-	sg.allocate(16);
-	rs.allocate(16);
+	auto& es = g_world->entitySystem;
+	auto& sg = g_world->sceneGraph;
+	auto& rs = g_world->renderSystem;
 
 	// Add entities
-	EntityId crate  = g_world->addEntity(Component_Name | Component_Render);
-	EntityId player = g_world->player =
-	    g_world->addEntity(Component_Name | Component_Render);
-	EntityId surface = g_world->addEntity(Component_Render);
-	EntityId wall0   = g_world->addEntity(Component_Render);
-	EntityId wall1   = g_world->addEntity(Component_Render);
-	EntityId wall2   = g_world->addEntity(Component_Render);
+	auto crate      = es.addEntity(Component_Name | Component_Render);
+	g_world->player = es.addEntity(Component_Name | Component_Render);
+	auto player     = g_world->player;
+	auto surface    = es.addEntity(Component_Render);
+	auto wall0      = es.addEntity(Component_Render);
+	auto wall1      = es.addEntity(Component_Render);
+	auto wall2      = es.addEntity(Component_Render);
 
 	// Name entities
 	{
-		g_world->names[crate]  = NameComponent{"crate"};
-		g_world->names[player] = NameComponent{"Bob"};
+		auto& names   = g_world->names;
+		names[crate]  = "crate";
+		names[player] = "Bob";
 	}
 	// Add entities to scene graph and set transforms
 	{
 		Transform crateTransform;
-		// crateTransform.orientation = angleAxis(-Degree{90}, {1, 0, 0});
-		// crateTransform.scale = {4, 4, 4};
 		auto crateNode  = sg.addNode(crate, crateTransform);
 		auto playerNode = sg.addNode(player, Transform{});
 		sg.linkNodes(crateNode, playerNode);
@@ -299,7 +311,7 @@ INTERNAL void initWorld()
 		dlight.direction = normalize(Vector3{0, -1, -1});
 		// append(rs.directionalLights, dlight);
 
-		Random r{1337};
+		auto r = Random{1337};
 		for (int i = 0; i < 3; i++)
 		{
 			PointLight pl;
@@ -334,7 +346,7 @@ void init(int /*argCount*/, char** /*args*/)
 	}
 
 	g_window.create({854, 480, 24}, "Dunjun");
-	g_window.setFramerateLimit(FrameLimit);
+	// g_window.setFramerateLimit(FrameLimit);
 	// g_window.setVerticalSyncEnabled(true);
 
 	glewInit();
@@ -349,7 +361,7 @@ void init(int /*argCount*/, char** /*args*/)
 	loadMaterials();
 	loadSpriteAsset();
 
-	g_world = defaultAllocator().makeNew<EntityWorld>();
+	g_world = defaultAllocator().makeNew<World>();
 
 	initWorld();
 }
@@ -387,8 +399,8 @@ void run()
 		if (tc.update(milliseconds(500)))
 		{
 			g_window.setTitle(stringFormat("Dunjun - %.3f ms - %d fps",
-			                               1000.0f / tc.getTickRate(),
-			                               (u32)tc.getTickRate()));
+			                               1000.0f / tc.tickRate,
+			                               (u32)tc.tickRate));
 		}
 
 		render();
@@ -399,6 +411,7 @@ void run()
 
 void shutdown()
 {
+	// NOTE(bill): These is no real need to call this as the OS should do this
 	defaultAllocator().makeDelete(g_world);
 	Input::shutdown();
 	g_window.close();

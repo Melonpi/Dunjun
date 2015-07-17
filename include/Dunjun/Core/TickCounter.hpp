@@ -26,8 +26,6 @@ struct TickCounter
 
 		return reset;
 	}
-
-	inline f64 getTickRate() const { return tickRate; }
 };
 
 } // namespace Dunjun

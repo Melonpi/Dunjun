@@ -1,7 +1,11 @@
 @echo off
 
+:::::::::::::::::::::::::::
+:: Build File for Dunjun ::
+:::::::::::::::::::::::::::
+
 ::
-:: Build file for Dunjun
+:: Settings
 ::
 
 :: Set Platform
@@ -44,8 +48,6 @@ set buildDir= "W:\Dunjun\bin\"
 ::
 ::
 ::
-::
-::
 
 :: Create Build Directory if does not exist yet
 IF NOT EXIST %buildDir% mkdir %buildDir%
@@ -65,7 +67,9 @@ del *.exe > NUL 2> NUL
 :: Ignore normal output
 copy "W:\Dunjun\external\SDL2-2.0.3\lib\%platform%\SDL2.dll" "SDL2.dll" > NUL
 
-:: Compile
+::
+:: Compile and Link
+::
 call cl "W:\Dunjun\src\UnityBuild.cpp" ^
 	%includes% %compilerFlags% %compilerDefines% %compilerWarnings% ^
 	/link %linkerFlags% %libPaths% %libs%

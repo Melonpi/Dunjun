@@ -26,6 +26,7 @@ RenderSystem::RenderSystem(Allocator& a, SceneGraph& sg)
 , camera{nullptr}
 , currentTextures{}
 {
+	allocate(16);
 }
 
 RenderSystem::~RenderSystem()

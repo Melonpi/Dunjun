@@ -95,6 +95,8 @@ bool operator>=(const String& lhs, const char* rhs);
 
 std::ostream& operator<<(std::ostream& os, const String& s);
 std::istream& operator>>(std::istream& is, String& s);
+
+std::istream& getline(std::istream& is, String& s);
 } // namespace Dunjun
 
 #endif

@@ -190,10 +190,6 @@ enum class CursorMode : u32
 void init();
 void shutdown();
 
-void setCursorMode(CursorMode mode);
-void setStickyKeys(bool sticky);
-void setStickyMouseButtons(bool sticky);
-
 bool isKeyPressed(Key key);
 
 Vector2 getCursorPosition();

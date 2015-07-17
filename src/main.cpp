@@ -7,7 +7,9 @@ int main(int argCount, char** args)
 {
 	Dunjun::Game::init(argCount, args);
 	Dunjun::Game::run();
-	Dunjun::Game::shutdown();
+	// NOTE(bill): Only enable if you need to destroy everything
+	// E.g. check for memory leaks else where in the code
+	// Dunjun::Game::shutdown();
 
 	return EXIT_SUCCESS;
 }

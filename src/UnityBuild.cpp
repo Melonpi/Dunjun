@@ -21,14 +21,6 @@
 #include "Dunjun/Math/Vector3.cpp"
 #include "Dunjun/Math/Vector4.cpp"
 
-// #include "Dunjun/Level/Level.cpp"
-// #include "Dunjun/Level/Room.cpp"
-
-// #include "Dunjun/Scene/FaceCamera.cpp"
-// #include "Dunjun/Scene/SceneNode.cpp"
-// #include "Dunjun/Scene/SceneRenderer.cpp"
-// #include "Dunjun/World.cpp"
-
 #include "Dunjun/Core/Filesystem.cpp"
 #include "Dunjun/Core/Memory.cpp"
 #include "Dunjun/Core/Murmur.cpp"
@@ -45,7 +37,8 @@
 #include "Dunjun/ResourceHolders.cpp"
 #include "Dunjun/Game.cpp"
 
-#include "Dunjun/EntityWorld.cpp"
+#include "Dunjun/Entity.cpp"
+#include "Dunjun/World.cpp"
 #include "Dunjun/SceneGraph.cpp"
 #include "Dunjun/RenderSystem.cpp"
 

@@ -1,44 +1,38 @@
 #ifndef DUNJUN_WORLD_HPP
 #define DUNJUN_WORLD_HPP
 
-#include <Dunjun/Common.hpp>
-#include <Dunjun/System.hpp>
-#include <Dunjun/Window/Event.hpp>
-#include <Dunjun/Scene.hpp>
-#include <Dunjun/Graphics.hpp>
-#include <Dunjun/Context.hpp>
-#include <Dunjun/Level/Level.hpp>
+#include <Dunjun/Types.hpp>
+#include <Dunjun/Math/Types.hpp>
+#include <Dunjun/Core/String.hpp>
+#include <Dunjun/Core/Time.hpp>
 
-#include <Dunjun/Core/ContainerTypes.hpp>
+#include <Dunjun/Window/Event.hpp>
+
+#include <Dunjun/Entity.hpp>
+
+#include <Dunjun/SceneGraph.hpp>
+#include <Dunjun/RenderSystem.hpp>
+#include <Dunjun/Graphics/Camera.hpp>
 
 namespace Dunjun
 {
 class World
 {
 public:
-	Context context;
+	EntitySystem entitySystem;
+	SceneGraph sceneGraph;
+	Camera camera;
+	RenderSystem renderSystem;
 
-	SceneNode sceneGraph;
-	SceneRenderer renderer;
+	String names[EntitySystem::MaxEntities];
 
-	Camera mainCamera;
-	Camera playerCamera;
-	Camera* currentCamera = &playerCamera;
-
-	SceneNode* player = nullptr;
-	Level* level      = nullptr;
-
-	Array<PointLight> pointLights;
-	Array<DirectionalLight> directionalLights;
-	Array<SpotLight> spotLights;
+	EntityId player;
 
 	World();
-	virtual ~World();
+	~World() = default;
 
-	void init(Context context);
-
-	void update(Time dt);
 	void handleEvent(const Event& event);
+	void update(Time dt);
 	void render();
 
 private:
