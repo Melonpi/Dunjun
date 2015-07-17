@@ -29,11 +29,13 @@
 // #include "Dunjun/Scene/SceneRenderer.cpp"
 // #include "Dunjun/World.cpp"
 
-#include "Dunjun/System/Filesystem.cpp"
-#include "Dunjun/System/Memory.cpp"
-#include "Dunjun/System/Murmur.cpp"
-#include "Dunjun/System/OpenGL.cpp"
-#include "Dunjun/System/Time.cpp"
+#include "Dunjun/Core/Filesystem.cpp"
+#include "Dunjun/Core/Memory.cpp"
+#include "Dunjun/Core/Murmur.cpp"
+#include "Dunjun/Core/OpenGL.cpp"
+#include "Dunjun/Core/String.cpp"
+#include "Dunjun/Core/StringFunctions.cpp"
+#include "Dunjun/Core/Time.cpp"
 
 #include "Dunjun/Window/Input.cpp"
 #include "Dunjun/Window/VideoMode.cpp"

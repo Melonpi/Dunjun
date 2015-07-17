@@ -1,5 +1,5 @@
-#ifndef DUNJUN_SYSTEM_TIME_HPP
-#define DUNJUN_SYSTEM_TIME_HPP
+#ifndef DUNJUN_CORE_TIME_HPP
+#define DUNJUN_CORE_TIME_HPP
 
 #include <chrono>
 

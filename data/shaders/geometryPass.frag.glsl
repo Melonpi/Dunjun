@@ -1,7 +1,7 @@
 #version 120
 
-#include <Common.head.glsl>
-#include <Material.head.glsl>
+#include "Common"
+#include "Material"
 
 uniform vec3 u_cameraPosition;
 uniform Transform u_transform;

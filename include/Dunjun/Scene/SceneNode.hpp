@@ -5,7 +5,7 @@
 #include <Dunjun/Graphics/Transform.hpp>
 #include <Dunjun/Scene/NodeComponent.hpp>
 #include <Dunjun/Scene/SceneRenderer.hpp>
-#include <Dunjun/System/Time.hpp>
+#include <Dunjun/Core/Time.hpp>
 #include <Dunjun/Window/Event.hpp>
 
 #include <algorithm>

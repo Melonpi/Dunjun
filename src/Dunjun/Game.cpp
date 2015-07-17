@@ -1,7 +1,7 @@
 #include <Dunjun/Config.hpp>
 #include <Dunjun/Game.hpp>
 
-#include <Dunjun/System.hpp>
+#include <Dunjun/Core.hpp>
 #include <Dunjun/Window.hpp>
 #include <Dunjun/ResourceHolders.hpp>
 
@@ -10,14 +10,13 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <string>
 
-#include <Dunjun/System/Containers.hpp>
-#include <Dunjun/System/Array.hpp>
-#include <Dunjun/System/Queue.hpp>
-#include <Dunjun/System/HashMap.hpp>
-#include <Dunjun/System/Murmur.hpp>
-#include <Dunjun/System/TempAllocator.hpp>
+#include <Dunjun/Core/ContainerTypes.hpp>
+#include <Dunjun/Core/Array.hpp>
+#include <Dunjun/Core/Queue.hpp>
+#include <Dunjun/Core/HashMap.hpp>
+#include <Dunjun/Core/Murmur.hpp>
+#include <Dunjun/Core/TempAllocator.hpp>
 
 #include <Dunjun/EntityWorld.hpp>
 #include <Dunjun/SceneGraph.hpp>
@@ -42,42 +41,49 @@ GLOBAL EntityWorld* g_world;
 GLOBAL Texture g_defaultTexture;
 GLOBAL Texture g_kittenTexture;
 GLOBAL Texture g_stoneTexture;
+GLOBAL Texture g_woodTexture;
 GLOBAL Texture g_terrainTexture;
 
 GLOBAL Material g_kittenMaterial;
 GLOBAL Material g_terrainMaterial;
+GLOBAL Material g_stoneMaterial;
+GLOBAL Material g_woodMaterial;
 
 namespace Game
 {
 INTERNAL void loadShaders()
 {
-	g_shaderHolder.insertFromFile("texPass",           //
-	                              "texPass.vert.glsl", //
-	                              "texPass.frag.glsl");
-	g_shaderHolder.insertFromFile("geometryPass",           //
-	                              "geometryPass.vert.glsl", //
-	                              "geometryPass.frag.glsl");
-	g_shaderHolder.insertFromFile("ambientLight",        //
-	                              "lightPass.vert.glsl", //
-	                              "ambientLight.frag.glsl");
-	g_shaderHolder.insertFromFile("pointLight",          //
-	                              "lightPass.vert.glsl", //
-	                              "pointLight.frag.glsl");
-	g_shaderHolder.insertFromFile("directionalLight",    //
-	                              "lightPass.vert.glsl", //
-	                              "directionalLight.frag.glsl");
-	g_shaderHolder.insertFromFile("spotLight",           //
-	                              "lightPass.vert.glsl", //
-	                              "spotLight.frag.glsl");
-	g_shaderHolder.insertFromFile("out",                 //
-	                              "lightPass.vert.glsl", //
-	                              "out.frag.glsl");
+	g_shaderHolder.insertFromFile("texPass",                     //
+	                              "texPass.vert.glsl",           //
+	                              "texPass.frag.glsl");          //
+	g_shaderHolder.insertFromFile("geometryPass",                //
+	                              "geometryPass.vert.glsl",      //
+	                              "geometryPass.frag.glsl");     //
+	g_shaderHolder.insertFromFile("ambientLight",                //
+	                              "lightPass.vert.glsl",         //
+	                              "ambientLight.frag.glsl");     //
+	g_shaderHolder.insertFromFile("pointLight",                  //
+	                              "lightPass.vert.glsl",         //
+	                              "pointLight.frag.glsl");       //
+	g_shaderHolder.insertFromFile("directionalLight",            //
+	                              "lightPass.vert.glsl",         //
+	                              "directionalLight.frag.glsl"); //
+	g_shaderHolder.insertFromFile("spotLight",                   //
+	                              "lightPass.vert.glsl",         //
+	                              "spotLight.frag.glsl");        //
+	g_shaderHolder.insertFromFile("out",                         //
+	                              "lightPass.vert.glsl",         //
+	                              "out.frag.glsl");              //
 }
+
 INTERNAL void loadMaterials()
 {
 	g_defaultTexture = loadTextureFromFile("data/textures/default.png");
 	g_kittenTexture  = loadTextureFromFile("data/textures/kitten.jpg");
-	g_stoneTexture   = loadTextureFromFile("data/textures/stone.png");
+	g_stoneTexture = loadTextureFromFile("data/textures/stone.png", //
+	                                     TextureFilter::Nearest);
+	g_woodTexture = loadTextureFromFile("data/textures/wood.png", //
+	                                    TextureFilter::Nearest);
 	g_terrainTexture = loadTextureFromFile("data/textures/terrain.png",
 	                                       TextureFilter::Nearest);
 
@@ -87,32 +93,13 @@ INTERNAL void loadMaterials()
 	g_terrainMaterial            = Material{};
 	g_terrainMaterial.diffuseMap = &g_terrainTexture;
 
-	// {
-	// 	auto mat        = make_unique<Material>();
-	// 	mat->shaders    = &g_shaderHolder.get("geometryPass");
-	// 	mat->diffuseMap = &g_defaultTexture;
-	// 	g_materialHolder.insert("default", std::move(mat));
-	// }
-	// {
-	// 	auto mat              = make_unique<Material>();
-	// 	mat->shaders          = &g_shaderHolder.get("geometryPass");
-	// 	mat->diffuseMap       = &g_kittenTexture;
-	// 	mat->specularExponent = 1e5;
-	// 	g_materialHolder.insert("cat", std::move(mat));
-	// }
-	// {
-	// 	auto mat        = make_unique<Material>();
-	// 	mat->shaders    = &g_shaderHolder.get("geometryPass");
-	// 	mat->diffuseMap = &g_stoneTexture;
-	// 	g_materialHolder.insert("stone", std::move(mat));
-	// }
-	// {
-	// 	auto mat        = make_unique<Material>();
-	// 	mat->shaders    = &g_shaderHolder.get("geometryPass");
-	// 	mat->diffuseMap = &g_terrainTexture;
-	// 	g_materialHolder.insert("terrain", std::move(mat));
-	// }
+	g_stoneMaterial            = Material{};
+	g_stoneMaterial.diffuseMap = &g_stoneTexture;
+
+	g_woodMaterial            = Material{};
+	g_woodMaterial.diffuseMap = &g_woodTexture;
 }
+
 INTERNAL void loadSpriteAsset()
 {
 	{
@@ -131,6 +118,23 @@ INTERNAL void loadSpriteAsset()
 
 		g_meshHolder.insert(
 		    "sprite", std::unique_ptr<Mesh>(new Mesh(generateMesh(meshData))));
+	}
+	{
+		MeshData meshData{defaultAllocator()};
+		meshData.drawType = DrawType::Triangles;
+
+		reserve(meshData.vertices, 4);
+		append(meshData.vertices, Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}});
+		append(meshData.vertices, Vertex{{+0.5f, -0.5f, 0.0f}, {8.0f, 0.0f}});
+		append(meshData.vertices, Vertex{{+0.5f, +0.5f, 0.0f}, {8.0f, 8.0f}});
+		append(meshData.vertices, Vertex{{-0.5f, +0.5f, 0.0f}, {0.0f, 8.0f}});
+
+		reserve(meshData.indices, 6);
+		meshData.addFace(0, 1, 2).addFace(2, 3, 0);
+		meshData.generateNormals();
+
+		g_meshHolder.insert(
+		    "wall", std::unique_ptr<Mesh>(new Mesh(generateMesh(meshData))));
 	}
 	{
 		MeshData meshData{defaultAllocator()};
@@ -160,19 +164,11 @@ INTERNAL void update(Time dt)
 		auto node      = sg.getNodeId(g_world->player);
 		Vector3 pos    = sg.getGlobalPosition(node);
 		f32 wt         = 1.0f * Time::now().asSeconds();
-		f32 a          = 1.0f;
+		f32 a          = 2.0f;
 		pos.x          = a * Math::cos(Radian{wt});
 		pos.z          = a * Math::sin(Radian{wt});
 
 		sg.setGlobalPosition(node, pos);
-	}
-
-	if (Input::isKeyPressed(Input::Key::F11))
-	{
-		// TODO(bill): Toggle fullscreen
-
-		// Initial OpenGL settings
-		glInit();
 	}
 }
 
@@ -186,7 +182,7 @@ INTERNAL void handleEvents()
 		case Event::Closed:
 		{
 			g_window.close();
-			std::exit(0);
+			exit(EXIT_SUCCESS);
 			break;
 		}
 		case Event::Resized:
@@ -211,7 +207,7 @@ INTERNAL void handleEvents()
 			case Input::Key::Escape:
 			{
 				g_window.close();
-				std::exit(0);
+				exit(EXIT_SUCCESS);
 				break;
 			}
 			default:
@@ -229,7 +225,13 @@ INTERNAL void handleEvents()
 
 INTERNAL void render()
 {
-	//
+	g_world->renderSystem.fbSize.x = g_window.getSize().width;
+	g_world->renderSystem.fbSize.y = g_window.getSize().height;
+
+	glViewport(0, 0, g_window.getSize().width, g_window.getSize().height);
+	glClearColor(0.5, 0.69, 1.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	g_world->render();
 }
 
@@ -240,42 +242,84 @@ INTERNAL void initWorld()
 	sg.allocate(16);
 	rs.allocate(16);
 
-	EntityId crate  = g_world->createEntity(Component_Name | Component_Render);
+	// Add entities
+	EntityId crate  = g_world->addEntity(Component_Name | Component_Render);
 	EntityId player = g_world->player =
-	    g_world->createEntity(Component_Name | Component_Render);
+	    g_world->addEntity(Component_Name | Component_Render);
+	EntityId surface = g_world->addEntity(Component_Render);
+	EntityId wall0   = g_world->addEntity(Component_Render);
+	EntityId wall1   = g_world->addEntity(Component_Render);
+	EntityId wall2   = g_world->addEntity(Component_Render);
 
-	printf("crate:  %d\n", crate);
-	printf("player: %d\n", player);
-
-	g_world->names[crate]  = NameComponent{"crate"};
-	g_world->names[player] = NameComponent{"Bob"};
-
-	Transform crateTransform;
-	crateTransform.orientation = angleAxis(-Degree{90}, {1, 0, 0});
-	crateTransform.scale = {4, 4, 4};
-	auto crateNode = sg.create(crate, crateTransform);
-	auto playerNode = sg.create(player, Transform{});
-	sg.link(crateNode, playerNode);
-
-	rs.create(crate, {g_meshHolder.get("sprite"), g_kittenMaterial});
-	rs.create(player, {g_meshHolder.get("sprite"), g_kittenMaterial});
-
+	// Name entities
 	{
-		DirectionalLight light;
-		light.direction = normalize(Vector3{0, 1, -1});
-		append(rs.directionalLights, light);
+		g_world->names[crate]  = NameComponent{"crate"};
+		g_world->names[player] = NameComponent{"Bob"};
+	}
+	// Add entities to scene graph and set transforms
+	{
+		Transform crateTransform;
+		// crateTransform.orientation = angleAxis(-Degree{90}, {1, 0, 0});
+		// crateTransform.scale = {4, 4, 4};
+		auto crateNode  = sg.addNode(crate, crateTransform);
+		auto playerNode = sg.addNode(player, Transform{});
+		sg.linkNodes(crateNode, playerNode);
+
+		Transform surfaceTransform;
+		surfaceTransform.position    = {0, -1, 0};
+		surfaceTransform.orientation = angleAxis(Degree{-90}, {1, 0, 0});
+		surfaceTransform.scale = {8, 8, 8};
+		sg.addNode(surface, surfaceTransform);
+
+		Transform wallTransform;
+		wallTransform.position = {0, 0, -4};
+		wallTransform.scale = {8, 8, 8};
+		sg.addNode(wall0, wallTransform);
+
+		wallTransform.position    = {-4, 0, 0};
+		wallTransform.orientation = angleAxis(Degree{90}, {0, 1, 0});
+		sg.addNode(wall1, wallTransform);
+
+		wallTransform.position    = {+4, 0, 0};
+		wallTransform.orientation = angleAxis(Degree{-90}, {0, 1, 0});
+		sg.addNode(wall2, wallTransform);
+	}
+	// Add render components to entities
+	{
+		rs.addComponent(crate, {g_meshHolder.get("sprite"), g_kittenMaterial});
+		rs.addComponent(player, {g_meshHolder.get("sprite"), g_kittenMaterial});
+		rs.addComponent(surface, {g_meshHolder.get("wall"), g_woodMaterial});
+		rs.addComponent(wall0, {g_meshHolder.get("wall"), g_stoneMaterial});
+		rs.addComponent(wall1, {g_meshHolder.get("wall"), g_stoneMaterial});
+		rs.addComponent(wall2, {g_meshHolder.get("wall"), g_stoneMaterial});
+	}
+	// Add lights
+	{
+		DirectionalLight dlight;
+		dlight.direction = normalize(Vector3{0, -1, -1});
+		// append(rs.directionalLights, dlight);
+
+		Random r{1337};
+		for (int i = 0; i < 3; i++)
+		{
+			PointLight pl;
+			pl.position.x = r.getFloat(-4, 4);
+			pl.position.y = r.getFloat(0.1f, 1.0f);
+			pl.position.z = r.getFloat(-4, 4);
+
+			pl.intensity = r.getFloat(0.5f, 2.0f);
+			pl.color.r   = r.getInt(50, 255);
+			pl.color.g   = r.getInt(50, 255);
+			pl.color.b   = r.getInt(50, 255);
+			pl.color.a = 255;
+			append(rs.pointLights, pl);
+		}
 	}
 
-	{
-		PointLight light;
-		light.position = {0, 1.5, 0};
-		light.intensity = 10.0f;
-		light.color = Color::Red;
-		append(rs.pointLights, light);
-	}
+	glInit();
 }
 
-void init(int /*argc*/, char** /*argv*/)
+void init(int /*argCount*/, char** /*args*/)
 {
 	Memory::init();
 
@@ -286,11 +330,12 @@ void init(int /*argc*/, char** /*argv*/)
 	{
 		std::cerr << "SDL Failed to initialize. Error: " << SDL_GetError()
 		          << "\n";
-		std::exit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
 
 	g_window.create({854, 480, 24}, "Dunjun");
 	g_window.setFramerateLimit(FrameLimit);
+	// g_window.setVerticalSyncEnabled(true);
 
 	glewInit();
 
@@ -343,8 +388,7 @@ void run()
 		{
 			g_window.setTitle(stringFormat("Dunjun - %.3f ms - %d fps",
 			                               1000.0f / tc.getTickRate(),
-			                               (u32)tc.getTickRate())
-			                      .c_str());
+			                               (u32)tc.getTickRate()));
 		}
 
 		render();
@@ -361,13 +405,13 @@ void shutdown()
 	SDL_Quit();
 	Memory::shutdown();
 
-	std::exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 void glInit()
 {
-	// glEnable(GL_CULL_FACE);
-	// glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 }

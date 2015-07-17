@@ -3,14 +3,14 @@
 
 #include <Dunjun/Types.hpp>
 #include <Dunjun/Math/Types.hpp>
-#include <Dunjun/System/Time.hpp>
+#include <Dunjun/Core/String.hpp>
+#include <Dunjun/Core/Time.hpp>
 #include <Dunjun/Window/Event.hpp>
 #include <Dunjun/Entity.hpp>
 #include <Dunjun/SceneGraph.hpp>
 #include <Dunjun/RenderSystem.hpp>
 #include <Dunjun/Graphics/Camera.hpp>
 
-#include <string>
 
 namespace Dunjun
 {
@@ -23,7 +23,7 @@ enum ComponentMasks : u32
 
 struct NameComponent
 {
-	std::string name;
+	String name;
 };
 
 struct EntityWorld
@@ -46,9 +46,9 @@ struct EntityWorld
 	EntityWorld(const EntityWorld&) = delete;
 	EntityWorld& operator=(const EntityWorld&) = delete;
 
-	EntityId createEntity(u32 components);
+	EntityId addEntity(u32 components);
+	void removeEntity(EntityId e);
 	bool isAlive(EntityId e) const;
-	void destroy(EntityId e);
 
 	void handleEvent(const Event& event);
 	void update(Time dt);

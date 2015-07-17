@@ -1,12 +1,11 @@
-#ifndef DUNJUN_SYSTEM_TEMPALLOCATOR_HPP
-#define DUNJUN_SYSTEM_TEMPALLOCATOR_HPP
+#ifndef DUNJUN_CORE_TEMPALLOCATOR_HPP
+#define DUNJUN_CORE_TEMPALLOCATOR_HPP
 
-#include <Dunjun/System/Allocator.hpp>
-#include <Dunjun/System/Memory.hpp>
+#include <Dunjun/Core/Allocator.hpp>
+#include <Dunjun/Core/Memory.hpp>
 
 namespace Dunjun
 {
-
 // TempAllocator is a temporary memory allocator that mainly allocates memory
 // from a local stack buffer with size `Size`.
 // If the memory is used up, it will use the backing allocator (at the moment,
@@ -18,7 +17,7 @@ template <usize Size>
 class TempAllocator : public Allocator
 {
 public:
-	TempAllocator(Allocator& backing = defaultAllocator());
+	TempAllocator(Allocator& backing = defaultScratchAllocator());
 	~TempAllocator();
 
 	void* allocate(usize size, usize align = DefaultAlign);
@@ -39,8 +38,9 @@ private:
 };
 
 // NOTE(bill): Please use on the premade sizes for the TempAllocator<> to reduce
-// unneeded template instantiation. If you need more than 4K, do not use a
-// TempAllocator!
+// unneeded template instantiation. If you need more than 4K, do _not_ use a
+// TempAllocator! Try using the `defaultScratchAllocator()` or just the
+// `defaultAllocator()`.
 using TempAllocator64   = TempAllocator<64>;
 using TempAllocator128  = TempAllocator<128>;
 using TempAllocator256  = TempAllocator<256>;
@@ -60,7 +60,7 @@ inline TempAllocator<Size>::TempAllocator(Allocator& backing)
 {
 	m_current = m_begin = &m_buffer[0];
 	m_end = m_begin + Size; // TODO(bill): Is it meant to be Size or Size-1??
-	*(void**)m_begin = nullptr;
+	*(void**)m_begin = nullptr; // Lovely casting
 	m_current += sizeof(void*);
 }
 
@@ -96,13 +96,13 @@ inline void* TempAllocator<Size>::allocate(usize size, usize align)
 		m_current = m_begin = (u8*)ptr;
 		m_end = m_begin + toAllocate;
 
-		*(void**)m_begin = nullptr;
+		*(void**)m_begin = nullptr; // Lovely casting
 
 		m_current += sizeof(void*);
 		m_current = (u8*)Memory::alignForward(m_current, align);
 	}
 
-	void* result{m_current};
+	void* result = m_current;
 	m_current += size;
 	return result;
 }

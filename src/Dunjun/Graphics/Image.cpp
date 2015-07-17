@@ -1,7 +1,7 @@
 #include <Dunjun/Graphics/Image.hpp>
 
 #include <Dunjun/Common.hpp>
-#include <Dunjun/System/Memory.hpp>
+#include <Dunjun/Core/Memory.hpp>
 
 #define STBI_FAILURE_USERMSG
 #define STB_IMAGE_IMPLEMENTATION
@@ -12,15 +12,15 @@
 
 namespace Dunjun
 {
-Image loadImageFromFile(const std::string& filename)
+Image loadImageFromFile(const String& filename)
 {
 	int w, h, f;
-	u8* p = stbi_load(filename.c_str(), &w, &h, &f, 0);
+	u8* p = stbi_load(cString(filename), &w, &h, &f, 0);
 	defer(stbi_image_free(p));
 
 	if (!p)
 	{
-		std::cerr << stbi_failure_reason() << std::endl;
+		panic(stbi_failure_reason());
 		return {};
 	}
 
@@ -45,7 +45,7 @@ Image loadImageFromMemory(u32 w, u32 h, ImageFormat f, const u8* p)
 	img.height = h;
 	img.format = f;
 
-	usize imageSize = img.width * img.height * (usize)img.format;
+	u32 imageSize = img.width * img.height * (u32)img.format;
 
 	Allocator& a = defaultAllocator();
 
@@ -64,17 +64,17 @@ void flipImageVertically(Image& img)
 {
 	Allocator& a = defaultAllocator();
 
-	const usize pitch   = img.width * (usize)img.format;
-	const u32 halfRows  = img.height / 2;
+	const u32 pitch    = img.width * (u32)img.format;
+	const u32 halfRows = img.height / 2;
 
 	u8* rowBuffer = (u8*)a.allocate(pitch * sizeof(u8));
 	defer(a.deallocate(rowBuffer));
 
-	for (u32 i{0}; i < halfRows; i++)
+	for (u32 i = 0; i < halfRows; i++)
 	{
-		u8* row = img.pixels + (i * img.width) * (usize)img.format;
+		u8* row = img.pixels + (i * img.width) * (u32)img.format;
 		u8* oppositeRow =
-		    img.pixels + ((img.height - i - 1) * img.width) * (usize)img.format;
+		    img.pixels + ((img.height - i - 1) * img.width) * (u32)img.format;
 
 		memcpy(rowBuffer, row, pitch);
 		memcpy(row, oppositeRow, pitch);
@@ -82,9 +82,6 @@ void flipImageVertically(Image& img)
 	}
 }
 
-void destroyImage(Image& image)
-{
-	defaultAllocator().deallocate(image.pixels);
-}
+void destroyImage(Image& image) { defaultAllocator().deallocate(image.pixels); }
 
 } // namespace Dunjun

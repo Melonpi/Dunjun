@@ -2,12 +2,11 @@
 #define DUNJUN_GRAPHICS_IMAGE_HPP
 
 #include <Dunjun/Types.hpp>
-
-#include <string>
+#include <Dunjun/Core/String.hpp>
 
 namespace Dunjun
 {
-enum class ImageFormat
+enum class ImageFormat : u32
 {
 	None           = 0,
 	Greyscale      = 1,
@@ -24,7 +23,7 @@ struct Image
 	u8* pixels;
 };
 
-Image loadImageFromFile(const std::string& filename);
+Image loadImageFromFile(const String& filename);
 Image loadImageFromMemory(u32 width,
                           u32 height,
                           ImageFormat format,

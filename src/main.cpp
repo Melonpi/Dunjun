@@ -3,11 +3,11 @@
 #include <SDL/SDL_main.h>
 #undef main
 
-int main(int argc, char** argv)
+int main(int argCount, char** args)
 {
-	Dunjun::Game::init(argc, argv);
+	Dunjun::Game::init(argCount, args);
 	Dunjun::Game::run();
 	Dunjun::Game::shutdown();
 
-	return 0;
+	return EXIT_SUCCESS;
 }

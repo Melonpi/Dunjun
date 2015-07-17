@@ -3,7 +3,6 @@
 
 #include <SDL/SDL.h>
 
-#include <array>
 #include <chrono>
 
 namespace Dunjun
@@ -12,14 +11,14 @@ namespace Input
 {
 GLOBAL const usize MaximumControllers{4};
 
-GLOBAL std::array<SDL_GameController*, MaximumControllers> g_controllerHandles;
-GLOBAL std::array<SDL_Haptic*, MaximumControllers> g_rumbleHandles;
+GLOBAL SDL_GameController* g_controllerHandles[MaximumControllers] = {};
+GLOBAL SDL_Haptic* g_rumbleHandles[MaximumControllers]             = {};
 
 void init()
 {
-	int maxJoysticks    = SDL_NumJoysticks();
-	int controllerIndex = 0;
-	for (int joystickIndex = 0; joystickIndex < maxJoysticks; joystickIndex++)
+	u32 maxJoysticks    = SDL_NumJoysticks();
+	u32 controllerIndex = 0;
+	for (u32 joystickIndex = 0; joystickIndex < maxJoysticks; joystickIndex++)
 	{
 		if (!SDL_IsGameController(joystickIndex))
 			continue;
@@ -37,7 +36,7 @@ void init()
 
 void shutdown()
 {
-	for (int i = 0; i < MaximumControllers; i++)
+	for (usize i = 0; i < MaximumControllers; i++)
 	{
 		if (isControllerPresent(i))
 			setControllerVibration(i, 0);
@@ -82,7 +81,7 @@ bool isKeyPressed(Key key)
 {
 	// clang-format off
 
-	int code = 0;
+	usize code = 0;
 
 	switch (key)
 	{
@@ -205,7 +204,7 @@ bool isKeyPressed(Key key)
 Vector2 getCursorPosition()
 {
 	// TODO(bill): get global cursor position
-	int x, y;
+	s32 x, y;
 	SDL_GetMouseState(&x, &y);
 
 	return {(f32)x, (f32)y};
@@ -213,7 +212,7 @@ Vector2 getCursorPosition()
 
 Vector2 getCursorPosition(const Window& relativeTo)
 {
-	int x, y;
+	s32 x, y;
 	SDL_GetMouseState(&x, &y);
 
 	return Vector2{(f32)x, (f32)y};
@@ -227,7 +226,7 @@ void setCursorPosition(const Window& relativeTo, const Vector2& pos)
 // Mouse
 bool isMouseButtonPressed(Mouse button)
 {
-	return (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON((int)button)) != 0;
+	return (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON((s32)button)) != 0;
 }
 
 // Vector2 getScrollOffset() { return Vector2(g_scrollX, g_scrollY); }
@@ -268,7 +267,7 @@ f32 getControllerAxis(u32 controllerIndex, ControllerAxis axis)
 	return 0.0f;
 }
 
-std::string getControllerName(u32 controllerIndex)
+String getControllerName(u32 controllerIndex)
 {
 	return {SDL_GameControllerName(g_controllerHandles[controllerIndex])};
 }
@@ -296,11 +295,11 @@ void setControllerVibration(u32 controllerIndex, f32 amount, Time duration)
 // Clipboard
 bool hasClipboardString() { return SDL_HasClipboardText() == SDL_TRUE; }
 
-std::string getClipboardString() { return {SDL_GetClipboardText()}; }
+String getClipboardString() { return {SDL_GetClipboardText()}; }
 
-void setClipboardString(const std::string& str)
+void setClipboardString(const String& str)
 {
-	SDL_SetClipboardText(str.c_str());
+	SDL_SetClipboardText(cString(str));
 }
 
 } // namespace Input

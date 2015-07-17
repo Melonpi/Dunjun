@@ -7,15 +7,9 @@
 
 namespace Dunjun
 {
-std::string getFileDirectory(const std::string& filepath)
-{
-	usize found = filepath.find_last_of("/\\");
-	return filepath.substr(0, found);
-}
-
 bool showSimpleMessageBox(MessageBoxType type,
-                          const std::string& title,
-                          const std::string& message)
+                          const String& title,
+                          const String& message)
 {
 	u32 flag = 0;
 
@@ -33,12 +27,6 @@ bool showSimpleMessageBox(MessageBoxType type,
 	}
 
 	return SDL_ShowSimpleMessageBox(
-	           flag, title.c_str(), message.c_str(), nullptr) == 0;
+	           flag, cString(title), cString(message), nullptr) == 0;
 }
-
-namespace BaseDirectory
-{
-const std::string Textures = "data/textures/";
-const std::string Shaders = "data/shaders/";
-} // namespace BaseDirectory
 } // namespace Dunjun

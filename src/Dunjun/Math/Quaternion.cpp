@@ -192,7 +192,7 @@ Quaternion matrix4ToQuaternion(const Matrix4& m)
 	const f32 fourZSquaredMinus1 = m[2][2] - m[0][0] - m[1][1];
 	const f32 fourWSquaredMinus1 = m[0][0] + m[1][1] + m[2][2];
 
-	int biggestIndex = 0;
+	s32 biggestIndex = 0;
 	f32 fourBiggestSquaredMinus1{fourWSquaredMinus1};
 	if (fourXSquaredMinus1 > fourBiggestSquaredMinus1)
 	{

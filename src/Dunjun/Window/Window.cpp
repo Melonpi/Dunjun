@@ -32,7 +32,7 @@ INTERNAL u32 generateFlags(u32 style)
 }
 
 Window::Window(VideoMode mode,
-               const std::string& title,
+               const String& title,
                u32 style,
                const GLContextSettings& settings)
 : m_impl{nullptr}
@@ -45,7 +45,7 @@ Window::Window(VideoMode mode,
 Window::~Window() { close(); }
 
 void Window::create(VideoMode mode,
-                    const std::string& title,
+                    const String& title,
                     u32 style,
                     const GLContextSettings& settings)
 {
@@ -86,7 +86,7 @@ void Window::create(VideoMode mode,
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, settings.antialiasingLevel);
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
-	m_impl = SDL_CreateWindow(title.c_str(),
+	m_impl = SDL_CreateWindow(cString(title),
 	                          SDL_WINDOWPOS_UNDEFINED,
 	                          SDL_WINDOWPOS_UNDEFINED,
 	                          mode.width,
@@ -151,11 +151,11 @@ Window& Window::setSize(const Dimensions& size)
 	return *this;
 }
 
-const char* Window::getTitle() const { return SDL_GetWindowTitle(m_impl); }
+String Window::getTitle() const { return {SDL_GetWindowTitle(m_impl)}; }
 
-Window& Window::setTitle(const char* title)
+Window& Window::setTitle(const String& title)
 {
-	SDL_SetWindowTitle(m_impl, title);
+	SDL_SetWindowTitle(m_impl, cString(title));
 
 	return *this;
 }

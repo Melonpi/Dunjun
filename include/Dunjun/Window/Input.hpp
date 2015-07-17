@@ -3,14 +3,12 @@
 
 #include <Dunjun/Common.hpp>
 
-#include <Dunjun/System/OpenGL.hpp>
+#include <Dunjun/Core/OpenGL.hpp>
 #include <Dunjun/Window/Window.hpp>
 
 #include <Dunjun/Math.hpp>
-#include <Dunjun/System/Time.hpp>
-
-#include <vector>
-#include <string>
+#include <Dunjun/Core/Time.hpp>
+#include <Dunjun/Core/String.hpp>
 
 namespace Dunjun
 {
@@ -213,14 +211,14 @@ f32 getControllerAxis(u32 controllerIndex, ControllerAxis axis);
 
 // TODO(bill): Get type of gamepad rather than name
 // NOTE(bill): Strings are UTF-8
-std::string getControllerName(u32 controllerIndex);
+String getControllerName(u32 controllerIndex);
 void setControllerVibration(u32 controllerIndex, f32 amount);
 void setControllerVibration(u32 controllerIndex, f32 amount, Time duration);
 
 // NOTE(bill): Strings are UTF-8
 bool hasClipboardString();
-std::string getClipboardString();
-void setClipboardString(const std::string& str);
+String getClipboardString();
+void setClipboardString(const String& str);
 } // namespace Input
 } // namespace Dunjun
 

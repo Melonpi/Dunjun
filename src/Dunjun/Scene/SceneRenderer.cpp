@@ -4,8 +4,8 @@
 #include <Dunjun/Scene/MeshRenderer.hpp>
 #include <Dunjun/World.hpp>
 
-#include <Dunjun/System/Memory.hpp>
-#include <Dunjun/System/Array.hpp>
+#include <Dunjun/Core/Memory.hpp>
+#include <Dunjun/Core/Array.hpp>
 
 #include <string>
 

@@ -1,8 +1,8 @@
-#ifndef DUNJUN_SYSTEM_CONTAINERS_HPP
-#define DUNJUN_SYSTEM_CONTAINERS_HPP
+#ifndef DUNJUN_CORE_CONTAINERTYPES_HPP
+#define DUNJUN_CORE_CONTAINERTYPES_HPP
 
 #include <Dunjun/Types.hpp>
-#include <Dunjun/System/Allocator.hpp>
+#include <Dunjun/Core/Allocator.hpp>
 
 namespace Dunjun
 {

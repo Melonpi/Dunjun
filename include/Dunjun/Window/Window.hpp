@@ -2,14 +2,13 @@
 #define DUNJUN_WINDOW_WINDOW_HPP
 
 #include <Dunjun/Math.hpp>
-#include <Dunjun/System/OpenGL.hpp>
-#include <Dunjun/System/Clock.hpp>
+#include <Dunjun/Core/OpenGL.hpp>
+#include <Dunjun/Core/Clock.hpp>
+#include <Dunjun/Core/String.hpp>
 #include <Dunjun/Window/VideoMode.hpp>
 #include <Dunjun/Window/GLContextSettings.hpp>
 
 #include <SDL/SDL.h>
-
-#include <string>
 
 namespace Dunjun
 {
@@ -37,8 +36,8 @@ class Window
 public:
 	struct Dimensions
 	{
-		int width;
-		int height;
+		s32 width;
+		s32 height;
 
 		inline f32 aspectRatio() const
 		{
@@ -52,14 +51,14 @@ public:
 	Window() = default;
 
 	explicit Window(VideoMode mode,
-	                const std::string& title,
+	                const String& title,
 	                u32 style                         = Style::Default,
 	                const GLContextSettings& settings = GLContextSettings{});
 
 	virtual ~Window();
 
 	void create(VideoMode mode,
-	            const std::string& title,
+	            const String& title,
 	            u32 style                         = Style::Default,
 	            const GLContextSettings& settings = GLContextSettings{});
 
@@ -73,8 +72,8 @@ public:
 	Window& setSize(const Dimensions& size);
 
 	/// UTF-8 Strings
-	const char* getTitle() const;
-	Window& setTitle(const char* title);
+	String getTitle() const;
+	Window& setTitle(const String& title);
 
 	Window& setVisible(bool visible);
 	Window& setVerticalSyncEnabled(bool enabled);
@@ -93,10 +92,10 @@ public:
 	SDL_Window* getSDLHandle() const { return m_impl; }
 
 private:
-	SDL_Window* m_impl = nullptr;
+	SDL_Window* m_impl        = nullptr;
 	SDL_GLContext m_glContext = {};
-	Clock m_clock ={};
-	Time m_frameTimeLimit = Time::Zero;
+	Clock m_clock             = {};
+	Time m_frameTimeLimit     = Time::Zero;
 	// Dimensions size;
 };
 } // namespace Dunjun

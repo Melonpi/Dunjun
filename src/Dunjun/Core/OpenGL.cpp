@@ -1,4 +1,4 @@
-#include <Dunjun/System/OpenGL.hpp>
+#include <Dunjun/Core/OpenGL.hpp>
 #include <Dunjun/Types.hpp>
 
 #include <type_traits>

@@ -35,7 +35,7 @@ Matrix4 hadamardProduct(const Matrix4& a, const Matrix4& b);
 
 inline std::ostream& operator<<(std::ostream& os, const Matrix4& m)
 {
-	os << "Matrix4(";
+	os << "Matrix4{";
 	for (usize i = 0; i < 4; i++)
 	{
 		os << "\n\t";
@@ -48,7 +48,7 @@ inline std::ostream& operator<<(std::ostream& os, const Matrix4& m)
 		if (i < 3)
 			os << ", ";
 	}
-	os << "\n)";
+	os << "\n}";
 
 	return os;
 }

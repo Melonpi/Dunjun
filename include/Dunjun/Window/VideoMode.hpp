@@ -2,8 +2,7 @@
 #define DUNJUN_WINDOW_VIDEOMODE_HPP
 
 #include <Dunjun/Common.hpp>
-
-#include <vector>
+#include <Dunjun/Core/ContainerTypes.hpp>
 
 namespace Dunjun
 {
@@ -17,7 +16,7 @@ struct VideoMode
 	VideoMode(u32 width, u32 height, u32 bitsPerPixel = 24);
 
 	GLOBAL VideoMode getDesktopMode();
-	GLOBAL const std::vector<VideoMode>& getFullscreenModes();
+	GLOBAL const Array<VideoMode>& getFullscreenModes();
 
 	bool isValid() const;
 };

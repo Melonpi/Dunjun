@@ -26,12 +26,13 @@ INTERNAL GLenum getInteralFormat(ImageFormat format, bool srgb)
 	}
 }
 
-Texture loadTextureFromFile(const char* filename,
+Texture loadTextureFromFile(const String& filename,
                             TextureFilter minMagFilter,
                             TextureWrapMode wrapMode)
 {
 	Image image = loadImageFromFile(filename);
 	defer(destroyImage(image));
+
 	flipImageVertically(image);
 
 	return loadTextureFromImage(image, minMagFilter, wrapMode);
@@ -48,17 +49,16 @@ Texture loadTextureFromImage(const Image& image,
 
 	glGenTextures(1, &tex.handle);
 
+	glEnable(GL_TEXTURE_2D);
+	defer(glDisable(GL_TEXTURE_2D));
+
 	glBindTexture(GL_TEXTURE_2D, tex.handle);
 	defer(glBindTexture(GL_TEXTURE_2D, 0));
 
-	glTexParameteri(
-	    GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<s32>(wrapMode));
-	glTexParameteri(
-	    GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<s32>(wrapMode));
-	glTexParameteri(
-	    GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<s32>(minMagFilter));
-	glTexParameteri(
-	    GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<s32>(minMagFilter));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLenum)wrapMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (GLenum)wrapMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLenum)minMagFilter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLenum)minMagFilter);
 
 	glTexImage2D(GL_TEXTURE_2D,
 	             0,
@@ -79,7 +79,7 @@ void destroyTexture(Texture& t)
 		glDeleteTextures(1, &t.handle);
 }
 
-void Texture::bind(const Texture* tex, u32 position)
+void bindTexture(const Texture* tex, u32 position)
 {
 	if (position > 31)
 	{
@@ -92,7 +92,11 @@ void Texture::bind(const Texture* tex, u32 position)
 	glClientActiveTexture(GL_TEXTURE0 + position);
 
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, (tex && tex->handle) ? tex->handle : 0);
-	glDisable(GL_TEXTURE_2D);
+	// defer(glDisable(GL_TEXTURE_2D));
+
+	if (tex && tex->handle)
+		glBindTexture(GL_TEXTURE_2D, tex->handle);
+	else
+		glBindTexture(GL_TEXTURE_2D, 0);
 }
 } // namespace Dunjun

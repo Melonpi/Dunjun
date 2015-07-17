@@ -1,29 +1,35 @@
 #include <Dunjun/Graphics/GBuffer.hpp>
 
-#include <vector>
+#include <Dunjun/Core/Array.hpp>
+#include <Dunjun/Core/Memory.hpp>
 
 namespace Dunjun
 {
-void GBuffer::destroy()
+void destroyGBuffer(GBuffer& b)
 {
-	if (fbo)
-		glDeleteFramebuffersEXT(1, &fbo);
+	for (usize i = 0; i < GBuffer::Count; i++)
+		destroyTexture(b.textures[i]);
+	if (b.fbo)
+		glDeleteFramebuffers(1, &b.fbo);
 }
 
-bool GBuffer::create(u32 w, u32 h)
+bool createGBuffer(GBuffer& b, u32 w, u32 h)
 {
-	if (w == width && h == height) // GBuffer already exists
+	if (w == b.width && h == b.height) // GBuffer already exists
 		return true;
 
-	width  = w;
-	height = h;
+	b.width  = w;
+	b.height = h;
 
-	if (!fbo)
-		glGenFramebuffersEXT(1, &fbo);
+	glGenFramebuffers(1, &b.fbo);
 
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, b.fbo);
+	defer(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 
-	std::vector<GLenum> drawBuffers;
+	glEnable(GL_TEXTURE_2D);
+	defer(glBindTexture(GL_TEXTURE_2D, 0));
+
+	Array<GLenum> drawBuffers{defaultAllocator()};
 
 	auto addRT = [&drawBuffers, w, h](Texture& tex,
 	                                  GLenum attachment,
@@ -31,8 +37,7 @@ bool GBuffer::create(u32 w, u32 h)
 	                                  GLenum format,
 	                                  GLenum type)
 	{
-		if (!tex.handle)
-			glGenTextures(1, &tex.handle);
+		glGenTextures(1, &tex.handle);
 		glBindTexture(GL_TEXTURE_2D, tex.handle);
 		glTexImage2D(GL_TEXTURE_2D,
 		             0,
@@ -48,55 +53,55 @@ bool GBuffer::create(u32 w, u32 h)
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-		glFramebufferTextureEXT(GL_FRAMEBUFFER_EXT, attachment, tex.handle, 0);
+		glFramebufferTexture2D(
+		    GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, tex.handle, 0);
 
-		if (attachment != GL_DEPTH_ATTACHMENT_EXT)
-			drawBuffers.emplace_back(attachment);
+		if (attachment != GL_DEPTH_ATTACHMENT)
+			append(drawBuffers, attachment);
 	};
 
-	addRT(textures[Diffuse],
-	      GL_COLOR_ATTACHMENT0_EXT,
+	addRT(b.textures[GBuffer::Diffuse],
+	      GL_COLOR_ATTACHMENT0,
 	      GL_RGB8,
 	      GL_RGB,
 	      GL_UNSIGNED_BYTE);
-	addRT(textures[Specular],
-	      GL_COLOR_ATTACHMENT1_EXT,
+	addRT(b.textures[GBuffer::Specular],
+	      GL_COLOR_ATTACHMENT1,
 	      GL_RGBA8,
 	      GL_RGBA,
 	      GL_UNSIGNED_BYTE);
-	addRT(textures[Normal],
-	      GL_COLOR_ATTACHMENT2_EXT,
+	addRT(b.textures[GBuffer::Normal],
+	      GL_COLOR_ATTACHMENT2,
 	      GL_RGB10_A2,
 	      GL_RGBA,
 	      GL_FLOAT);
-	addRT(textures[Depth],
-	      GL_DEPTH_ATTACHMENT_EXT,
+	addRT(b.textures[GBuffer::Depth],
+	      GL_DEPTH_ATTACHMENT,
 	      GL_DEPTH_COMPONENT24,
 	      GL_DEPTH_COMPONENT,
 	      GL_FLOAT);
 
 	glDrawBuffers((u32)len(drawBuffers), &drawBuffers[0]);
 
-	if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) !=
-	    GL_FRAMEBUFFER_COMPLETE_EXT)
-	{
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		return false;
-	}
 
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
 	return true;
 }
 
-void GBuffer::bind(const GBuffer* b)
+void bindGBuffer(const GBuffer* b)
 {
 	if (!b)
+	{
 		glFlush();
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, b != nullptr ? b->fbo : 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+	else
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, b->fbo);
+	}
 }
 } // namespace Dunjun

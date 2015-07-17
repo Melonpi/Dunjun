@@ -1,11 +1,11 @@
 #ifndef DUNJUN_GRAPHICS_MESH_HPP
 #define DUNJUN_GRAPHICS_MESH_HPP
 
-#include <Dunjun/System/OpenGL.hpp>
+#include <Dunjun/Core/OpenGL.hpp>
 #include <Dunjun/Common.hpp>
 #include <Dunjun/Graphics/Vertex.hpp>
 
-#include <Dunjun/System/Containers.hpp>
+#include <Dunjun/Core/ContainerTypes.hpp>
 
 namespace Dunjun
 {

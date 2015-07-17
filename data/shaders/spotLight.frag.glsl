@@ -1,6 +1,6 @@
 #version 120
 
-#include <Lighting.head.glsl>
+#include "Lighting"
 
 uniform sampler2D u_specular;
 uniform sampler2D u_normal;
@@ -13,10 +13,10 @@ uniform SpotLight u_light;
 varying vec2 v_texCoord;
 
 
-vec4 calculateSpotLight(float lightToSurfaceAngle,
-                        vec3 surfaceToLight,
-                        float distanceToLight,
-                        vec3 normal)
+vec4 calculateSpotLight(in float lightToSurfaceAngle,
+                        in vec3 surfaceToLight,
+                        in float distanceToLight,
+                        in vec3 normal)
 {
 	float diffuseCoefficient = max(0.0, dot(normal, surfaceToLight));
 

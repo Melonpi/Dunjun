@@ -1,6 +1,6 @@
 #version 120
 
-#include <Common.head.glsl>
+#include "Common"
 
 attribute vec3 a_position;
 attribute vec2 a_texCoord;
@@ -30,6 +30,4 @@ void main()
 	v_position_ws = pos;
 
 	gl_Position = u_camera * vec4(pos, 1.0);
-	//gl_Position = vec4(pos, 1.0);
-
 }

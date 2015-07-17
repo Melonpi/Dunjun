@@ -1,2 +1,2 @@
 @echo off
-msbuild /target:Clean Dunjun.sln /m /verbosity:n
+del bin\*.* /F /Q

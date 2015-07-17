@@ -1,4 +1,4 @@
-#include <Dunjun/System/Murmur.hpp>
+#include <Dunjun/Core/Murmur.hpp>
 #include <Dunjun/Config.hpp>
 
 namespace Dunjun

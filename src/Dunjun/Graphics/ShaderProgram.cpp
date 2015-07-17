@@ -1,123 +1,77 @@
 #include <Dunjun/Graphics/ShaderProgram.hpp>
 
-#include <Dunjun/System/OpenGL.hpp>
-#include <Dunjun/System/Memory.hpp>
+#include <Dunjun/Core/OpenGL.hpp>
+#include <Dunjun/Core/Memory.hpp>
 
-#include <fstream>
-#include <iostream>
+#include <Dunjun/Core/Memory.hpp>
+#include <Dunjun/Core/Array.hpp>
+#include <Dunjun/Core/HashMap.hpp>
+#include <Dunjun/Core/FileSystem.hpp>
+
+#include <Dunjun/Core/StringFunctions.hpp>
+#include <Dunjun/Core/Murmur.hpp>
+
+#include <cstdlib>
 
 namespace Dunjun
 {
-std::vector<std::string> split(const std::string& s, char delim)
+INTERNAL String shaderSourceFromFile(const String& filename)
 {
-	std::vector<std::string> elems;
+	String filePath = BaseDirectory::Shaders + filename;
 
-	const char* cstr = s.c_str();
-	usize strLength  = len(s);
-	usize start      = 0;
-	usize end        = 0;
+	const char* cstr = cString(filePath);
 
-	while (end <= strLength)
+	FILE* file = fopen(cstr, "rb");
+	if (!file) // If failed, panic
 	{
-		while (end <= strLength)
-		{
-			if (cstr[end] == delim)
-				break;
-			end++;
-		}
+		panic("Failed to open shader file: " + filePath);
+		return {};
+	}
+	defer(fclose(file));
 
-		elems.emplace_back(s.substr(start, end - start));
-		start = end + 1;
-		end   = start;
+	String output;
+
+	const usize bufferSize = 4096;
+	char lineBuffer[bufferSize];
+	String line;
+
+	while (fgets(lineBuffer, sizeof(lineBuffer), file))
+	{
+		line = Strings::trimSpace(lineBuffer);
+
+		if (Strings::hasPrefix(line, "#include"))
+		{
+			String includeFilename = substring(line, 8, len(line));
+			includeFilename = Strings::trimSpace(includeFilename);
+			includeFilename = Strings::trim(includeFilename, "\"");
+
+			if (len(includeFilename) > 0)
+			{
+				// Recursively append source of header file and append header
+				// extension
+				const String& withExt = cString(includeFilename + ".head.glsl");
+				append(output, shaderSourceFromFile(withExt));
+			}
+		}
+		else
+		{
+			append(output, line);
+		}
+		append(output, '\n'); // Append a *nix newline
 	}
 
-	return elems;
+	return output;
 }
 
-// TODO(bill): Customize to be specific for shader files
-// #include <> & #include ""
-INTERNAL std::string stringFromFile(const std::string& filename)
+ShaderProgram::ShaderProgram()
+: handle{0}
+, isLinked{false}
+, errorLog{}
+
+, m_attribLocations{defaultAllocator()}
+, m_uniformLocations{defaultAllocator()}
+
 {
-	std::ifstream file;
-	file.open(std::string{BaseDirectory::Shaders + filename.c_str()},
-	          std::ios::in | std::ios::binary);
-
-	std::string fileDirectory{FileSystem::getFileDirectory(filename) + "/"};
-
-	std::string output;
-	std::string line;
-
-	if (!file.is_open())
-	{
-		panic(std::string("Failed to open file : ") + filename);
-	}
-	else
-	{
-		while (file.good())
-		{
-			std::getline(file, line);
-
-			if (line.find("#include") == std::string::npos)
-			{
-				output.append(line + "\n");
-			}
-			else
-			{
-				std::string includeFilename = split(line, ' ')[1];
-
-				if (includeFilename[0] == '<')
-				{ // Absolute Path (library path)
-					usize closingBracketPos = 0;
-					usize length = len(includeFilename);
-					for (usize i = 1; i < length; i++)
-					{
-						if (includeFilename[i] == '>')
-						{
-							closingBracketPos = i;
-							break;
-						}
-					}
-
-					if (closingBracketPos > 1)
-					{
-						includeFilename =
-						    includeFilename.substr(1, closingBracketPos - 1);
-					}
-					else
-					{
-						includeFilename = "";
-					}
-				}
-				else if (includeFilename[0] == '\"')
-				{ // Relative Path (folder path)
-					usize closingSpeechMark = 0;
-					usize length = len(includeFilename);
-					for (usize i = 1; i < length; i++)
-					{
-						if (includeFilename[i] == '\"')
-						{
-							closingSpeechMark = i;
-							break;
-						}
-					}
-
-					if (closingSpeechMark > 1)
-						includeFilename =
-						    includeFilename.substr(1, closingSpeechMark - 1);
-					else
-						includeFilename = "";
-				}
-
-				// std::cout << includeFilename << '\n';
-
-				if (len(includeFilename) > 0)
-					output.append(stringFromFile(includeFilename) + "\n");
-			}
-		}
-	}
-
-	file.close();
-	return output;
 }
 
 ShaderProgram::~ShaderProgram()
@@ -127,38 +81,41 @@ ShaderProgram::~ShaderProgram()
 }
 
 bool ShaderProgram::attachShaderFromFile(ShaderType type,
-                                         const std::string& filename)
+                                         const String& filename)
 {
-	std::string source = stringFromFile(filename);
-	return attachShaderFromMemory(type, source);
+	String source = shaderSourceFromFile(filename);
+	return attachShaderFromMemory(type, cString(source));
 }
 
 bool ShaderProgram::attachShaderFromMemory(ShaderType type,
-                                           const std::string& source)
+                                           const String& shaderSource)
 {
 	if (!handle)
 		handle = glCreateProgram();
-
-	const char* shaderSource = source.c_str();
 
 	u32 shader = 0;
 	if (type == ShaderType::Vertex)
 		shader = glCreateShader(GL_VERTEX_SHADER);
 	else if (type == ShaderType::Fragment)
 		shader = glCreateShader(GL_FRAGMENT_SHADER);
+	else
+		panic("Unknown shader type.");
 
-	glShaderSource(shader, 1, &shaderSource, nullptr);
+	const char* cStrSource = cString(shaderSource);
+	glShaderSource(shader, 1, &cStrSource, nullptr);
 	glCompileShader(shader);
 
 	s32 status;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 	if (status == false)
 	{
-		std::string msg;
+		String msg;
 		if (type == ShaderType::Vertex)
 			msg = "Compile failure in vertex shader: \n";
 		else if (type == ShaderType::Fragment)
 			msg = "Compile failure in fragment shader: \n";
+		else
+			panic("Unknown shader type.");
 
 		s32 infoLogLength;
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
@@ -171,9 +128,10 @@ bool ShaderProgram::attachShaderFromMemory(ShaderType type,
 
 		glGetShaderInfoLog(shader, infoLogLength, nullptr, strInfoLog);
 
-		msg.append(strInfoLog);
-		msg.append("\n");
-		errorLog.append(msg);
+		append(msg, strInfoLog);
+		append(msg, '\n');
+
+		append(errorLog, msg);
 
 		glDeleteShader(shader);
 
@@ -224,7 +182,7 @@ bool ShaderProgram::link()
 		glGetProgramiv(handle, GL_LINK_STATUS, &status);
 		if (!status)
 		{
-			std::string msg{"ShaderProgram linking failure: \n"};
+			String msg{"ShaderProgram linking failure: \n"};
 
 			s32 infoLogLength;
 			glGetProgramiv(handle, GL_INFO_LOG_LENGTH, &infoLogLength);
@@ -237,9 +195,9 @@ bool ShaderProgram::link()
 
 			glGetProgramInfoLog(handle, infoLogLength, nullptr, strInfoLog);
 
-			msg.append(strInfoLog);
-			msg.append("\n");
-			errorLog.append(msg);
+			append(msg, strInfoLog);
+			append(msg, "\n");
+			append(errorLog, msg);
 
 			glDeleteProgram(handle);
 			handle = 0;
@@ -254,35 +212,37 @@ bool ShaderProgram::link()
 	return isLinked;
 }
 
-void ShaderProgram::bindAttribLocation(u32 location, const std::string& name)
+void ShaderProgram::bindAttribLocation(s32 location, const String& name)
 {
-	glBindAttribLocation(handle, location, name.c_str());
-	m_attribLocations[name] = location;
+	glBindAttribLocation(handle, location, cString(name));
+	set(m_attribLocations, stringHash(name), location);
 }
 
-s32 ShaderProgram::getAttribLocation(const std::string& name) const
+s32 ShaderProgram::getAttribLocation(const String& name) const
 {
-	auto found = m_attribLocations.find(name);
-	if (found != std::end(m_attribLocations))
-		return found->second;
+	const u64 hash = stringHash(name);
 
-	s32 loc                 = glGetAttribLocation(handle, name.c_str());
-	m_attribLocations[name] = loc;
+	if (has(m_attribLocations, hash))
+		return get(m_attribLocations, hash, 0);
+
+	s32 loc = glGetAttribLocation(handle, cString(name));
+	set(m_attribLocations, hash, loc);
 	return loc;
 }
 
-s32 ShaderProgram::getUniformLocation(const std::string& name) const
+s32 ShaderProgram::getUniformLocation(const String& name) const
 {
-	auto found = m_uniformLocations.find(name);
-	if (found != std::end(m_uniformLocations))
-		return found->second;
+	const u64 hash = stringHash(name);
 
-	s32 loc                  = glGetUniformLocation(handle, name.c_str());
-	m_uniformLocations[name] = loc;
+	if (has(m_uniformLocations, hash))
+		return get(m_uniformLocations, hash, 0);
+
+	s32 loc = glGetUniformLocation(handle, cString(name));
+	set(m_uniformLocations, hash, loc);
 	return loc;
 }
 
-void ShaderProgram::setUniform(const std::string& name, f32 x) const
+void ShaderProgram::setUniform(const String& name, f32 x) const
 {
 	checkInUse();
 	s32 loc = getUniformLocation(name);
@@ -291,7 +251,7 @@ void ShaderProgram::setUniform(const std::string& name, f32 x) const
 	glUniform1f(loc, x);
 }
 
-void ShaderProgram::setUniform(const std::string& name, f32 x, f32 y) const
+void ShaderProgram::setUniform(const String& name, f32 x, f32 y) const
 {
 	checkInUse();
 	s32 loc = getUniformLocation(name);
@@ -300,10 +260,7 @@ void ShaderProgram::setUniform(const std::string& name, f32 x, f32 y) const
 	glUniform2f(loc, x, y);
 }
 
-void ShaderProgram::setUniform(const std::string& name,
-                               f32 x,
-                               f32 y,
-                               f32 z) const
+void ShaderProgram::setUniform(const String& name, f32 x, f32 y, f32 z) const
 {
 	checkInUse();
 	s32 loc = getUniformLocation(name);
@@ -313,7 +270,7 @@ void ShaderProgram::setUniform(const std::string& name,
 }
 
 void ShaderProgram::setUniform(
-    const std::string& name, f32 x, f32 y, f32 z, f32 w) const
+    const String& name, f32 x, f32 y, f32 z, f32 w) const
 {
 	checkInUse();
 	s32 loc = getUniformLocation(name);
@@ -322,7 +279,7 @@ void ShaderProgram::setUniform(
 	glUniform4f(loc, x, y, z, w);
 }
 
-void ShaderProgram::setUniform(const std::string& name, u32 x) const
+void ShaderProgram::setUniform(const String& name, u32 x) const
 {
 	checkInUse();
 	s32 loc = getUniformLocation(name);
@@ -331,7 +288,7 @@ void ShaderProgram::setUniform(const std::string& name, u32 x) const
 	glUniform1ui(loc, x);
 }
 
-void ShaderProgram::setUniform(const std::string& name, s32 x) const
+void ShaderProgram::setUniform(const String& name, s32 x) const
 {
 	checkInUse();
 	s32 loc = getUniformLocation(name);
@@ -340,7 +297,7 @@ void ShaderProgram::setUniform(const std::string& name, s32 x) const
 	glUniform1i(loc, x);
 }
 
-void ShaderProgram::setUniform(const std::string& name, bool x) const
+void ShaderProgram::setUniform(const String& name, bool x) const
 {
 	checkInUse();
 	s32 loc = getUniformLocation(name);
@@ -349,77 +306,75 @@ void ShaderProgram::setUniform(const std::string& name, bool x) const
 	glUniform1i(loc, (s32)x);
 }
 
-void ShaderProgram::setUniform(const std::string& name, const Vector2& v) const
+void ShaderProgram::setUniform(const String& name, const Vector2& v) const
 {
 	checkInUse();
 	s32 loc = getUniformLocation(name);
 	if (loc == -1)
 		return;
-	glUniform2fv(loc, 1, &v.data[0]);
+	glUniform2fv(loc, 1, &v[0]);
 }
 
-void ShaderProgram::setUniform(const std::string& name, const Vector3& v) const
+void ShaderProgram::setUniform(const String& name, const Vector3& v) const
 {
 	checkInUse();
 	s32 loc = getUniformLocation(name);
 	if (loc == -1)
 		return;
-	glUniform3fv(loc, 1, &v.data[0]);
+	glUniform3fv(loc, 1, &v[0]);
 }
 
-void ShaderProgram::setUniform(const std::string& name, const Vector4& v) const
+void ShaderProgram::setUniform(const String& name, const Vector4& v) const
 {
 	checkInUse();
 	s32 loc = getUniformLocation(name);
 	if (loc == -1)
 		return;
-	glUniform4fv(loc, 1, &v.data[0]);
+	glUniform4fv(loc, 1, &v[0]);
 }
 
-void ShaderProgram::setUniform(const std::string& name, const Matrix4& m) const
+void ShaderProgram::setUniform(const String& name, const Matrix4& m) const
 {
 	checkInUse();
 	s32 loc = getUniformLocation(name);
 	if (loc == -1)
 		return;
-	glUniformMatrix4fv(loc, 1, false, &m.data[0].data[0]);
+	glUniformMatrix4fv(loc, 1, false, &m[0][0]);
 }
 
-void ShaderProgram::setUniform(const std::string& name,
-                               const Quaternion& t) const
+void ShaderProgram::setUniform(const String& name, const Quaternion& q) const
 {
 	checkInUse();
 	s32 loc = getUniformLocation(name);
 	if (loc == -1)
 		return;
-	glUniform4fv(loc, 1, &t.data[0]);
+	glUniform4fv(loc, 1, &q.x);
 }
 
-void ShaderProgram::setUniform(const std::string& name,
-                               const Transform& t) const
+void ShaderProgram::setUniform(const String& name, const Transform& t) const
 {
 	checkInUse();
 	{
-		s32 loc = getUniformLocation(name + ".position");
+		s32 loc = getUniformLocation(cString(name + ".position"));
 		if (loc == -1)
 			return;
-		glUniform3fv(loc, 1, &t.position.data[0]);
+		glUniform3fv(loc, 1, &t.position[0]);
 	}
 	{
-		s32 loc = getUniformLocation(name + ".orientation");
+		s32 loc = getUniformLocation(cString(name + ".orientation"));
 		if (loc == -1)
 			return;
-		glUniform4fv(loc, 1, &t.orientation.data[0]);
+		glUniform4fv(loc, 1, &t.orientation.x);
 	}
 	{
-		s32 loc = getUniformLocation(name + ".scale");
+		s32 loc = getUniformLocation(cString(name + ".scale"));
 		if (loc == -1)
 			return;
-		glUniform3fv(loc, 1, &t.scale.data[0]);
+		glUniform3fv(loc, 1, &t.scale[0]);
 	}
 }
 
-void ShaderProgram::setUniform(const std::string& name, const Color& c) const
+void ShaderProgram::setUniform(const String& name, const Color& c) const
 {
 	f32 r = c.r / 255.0f;
 	f32 g = c.g / 255.0f;

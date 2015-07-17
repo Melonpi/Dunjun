@@ -122,22 +122,22 @@ void multiHashMap()
 
 	HashMap<int> h{a};
 
-	assert(Multi::count(h, 0) == 0);
-	Multi::insert(h, 0, 1);
-	Multi::insert(h, 0, 2);
-	Multi::insert(h, 0, 3);
-	assert(Multi::count(h, 0) == 3);
+	assert(MultiHashMap::count(h, 0) == 0);
+	MultiHashMap::insert(h, 0, 1);
+	MultiHashMap::insert(h, 0, 2);
+	MultiHashMap::insert(h, 0, 3);
+	assert(MultiHashMap::count(h, 0) == 3);
 
 	Array<int> v{a};
-	Multi::get(h, 0, v);
+	MultiHashMap::get(h, 0, v);
 	assert(len(v) == 3);
 	std::sort(begin(v), end(v));
 	assert(v[0] == 1 && v[1] == 2 && v[2] == 3);
 
-	Multi::remove(h, Multi::findFirst(h, 0));
-	assert(Multi::count(h, 0) == 2);
-	Multi::removeAll(h, 0);
-	assert(Multi::count(h, 0) == 0);
+	MultiHashMap::remove(h, MultiHashMap::findFirst(h, 0));
+	assert(MultiHashMap::count(h, 0) == 2);
+	MultiHashMap::removeAll(h, 0);
+	assert(MultiHashMap::count(h, 0) == 0);
 
 	Memory::shutdown();
 }

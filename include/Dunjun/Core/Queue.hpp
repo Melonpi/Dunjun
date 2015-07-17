@@ -1,9 +1,9 @@
-#ifndef DUNJUN_SYSTEM_QUEUE_HPP
-#define DUNJUN_SYSTEM_QUEUE_HPP
+#ifndef DUNJUN_CORE_QUEUE_HPP
+#define DUNJUN_CORE_QUEUE_HPP
 
-#include <Dunjun/System/Containers.hpp>
+#include <Dunjun/Core/ContainerTypes.hpp>
 
-#include <Dunjun/System/Array.hpp>
+#include <Dunjun/Core/Array.hpp>
 
 #include <cstring>
 #include <cassert>

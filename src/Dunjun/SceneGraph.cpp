@@ -1,5 +1,5 @@
 #include <Dunjun/SceneGraph.hpp>
-#include <Dunjun/System/Hashmap.hpp>
+#include <Dunjun/Core/Hashmap.hpp>
 
 #include <cstring>
 
@@ -49,7 +49,7 @@ void SceneGraph::allocate(u32 capacity)
 	data = newData;
 }
 
-SceneGraph::NodeId SceneGraph::create(EntityId id, const Transform& t)
+SceneGraph::NodeId SceneGraph::addNode(EntityId id, const Transform& t)
 {
 	if (data.capacity == data.length) // grow
 		allocate(2 * data.length + 1);
@@ -71,7 +71,7 @@ SceneGraph::NodeId SceneGraph::create(EntityId id, const Transform& t)
 	return last;
 }
 
-void SceneGraph::destroy(NodeId id)
+void SceneGraph::removeNode(NodeId id)
 {
 	const NodeId last         = data.length - 1;
 	const EntityId entity     = data.entityId[id];
@@ -100,9 +100,9 @@ bool SceneGraph::isValid(NodeId id) const { return id != EmptyNodeId; }
 
 u32 SceneGraph::nodeCount() const { return data.length; }
 
-void SceneGraph::link(NodeId parentId, NodeId childId)
+void SceneGraph::linkNodes(NodeId parentId, NodeId childId)
 {
-	unlink(childId);
+	unlinkNode(childId);
 
 	if (!isValid(data.firstChild[parentId]))
 	{
@@ -138,7 +138,7 @@ void SceneGraph::link(NodeId parentId, NodeId childId)
 	transformChild(childId, parentTransform);
 }
 
-void SceneGraph::unlink(NodeId childId)
+void SceneGraph::unlinkNode(NodeId childId)
 {
 	if (!isValid(data.parent[childId]))
 		return;

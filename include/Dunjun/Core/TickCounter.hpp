@@ -1,7 +1,7 @@
 #ifndef DUNJUN_SYSTETICKCOUNTER_HPP
-#define DUNJUN_SYSTEM_TICKCOUNTER_HPP
+#define DUNJUN_CORE_TICKCOUNTER_HPP
 
-#include <Dunjun/System/Clock.hpp>
+#include <Dunjun/Core/Clock.hpp>
 
 namespace Dunjun
 {

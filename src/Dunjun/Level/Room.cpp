@@ -2,8 +2,8 @@
 
 #include <Dunjun/Scene/MeshRenderer.hpp>
 
-#include <Dunjun/System/Array.hpp>
-#include <Dunjun/System/Memory.hpp>
+#include <Dunjun/Core/Array.hpp>
+#include <Dunjun/Core/Memory.hpp>
 
 namespace Dunjun
 {

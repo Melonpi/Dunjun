@@ -1,2 +1,2 @@
 @echo off
-bin\x64_Debug\Dunjun.exe
+call bin\Dunjun.exe

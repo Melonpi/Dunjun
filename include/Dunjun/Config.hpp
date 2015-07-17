@@ -76,9 +76,6 @@
 	#define DUNJUN_COMPILER_INTEL
 #endif
 
-
-#include <Dunjun/Types.hpp>
-
 // clang-format on
 
 #endif

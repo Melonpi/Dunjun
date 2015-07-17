@@ -2,7 +2,7 @@
 #define DUNJUN_GRAPHICS_TEXTURE_HPP
 
 #include <Dunjun/Graphics/Image.hpp>
-#include <Dunjun/System/OpenGL.hpp>
+#include <Dunjun/Core/OpenGL.hpp>
 #include <Dunjun/Common.hpp>
 
 namespace Dunjun
@@ -27,20 +27,20 @@ struct Texture
 	u32 handle;
 	s32 width;
 	s32 height;
-
-	GLOBAL void bind(const Texture* tex, u32 position);
 };
 
-Texture loadTextureFromFile(
-    const char* filename,
-    TextureFilter minMagFilter = TextureFilter::Linear,
-    TextureWrapMode wrapMode = TextureWrapMode::ClampToEdge);
-Texture loadTextureFromImage(
-    const Image& image,
-    TextureFilter minMagFilter = TextureFilter::Linear,
-    TextureWrapMode wrapMode = TextureWrapMode::ClampToEdge);
+Texture
+loadTextureFromFile(const String& filename,
+                    TextureFilter minMagFilter = TextureFilter::Linear,
+                    TextureWrapMode wrapMode = TextureWrapMode::Repeat);
+Texture
+loadTextureFromImage(const Image& image,
+                     TextureFilter minMagFilter = TextureFilter::Linear,
+                     TextureWrapMode wrapMode = TextureWrapMode::Repeat);
 
 void destroyTexture(Texture& t);
+
+void bindTexture(const Texture* t);
 } // namespace Dunjun
 
 #endif

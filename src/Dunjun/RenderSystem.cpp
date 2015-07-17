@@ -2,12 +2,11 @@
 
 #include <Dunjun/ResourceHolders.hpp>
 
-#include <Dunjun/System/Array.hpp>
-#include <Dunjun/System/HashMap.hpp>
+#include <Dunjun/Core/Array.hpp>
+#include <Dunjun/Core/HashMap.hpp>
 
 namespace Dunjun
 {
-
 RenderSystem::RenderSystem(Allocator& a, SceneGraph& sg)
 : allocator{a}
 , data{}
@@ -25,8 +24,17 @@ RenderSystem::RenderSystem(Allocator& a, SceneGraph& sg)
 , spotLights{allocator}
 
 , camera{nullptr}
-, currentTexture{nullptr}
+, currentTextures{}
 {
+}
+
+RenderSystem::~RenderSystem()
+{
+	allocator.deallocate(data.buffer);
+
+	destroyGBuffer(gbuffer);
+	destroyRenderTexture(lbuffer);
+	destroyRenderTexture(outTexture);
 }
 
 void RenderSystem::allocate(u32 capacity)
@@ -52,8 +60,8 @@ void RenderSystem::allocate(u32 capacity)
 	data = newData;
 }
 
-RenderSystem::ComponentId RenderSystem::create(EntityId id,
-                                               const RenderComponent& component)
+RenderSystem::ComponentId
+RenderSystem::addComponent(EntityId id, const RenderComponent& component)
 {
 	if (data.capacity == data.length) // grow
 		allocate(2 * data.length + 1);
@@ -70,7 +78,7 @@ RenderSystem::ComponentId RenderSystem::create(EntityId id,
 	return last;
 }
 
-void RenderSystem::destroy(ComponentId id)
+void RenderSystem::removeComponent(ComponentId id)
 {
 	const ComponentId last    = data.length - 1;
 	const EntityId entity     = data.entityId[id];
@@ -97,8 +105,9 @@ bool RenderSystem::isValid(ComponentId id) const
 
 void RenderSystem::resetAllPointers()
 {
-	camera         = nullptr;
-	currentTexture = nullptr;
+	camera = nullptr;
+	for (u32 i = 0; i < 32; i++)
+		setTexture(nullptr, i);
 }
 
 void RenderSystem::render()
@@ -109,7 +118,7 @@ void RenderSystem::render()
 		return;
 	}
 
-	gbuffer.create(fbSize.x, fbSize.y);
+	createGBuffer(gbuffer, fbSize.x, fbSize.y);
 
 	geometryPass();
 	lightPass();
@@ -118,55 +127,57 @@ void RenderSystem::render()
 
 void RenderSystem::geometryPass()
 {
+	glEnable(GL_TEXTURE_2D);
+
 	ShaderProgram& shaders = g_shaderHolder.get("geometryPass");
 
-	GBuffer::bind(&gbuffer);
-	defer(GBuffer::bind(nullptr));
+	bindGBuffer(&gbuffer);
+	defer(bindGBuffer(nullptr));
 	{
+		glClearColor(0, 0, 0, 0);
 		glViewport(0, 0, gbuffer.width, gbuffer.height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		shaders.use();
 		defer(shaders.stopUsing());
-
-		shaders.setUniform("u_camera", cameraMatrix(*camera));
-		shaders.setUniform("u_cameraPosition", camera->transform.position);
-
-		for (u32 i = 0; i < data.length; i++)
 		{
-			const EntityId entityId          = data.entityId[i];
-			const RenderComponent& component = data.component[i];
-			const Material& material         = component.material;
+			shaders.setUniform("u_camera", cameraMatrix(*camera));
+			shaders.setUniform("u_cameraPosition", camera->transform.position);
 
-			shaders.setUniform("u_material.diffuseColor",
-			                   material.diffuseColor);
-			shaders.setUniform("u_material.diffuseMap", (s32)0);
-			setTexture(material.diffuseMap, 0);
+			for (u32 i = 0; i < data.length; i++)
+			{
+				const EntityId entityId          = data.entityId[i];
+				const RenderComponent& component = data.component[i];
+				const Material& material         = component.material;
 
-			// TODO(bill): improve performance - set at render time
-			auto node = sceneGraph.getNodeId(entityId);
-			shaders.setUniform(
-			    "u_transform",
-			    sceneGraph.getGlobalTransform(node));
+				shaders.setUniform("u_material.diffuseColor",
+				                   material.diffuseColor);
+				shaders.setUniform("u_material.diffuseMap", (s32)0);
+				setTexture(material.diffuseMap, 0);
 
-			drawMesh(component.mesh);
+				// TODO(bill): improve performance - set at render time
+				auto node = sceneGraph.getNodeId(entityId);
+				shaders.setUniform("u_transform",
+				                   sceneGraph.getGlobalTransform(node));
+
+				drawMesh(component.mesh);
+			}
 		}
-
-		glFlush();
 	}
 }
 
 void RenderSystem::lightPass()
 {
-	lbuffer.create(gbuffer.width, gbuffer.height, RenderTexture::Lighting);
+	createRenderTexture(
+	    lbuffer, gbuffer.width, gbuffer.height, RenderTexture::Lighting);
 
-	Texture::bind(&gbuffer.textures[GBuffer::Diffuse], 0);
-	Texture::bind(&gbuffer.textures[GBuffer::Specular], 1);
-	Texture::bind(&gbuffer.textures[GBuffer::Normal], 2);
-	Texture::bind(&gbuffer.textures[GBuffer::Depth], 3);
+	bindTexture(&gbuffer.textures[GBuffer::Diffuse], 0);
+	bindTexture(&gbuffer.textures[GBuffer::Specular], 1);
+	bindTexture(&gbuffer.textures[GBuffer::Normal], 2);
+	bindTexture(&gbuffer.textures[GBuffer::Depth], 3);
 
-	RenderTexture::bind(&lbuffer);
-	defer(RenderTexture::bind(nullptr));
+	bindRenderTexture(&lbuffer);
+	defer(bindRenderTexture(nullptr));
 	{
 		glClearColor(0, 0, 0, 0);
 		glViewport(0, 0, lbuffer.width, lbuffer.height);
@@ -175,6 +186,7 @@ void RenderSystem::lightPass()
 		glDepthMask(false);
 		defer(glDepthMask(true));
 
+		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
 		defer(glDisable(GL_BLEND));
 		glBlendFunc(GL_ONE, GL_ONE);
@@ -305,8 +317,7 @@ void RenderSystem::lightPass()
 				shaders.setUniform("u_light.point.range", light.range);
 
 				shaders.setUniform("u_light.direction", light.direction);
-				shaders.setUniform("u_light.coneAngle",
-				                   static_cast<f32>(light.coneAngle));
+				shaders.setUniform("u_light.coneAngle", (f32)(light.coneAngle));
 
 				drawMesh(g_meshHolder.get("quad"));
 			}
@@ -316,13 +327,16 @@ void RenderSystem::lightPass()
 
 void RenderSystem::outPass()
 {
-	outTexture.create(gbuffer.width, gbuffer.height, RenderTexture::Color);
+	createRenderTexture(
+	    outTexture, gbuffer.width, gbuffer.height, RenderTexture::Color);
 
-	Texture::bind(&gbuffer.textures[GBuffer::Diffuse], 0);
-	Texture::bind(&lbuffer.colorTexture, 1);
+	bindTexture(nullptr, 0);
+	bindTexture(nullptr, 1);
+	bindTexture(&gbuffer.textures[GBuffer::Diffuse], 0);
+	bindTexture(&lbuffer.colorTexture, 1);
 
-	RenderTexture::bind(&outTexture);
-	defer(RenderTexture::bind(nullptr));
+	bindRenderTexture(&outTexture);
+	defer(bindRenderTexture(nullptr));
 	{
 		glClearColor(1, 1, 1, 1);
 		glViewport(0, 0, outTexture.width, outTexture.height);
@@ -333,8 +347,8 @@ void RenderSystem::outPass()
 		shaders.use();
 		defer(shaders.stopUsing());
 
-		shaders.setUniform("u_diffuse", 0);
-		shaders.setUniform("u_lighting", 1);
+		shaders.setUniform("u_diffuse", (s32)0);
+		shaders.setUniform("u_lighting", (s32)1);
 
 		drawMesh(g_meshHolder.get("quad"));
 	}
@@ -342,11 +356,11 @@ void RenderSystem::outPass()
 
 bool RenderSystem::setTexture(const Texture* texture, u32 position)
 {
-	if (texture != currentTexture)
+	if (texture != currentTextures[position])
 	{
-		currentTexture = texture;
+		currentTextures[position] = texture;
 
-		Texture::bind(currentTexture, position);
+		bindTexture(currentTextures[position], position);
 
 		return true;
 	}

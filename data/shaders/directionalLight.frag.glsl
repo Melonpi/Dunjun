@@ -1,6 +1,6 @@
 #version 120
 
-#include <Lighting.head.glsl>
+#include "Lighting"
 
 uniform sampler2D u_specular;
 uniform sampler2D u_normal;
@@ -9,7 +9,7 @@ uniform DirectionalLight u_light;
 
 varying vec2 v_texCoord;
 
-vec4 calculateDirectionalLight(DirectionalLight light, vec3 normal)
+vec4 calculateDirectionalLight(in DirectionalLight light, in vec3 normal)
 {
 	float diffuseCoefficient = max(0.0, dot(normal, -light.direction));
 

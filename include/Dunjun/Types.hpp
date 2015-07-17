@@ -1,5 +1,7 @@
-#ifndef DUNJUN_SYSTEM_TYPES_HPP
-#define DUNJUN_SYSTEM_TYPES_HPP
+#ifndef DUNJUN_CORE_TYPES_HPP
+#define DUNJUN_CORE_TYPES_HPP
+
+#include <Dunjun/Config.hpp>
 
 // clang-format off
 
@@ -24,11 +26,11 @@ namespace Dunjun
 // Type Specification
 // Integer:         [us](8|16|32|64)
 // Floating Point:  f(16|32|64)
-// Integral Size:   usize
-// Boolean:         b(8|32)
+// Integral Size:   [us]size
+// Boolean:         b(8|32) // NOTE(bill): 16 bit boolean is never needed
 // Pointer Integer: u?intptr
 
-// All "common" platforms use the same size for char, short and int
+// NOTE(bill): All "common" platforms use the same size for char, short and int
 // We do not need to include stdint.h/cstdint which not always available.
 
 // The amount of times that I have swapped between conventions is a lot!
@@ -51,8 +53,21 @@ using u32 = unsigned int;
 	using u64 = unsigned long long;
 #endif
 
-// Depending on the header, `size_t` xor `std::size_t` may defined
-using usize = std::size_t;
+// NOTE(bill): (std::)size_t is not used not because it's a bad concept but on
+// the platforms Dunjun will be using:
+// sizeof(size_t) == sizeof(usize) == sizeof(ssize)
+// NOTE(bill): This also allows for a signed version of size_t which is similar
+// to ptrdiff_t
+// NOTE(bill): If (u)intptr is a better fit, please use that.
+#if defined(DUNJUN_64_BIT)
+	using usize = u64;
+	using ssize = s64;
+#elif defined(DUNJUN_32_BIT)
+	using usize = u32;
+	using ssize = s32;
+#else
+	#error Unknown bit size
+#endif
 
 using uintptr = uintptr_t;
 using intptr = intptr_t;
@@ -66,8 +81,8 @@ using b32 = s32;
 using f32 = float;
 using f64 = double;
 
-namespace
-{
+////////////////////////////////////////////////////////////////////////////////
+
 inline s16 f32Tof16(f32 f)
 {
 	s16 fint16;
@@ -88,7 +103,6 @@ inline f32 f16Tof32(s16 fint16)
 	std::memcpy(&fRet, &fint32, sizeof(f32));
 	return fRet;
 }
-} // namespace (anonymous)
 
 class f16
 {

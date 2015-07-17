@@ -1,7 +1,7 @@
 #ifndef LIGHTING_HEAD_GLSL
 #define LIGHTING_HEAD_GLSL
 
-#include <Common.head.glsl>
+#include "Common"
 
 struct Attenuation
 {

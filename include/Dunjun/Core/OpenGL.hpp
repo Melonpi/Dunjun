@@ -1,5 +1,5 @@
-#ifndef DUNJUN_SYSTEM_OPENGL_HPP
-#define DUNJUN_SYSTEM_OPENGL_HPP
+#ifndef DUNJUN_CORE_OPENGL_HPP
+#define DUNJUN_CORE_OPENGL_HPP
 
 // NOTE(bill): This should be defined when compiling but just to make sure
 #ifndef GLEW_STATIC

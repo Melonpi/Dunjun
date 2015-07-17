@@ -3,10 +3,12 @@
 
 #include <Dunjun/Config.hpp>
 #include <Dunjun/Types.hpp>
-#include <Dunjun/System/FileSystem.hpp>
+#include <Dunjun/Core/FileSystem.hpp>
+#include <Dunjun/Core/String.hpp>
 
 #include <cassert>
 #include <cstdarg>
+#include <cstring>
 #include <functional>
 #include <iostream>
 #include <memory>
@@ -52,7 +54,7 @@ template <typename T, typename U>
 inline T pseudo_cast(const U& x)
 {
 	T to{0};
-	std::memcpy(&to, &x, (sizeof(T) < sizeof(U)) ? sizeof(T) : sizeof(U));
+	memcpy(&to, &x, (sizeof(T) < sizeof(U)) ? sizeof(T) : sizeof(U));
 	return to;
 }
 
@@ -79,36 +81,22 @@ Defer<Fn> deferFn(Fn&& fn) { return Defer<Fn>(std::forward<Fn>(fn)); }
 #define defer(code) auto DEFER_3(_defer_) = Impl::deferFn([&](){code;});
 
 /* Example for defer
- * FILE* f{fopen("test.txt", "r"))};
+ * FILE* file = fopen("test.txt", "r"));
  * if (f == nullptr)
  * 	return;
- * defer(fclose(f));
+ * defer(fclose(file));
  */
-
-////////////////////////////////////////////////////////////////////////////////
-
-// Cross-platform version of sprintf that uses a local persist buffer
-// If more than 1024 characters are needed, a std::stringstream may be needed
-// instead.
-inline std::string stringFormat(const char* fmt, ...)
-{
-	LOCAL_PERSIST char s_buf[1024];
-	va_list v;
-	va_start(v, fmt);
-#if defined(DUNJUN_COMPILER_MSVC) // "Fix" MSVC's idea of "standards"
-	_vsnprintf(s_buf, 1024, fmt, v);
-#else
-	vsnprintf(s_buf, 1024, fmt, v);
-#endif
-	va_end(v);
-	s_buf[1023] = '\0';
-
-	return {s_buf, strlen(s_buf)};
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // NOTE(bill): Helper functions for determining the length of a type and if that
 // type is empty or not
+
+inline usize len(const char* str)
+{
+	if (str)
+		return strlen(str);
+	return 0;
+}
 
 template <typename T>
 inline usize len(const T& t)
@@ -122,29 +110,28 @@ inline usize len(const T(&array)[N])
 	return N;
 }
 
-template <typename T>
-inline bool empty(const T& t)
-{
-	return t.empty();
-}
-
-template <typename T, usize N>
-inline bool empty(const T(&array)[N])
-{
-	return false;
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////
 
-// TODO(bill): Remove panic(...) from code eventually and use a log
-// This is similar to an assert but not exactly. At the moment, it exit's the
-// application but later, it should not.
-inline void panic(const std::string& str)
+// Cross-platform version of sprintf that uses a local persist buffer
+// If more than 1024 characters are needed, a std::stringstream may be needed
+// instead.
+inline String stringFormat(const char* fmt, ...)
 {
-	std::cerr << str.c_str() << std::endl;
-	std::exit(EXIT_FAILURE);
+	LOCAL_PERSIST char s_buf[1024];
+	va_list v;
+	va_start(v, fmt);
+#if defined(DUNJUN_COMPILER_MSVC) // "Fix" MSVC's idea of "standards"
+	_vsnprintf(s_buf, 1024, fmt, v);
+#else
+	vsnprintf(s_buf, 1024, fmt, v);
+#endif
+	va_end(v);
+	s_buf[1023] = '\0';
+
+	return {s_buf, len(s_buf)};
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 enum class MessageBoxType
 {
@@ -155,15 +142,27 @@ enum class MessageBoxType
 
 // Use this function to display a simple modal message box
 bool showSimpleMessageBox(MessageBoxType type,
-                          const std::string& title,
-                          const std::string& message);
+                          const String& title,
+                          const String& message);
+
+
+// TODO(bill): Remove panic(...) from code eventually and use a log
+// This is similar to an assert but not exactly. At the moment, it exit's the
+// application but later, it should not.
+inline void panic(const String& str)
+{
+	std::cerr << str << std::endl;
+	showSimpleMessageBox(MessageBoxType::Error, "Panic", str);
+	*(int*)0 = 0; // NOTE(bill): CRASH!!!
+	exit(1);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 namespace BaseDirectory
 {
-extern const std::string Textures;
-extern const std::string Shaders;
+const char* const Textures = "data/textures/";
+const char* const Shaders = "data/shaders/";
 } // namespace BaseDirectory
 
 } // namespace Dunjun

@@ -1,9 +1,9 @@
-#ifndef DUNJUN_SYSTEM_HASHMAP_HPP
-#define DUNJUN_SYSTEM_HASHMAP_HPP
+#ifndef DUNJUN_CORE_HASHMAP_HPP
+#define DUNJUN_CORE_HASHMAP_HPP
 
-#include <Dunjun/System/Containers.hpp>
+#include <Dunjun/Core/ContainerTypes.hpp>
 
-#include <Dunjun/System/Array.hpp>
+#include <Dunjun/Core/Array.hpp>
 
 #include <cstring>
 
@@ -41,7 +41,7 @@ template <typename T>
 const typename HashMap<T>::Entry* end(const HashMap<T>& h);
 
 // Functions for Multi Hash Maps e.g. keys with mutliple values
-namespace Multi
+namespace MultiHashMap
 {
 // Get all the entries with the corresponding key
 template <typename T>
@@ -73,7 +73,7 @@ void remove(HashMap<T>& h, const typename HashMap<T>::Entry* e);
 template <typename T>
 void removeAll(HashMap<T>& h, u64 key);
 
-} // namespace Multi
+} // namespace MultiHashMap
 
 ////////////////////////////////////////
 //       HashMap Implementation       //
@@ -234,7 +234,7 @@ void rehash(HashMap<T>& h, usize newCapacity)
 	for (usize i = 0; i < oldLength; i++)
 	{
 		auto& e = h.data[i];
-		Multi::insert(nh, e.key, e.value);
+		MultiHashMap::insert(nh, e.key, e.value);
 	}
 
 	HashMap<T> empty = *h.hashes.allocator;
@@ -321,7 +321,7 @@ inline const typename HashMap<T>::Entry* end(const HashMap<T>& h)
 	return end(h.data);
 }
 
-namespace Multi
+namespace MultiHashMap
 {
 template <typename T>
 inline void get(const HashMap<T>& h, u64 key, Array<T>& items)
@@ -404,7 +404,7 @@ inline void removeAll(HashMap<T>& h, u64 key)
 		remove(h, key);
 }
 
-} // namespace Multi
+} // namespace MultiHashMap
 
 //////////////////
 // HashMap<T>:: //

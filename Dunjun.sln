@@ -1,28 +1,27 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.22823.1
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dunjun", "Dunjun.vcxproj", "{D6668A8A-8EAE-46EB-92F7-2F9A73C366C4}"
+Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "Dunjun", "bin\Dunjun.exe", "{3560AFE6-11C3-4AA6-9208-2C2F97B95E3A}"
+	ProjectSection(DebuggerProjectSystem) = preProject
+		PortSupplier = 00000000-0000-0000-0000-000000000000
+		Executable = W:\Dunjun\bin\Dunjun.exe
+		RemoteMachine = BILL-PC
+		StartingDirectory = W:\Dunjun
+		Environment = Default
+		LaunchingEngine = 00000000-0000-0000-0000-000000000000
+		UseLegacyDebugEngines = No
+		LaunchSQLEngine = No
+		AttachLaunchAction = No
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Win32 = Debug|Win32
 		Debug|x64 = Debug|x64
-		Release|Win32 = Release|Win32
-		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D6668A8A-8EAE-46EB-92F7-2F9A73C366C4}.Debug|Win32.ActiveCfg = Debug|Win32
-		{D6668A8A-8EAE-46EB-92F7-2F9A73C366C4}.Debug|Win32.Build.0 = Debug|Win32
-		{D6668A8A-8EAE-46EB-92F7-2F9A73C366C4}.Debug|Win32.Deploy.0 = Debug|Win32
-		{D6668A8A-8EAE-46EB-92F7-2F9A73C366C4}.Debug|x64.ActiveCfg = Debug|x64
-		{D6668A8A-8EAE-46EB-92F7-2F9A73C366C4}.Debug|x64.Build.0 = Debug|x64
-		{D6668A8A-8EAE-46EB-92F7-2F9A73C366C4}.Debug|x64.Deploy.0 = Debug|x64
-		{D6668A8A-8EAE-46EB-92F7-2F9A73C366C4}.Release|Win32.ActiveCfg = Release|Win32
-		{D6668A8A-8EAE-46EB-92F7-2F9A73C366C4}.Release|Win32.Build.0 = Release|Win32
-		{D6668A8A-8EAE-46EB-92F7-2F9A73C366C4}.Release|x64.ActiveCfg = Release|x64
-		{D6668A8A-8EAE-46EB-92F7-2F9A73C366C4}.Release|x64.Build.0 = Release|x64
+		{3560AFE6-11C3-4AA6-9208-2C2F97B95E3A}.Debug|x64.ActiveCfg = Debug|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,6 +2,9 @@
 
 #include <SDL/SDL_video.h>
 
+#include <Dunjun/Core/Array.hpp>
+#include <Dunjun/Core/Memory.hpp>
+
 #include <algorithm>
 
 namespace Dunjun
@@ -22,13 +25,12 @@ VideoMode VideoMode::getDesktopMode()
 	return {(u32)dm.w, (u32)dm.h, SDL_BITSPERPIXEL(dm.format)};
 }
 
-const std::vector<VideoMode>& VideoMode::getFullscreenModes()
+const Array<VideoMode>& VideoMode::getFullscreenModes()
 {
-	LOCAL_PERSIST std::vector<VideoMode> modes;
+	LOCAL_PERSIST Array<VideoMode> modes{defaultAllocator()};
 
-	if (modes.empty())
+	if (len(modes) == 0)
 	{
-		printf("Here\n");
 		s32 displayModeCount;
 		SDL_DisplayMode dm;
 
@@ -49,11 +51,12 @@ const std::vector<VideoMode>& VideoMode::getFullscreenModes()
 				          << std::endl;
 				continue;
 			}
-			modes.emplace_back(dm.w, dm.h, SDL_BITSPERPIXEL(dm.format));
+			append(
+			    modes,
+			    VideoMode{(u32)dm.w, (u32)dm.h, SDL_BITSPERPIXEL(dm.format)});
 		}
 
-		std::sort(
-		    std::begin(modes), std::end(modes), std::greater<VideoMode>());
+		std::sort(begin(modes), end(modes), std::greater<VideoMode>());
 	}
 
 	return modes;
@@ -61,10 +64,9 @@ const std::vector<VideoMode>& VideoMode::getFullscreenModes()
 
 bool VideoMode::isValid() const
 {
-	const std::vector<VideoMode>& modes = getFullscreenModes();
+	const Array<VideoMode>& modes = getFullscreenModes();
 
-	return std::find(std::begin(modes), std::end(modes), *this) !=
-	       std::end(modes);
+	return std::find(begin(modes), end(modes), *this) != end(modes);
 }
 
 bool operator==(const VideoMode& left, const VideoMode& right)

@@ -1,7 +1,7 @@
 #ifndef DUNJUN_GRAPHICS_GBUFFER_HPP
 #define DUNJUN_GRAPHICS_GBUFFER_HPP
 
-#include <Dunjun/System/OpenGL.hpp>
+#include <Dunjun/Core/OpenGL.hpp>
 #include <Dunjun/Types.hpp>
 #include <Dunjun/Graphics/Texture.hpp>
 
@@ -19,16 +19,16 @@ struct GBuffer
 		Count,
 	};
 
-	u32 width;
-	u32 height;
-	u32 fbo;
+	u32 width  = 0;
+	u32 height = 0;
+	u32 fbo    = 0;
 	Texture textures[TextureType::Count];
-
-	bool create(u32 width, u32 height);
-	void destroy();
-
-	GLOBAL void bind(const GBuffer* b);
 };
+
+bool createGBuffer(GBuffer& b, u32 width, u32 height);
+void destroyGBuffer(GBuffer& b);
+void bindGBuffer(const GBuffer* b);
+
 } // namespace Dunjun
 
 #endif

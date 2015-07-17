@@ -3,8 +3,8 @@
 
 #include <Dunjun/Entity.hpp>
 #include <Dunjun/Graphics/Transform.hpp>
-#include <Dunjun/System/Allocator.hpp>
-#include <Dunjun/System/Containers.hpp>
+#include <Dunjun/Core/Allocator.hpp>
+#include <Dunjun/Core/ContainerTypes.hpp>
 
 namespace Dunjun
 {
@@ -43,15 +43,15 @@ struct SceneGraph
 
 	void allocate(u32 capacity);
 
-	NodeId create(EntityId id, const Transform& t);
-	void destroy(NodeId id);
+	NodeId addNode(EntityId id, const Transform& t);
+	void removeNode(NodeId id);
 
 	NodeId getNodeId(EntityId id) const;
 	bool isValid(NodeId id) const;
 	u32 nodeCount() const;
 
-	void link(NodeId parentId, NodeId childId);
-	void unlink(NodeId childId);
+	void linkNodes(NodeId parentId, NodeId childId);
+	void unlinkNode(NodeId childId);
 
 	void transformChild(NodeId childId, const Transform& t);
 

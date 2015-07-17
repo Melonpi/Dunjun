@@ -12,7 +12,7 @@
 #include <Dunjun/Graphics/Texture.hpp>
 #include <Dunjun/Scene/Lighting.hpp>
 
-#include <Dunjun/System/Containers.hpp>
+#include <Dunjun/Core/ContainerTypes.hpp>
 
 namespace Dunjun
 {
@@ -53,12 +53,12 @@ public:
 	const Camera* camera;
 
 	RenderSystem(Allocator& a, SceneGraph& sg);
-	~RenderSystem() = default;
+	~RenderSystem();
 
 	void allocate(u32 capacity);
 
-	ComponentId create(EntityId id, const RenderComponent& component);
-	void destroy(ComponentId id);
+	ComponentId addComponent(EntityId id, const RenderComponent& component);
+	void removeComponent(ComponentId id);
 
 	ComponentId getComponentId(EntityId id);
 	bool isValid(ComponentId id) const;
@@ -72,7 +72,11 @@ public:
 	void outPass();
 
 private:
-	const Texture* currentTexture;
+	const Texture* currentTextures[32];
+
+	// NOTE(bill): Disable copying
+	RenderSystem(const RenderSystem&) = delete;
+	RenderSystem& operator=(const RenderSystem&) = delete;
 
 	bool setTexture(const Texture* texture, u32 position);
 	// bool setShaders(const ShaderProgram* shaders);

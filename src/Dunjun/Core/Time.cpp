@@ -1,5 +1,5 @@
 #include <Dunjun/Config.hpp>
-#include <Dunjun/System/Time.hpp>
+#include <Dunjun/Core/Time.hpp>
 
 #include <thread>
 

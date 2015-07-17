@@ -1,7 +1,7 @@
-#ifndef DUNJUN_SYSTEM_ARRAY_HPP
-#define DUNJUN_SYSTEM_ARRAY_HPP
+#ifndef DUNJUN_CORE_ARRAY_HPP
+#define DUNJUN_CORE_ARRAY_HPP
 
-#include <Dunjun/System/Containers.hpp>
+#include <Dunjun/Core/ContainerTypes.hpp>
 
 #include <cstring> // memcpy
 
@@ -56,9 +56,9 @@ const T& back(const Array<T>& a);
 template <typename T>
 void clear(Array<T>& a);
 
-// Trims the array so that its capactity equals its length
+// Shrink the array so that its capactity equals its length
 template <typename T>
-void trim(Array<T>& a);
+void shrinkToFit(Array<T>& a);
 
 // Resizes the array to a given size
 // Old items will be copied to the new array. If the new capacity is smaller
@@ -183,7 +183,7 @@ inline void clear(Array<T>& a)
 }
 
 template <typename T>
-inline void trim(Array<T>& a)
+inline void shrinkToFit(Array<T>& a)
 {
 	setCapacity(a, a.length);
 }
