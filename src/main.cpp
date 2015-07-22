@@ -1,7 +1,7 @@
+#include <Dunjun/Config.hpp>
 #include <Dunjun/Game.hpp>
 
-#include <SDL/SDL_main.h>
-#undef main
+#undef main // NOTE(bill): SDL redefines main but we don't need it
 
 int main(int argCount, char** args)
 {
