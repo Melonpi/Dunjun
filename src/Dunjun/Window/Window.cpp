@@ -172,7 +172,7 @@ Window& Window::setVisible(bool visible)
 
 Window& Window::setVerticalSyncEnabled(bool enabled)
 {
-	// TODO(bill): SDL_GL_SetSwapInterval(int interval)
+	// NOTE(bill):
 	// interval = |  0 | immediate updates
 	//            |  1 | updates synchronized with the vertical retrace
 	//            | -1 | late swap tearing
@@ -469,20 +469,18 @@ INTERNAL void convertEvent(SDL_Event& e, Event& event)
 
 	case SDL_CONTROLLERBUTTONDOWN:
 	{
-		event.type                   = Event::ControllerButtonPressed;
-		event.controllerButton.index = e.cbutton.which;
-		event.controllerButton.button =
-		    (Input::ControllerButton)e.cbutton.button;
+		event.type                    = Event::ControllerButtonPressed;
+		event.controllerButton.index  = e.cbutton.which;
+		event.controllerButton.button = (Input::ControllerButton)e.cbutton.button;
 
 		return;
 	}
 
 	case SDL_CONTROLLERBUTTONUP:
 	{
-		event.type                   = Event::ControllerButtonReleased;
-		event.controllerButton.index = e.cbutton.which;
-		event.controllerButton.button =
-		    (Input::ControllerButton)e.cbutton.button;
+		event.type                    = Event::ControllerButtonReleased;
+		event.controllerButton.index  = e.cbutton.which;
+		event.controllerButton.button = (Input::ControllerButton)e.cbutton.button;
 
 		return;
 	}
@@ -515,10 +513,9 @@ INTERNAL void convertEvent(SDL_Event& e, Event& event)
 	{
 		event.type                 = Event::ControllerAxisMoved;
 		event.controllerAxis.index = e.caxis.which;
-		event.controllerAxis.axis =
-		    static_cast<Input::ControllerAxis>(e.caxis.axis);
+		event.controllerAxis.axis  = (Input::ControllerAxis)e.caxis.axis;
 
-		s16 value{e.caxis.value};
+		s16 value = e.caxis.value;
 		if (event.controllerAxis.axis == Input::ControllerAxis::LeftY)
 			value = -value;
 

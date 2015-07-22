@@ -59,13 +59,13 @@ public:
 
 		if (bindDefaultAttribLocation)
 		{
-			shaders->bindAttribLocation((u32)AtrribLocation::Position,
+			shaders->bindAttribLocation((s32)AttribLocation::Position,
 			                            "a_position");
-			shaders->bindAttribLocation((u32)AtrribLocation::TexCoord,
+			shaders->bindAttribLocation((s32)AttribLocation::TexCoord,
 			                            "a_texCoord");
-			shaders->bindAttribLocation((u32)AtrribLocation::Color,
+			shaders->bindAttribLocation((s32)AttribLocation::Color,
 			                            "a_color");
-			shaders->bindAttribLocation((u32)AtrribLocation::Normal,
+			shaders->bindAttribLocation((s32)AttribLocation::Normal,
 			                            "a_normal");
 		}
 

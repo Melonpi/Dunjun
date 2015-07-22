@@ -19,9 +19,9 @@ struct GBuffer
 		Count,
 	};
 
-	u32 width  = 0;
-	u32 height = 0;
-	u32 fbo    = 0;
+	u32 width;
+	u32 height;
+	u32 fbo;
 	Texture textures[TextureType::Count];
 };
 

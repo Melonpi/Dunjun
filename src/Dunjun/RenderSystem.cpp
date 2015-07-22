@@ -64,7 +64,7 @@ void RenderSystem::allocate(u32 capacity)
 RenderSystem::ComponentId
 RenderSystem::addComponent(EntityId id, const RenderComponent& component)
 {
-	if (data.capacity == data.length) // grow
+	if (data.capacity == data.length || data.capacity == 0) // grow
 		allocate(2 * data.length + 1);
 
 	const ComponentId last = data.length;
@@ -253,8 +253,6 @@ void RenderSystem::lightPass()
 
 			for (const PointLight& light : pointLights)
 			{
-				light.range = calculateLightRange(light);
-
 				Vector3 lightIntensities;
 
 				lightIntensities.r = light.color.r / 255.0f;
@@ -295,8 +293,6 @@ void RenderSystem::lightPass()
 
 			for (const SpotLight& light : spotLights)
 			{
-				light.range = calculateLightRange(light);
-
 				Vector3 lightIntensities;
 
 				lightIntensities.r = light.color.r / 255.0f;

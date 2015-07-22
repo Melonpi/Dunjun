@@ -52,7 +52,7 @@ void SceneGraph::allocate(u32 capacity)
 
 SceneGraph::NodeId SceneGraph::addNode(EntityId id, const Transform& t)
 {
-	if (data.capacity == data.length) // grow
+	if (data.capacity == data.length || data.capacity == 0) // grow
 		allocate(2 * data.length + 1);
 
 	const NodeId last = data.length;

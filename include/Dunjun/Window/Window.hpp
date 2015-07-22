@@ -43,8 +43,9 @@ public:
 		{
 			if (width == height)
 				return 1.0f;
-
-			return static_cast<f32>(width) / static_cast<f32>(height);
+			if (height <= 0.0f)
+				return 1.0f;
+			return (f32)width / (f32)height;
 		}
 	};
 
@@ -55,7 +56,7 @@ public:
 	                u32 style                         = Style::Default,
 	                const GLContextSettings& settings = GLContextSettings{});
 
-	virtual ~Window();
+	~Window();
 
 	void create(VideoMode mode,
 	            const String& title,

@@ -10,6 +10,7 @@ namespace Dunjun
 namespace Strings
 {
 // TODO(bill): Fully support UTF-8 and unicode code points (e.g. u32)
+// This will most likely _require_ a 3rd-party library
 
 // `contains` returns true if substr is within s
 bool contains(const String& s, const String& substr);
@@ -25,16 +26,31 @@ bool hasSuffix(const String& s, const String& suffix);
 // The separator string sep is placed between elements in the resulting string
 String join(const Array<String>& array, const String& sep);
 
-// `split` slices s into all substrings separated by sep and returns an array of
-// the substrings between those separators
-Array<String> split(const String& s, const String& sep);
+// `split` splits s into all substrings separated by sep and sets the `out`
+// array to the substrings between those separators
+void split(const String& s, const String& sep, Array<String>& out);
 
 // `toLower` returns a lower case version of s
 String toLower(const String& s);
+// `toLower` returns a lower case version of c
+char toLower(const char c);
+
 // `toTitle` returns a titlized version of s
-// String toTitle(const String& s); // TODO(bill)
+String toTitle(const String& s);
+
 // `toUpper` returns an upper case version of s
 String toUpper(const String& s);
+// `toUpper` returns an upper case version of c
+char toUpper(const char c);
+
+// `isSpace` returns true if the character is whitespace
+bool isSpace(const char c);
+// `isAlpha` returns true if the character is [a-zA-Z]
+bool isAlpha(const char c);
+// `isDigit` returns true if the character is [0-9]
+bool isDigit(const char c);
+// `isAlphaNumeric` returns true if the character is [a-zA-Z0-9]
+bool isAlphaNumeric(const char c);
 
 // `trimLeft`
 String trimLeft(const String& s, const String& cutset);

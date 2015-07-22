@@ -14,7 +14,7 @@ namespace Dunjun
 {
 namespace Input
 {
-enum class Key
+enum class Key : s32
 {
 	Unknown = -1, // Unhandled key
 	A       = 0,  // The A key
@@ -125,7 +125,7 @@ enum class Key
 	KeyCount // Keep last -- the total number of keyboard keys
 };
 
-enum class Mouse : u32
+enum class Mouse
 {
 	Button1 = 1,
 	Button2 = 2,
@@ -178,13 +178,6 @@ enum class ControllerAxis : u32
 	TriggerRight,
 
 	Count,
-};
-
-enum class CursorMode : u32
-{
-	Normal,
-	Hidden,
-	Disabled,
 };
 
 void init();

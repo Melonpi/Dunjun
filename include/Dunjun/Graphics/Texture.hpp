@@ -32,11 +32,11 @@ struct Texture
 Texture
 loadTextureFromFile(const String& filename,
                     TextureFilter minMagFilter = TextureFilter::Linear,
-                    TextureWrapMode wrapMode = TextureWrapMode::Repeat);
+                    TextureWrapMode wrapMode   = TextureWrapMode::Repeat);
 Texture
 loadTextureFromImage(const Image& image,
                      TextureFilter minMagFilter = TextureFilter::Linear,
-                     TextureWrapMode wrapMode = TextureWrapMode::Repeat);
+                     TextureWrapMode wrapMode   = TextureWrapMode::Repeat);
 
 void destroyTexture(Texture& t);
 

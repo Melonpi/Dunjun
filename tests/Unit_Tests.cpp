@@ -1,9 +1,9 @@
 #include <Dunjun/Memory/Memory.hpp>
-#include <Dunjun/System/Container.hpp>
+#include <Dunjun/Core/ContainerTypes.hpp>
 
-#include <Dunjun/System/Array.hpp>
-#include <Dunjun/System/Queue.hpp>
-#include <Dunjun/System/HashMap.hpp>
+#include <Dunjun/Core/Array.hpp>
+#include <Dunjun/Core/Queue.hpp>
+#include <Dunjun/Core/HashMap.hpp>
 
 #include <cassert>
 
@@ -51,7 +51,7 @@ void arrayTest()
 	popBack(v1);
 	assert(len(v1) == 0);
 
-	for (int i{0}; i < 100; i++)
+	for (int i = 0; i < 100; i++)
 		append(v1, i);
 	assert(len(v1) == 100);
 
@@ -77,7 +77,7 @@ void arrayTest()
 	int items[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 	append(q, items, 10);
 	assert(len(q) == 10);
-	for (int i{0}; i < 10; i++)
+	for (int i = 0; i < 10; i++)
 		assert(q[i] == i + 1);
 	clear(q);
 	assert(len(q) == 0);
@@ -98,18 +98,18 @@ void hashMapTest()
 	assert(get(h, 123, 0) == 7331);
 	assert(get(h, 321, 666) == 666);
 
-	for (int i{0}; i < 100; i++)
+	for (int i = 0; i < 100; i++)
 		set(h, i, i * i);
-	for (int i{0}; i < 100; i++)
+	for (int i = 0; i < 100; i++)
 		assert(get(h, i, 0) == i * i);
 	remove(h, 123);
 	assert(!has(h, 123));
 	remove(h, 321);
 	assert(get(h, 123, 0) == 0);
-	for (int i{0}; i < 100; i++)
+	for (int i = 0; i < 100; i++)
 		assert(get(h, i, 0) == i * i);
 	clear(h);
-	for (int i{0}; i < 100; i++)
+	for (int i = 0; i < 100; i++)
 		assert(!has(h, i));
 
 	Memory::shutdown();

@@ -324,6 +324,8 @@ INTERNAL void initWorld()
 			pl.color.g   = r.getInt(50, 255);
 			pl.color.b   = r.getInt(50, 255);
 			pl.color.a = 255;
+			pl.range = calculateLightRange(pl);
+
 			append(rs.pointLights, pl);
 		}
 	}

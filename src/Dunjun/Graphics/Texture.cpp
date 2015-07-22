@@ -55,10 +55,10 @@ Texture loadTextureFromImage(const Image& image,
 	glBindTexture(GL_TEXTURE_2D, tex.handle);
 	defer(glBindTexture(GL_TEXTURE_2D, 0));
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLenum)wrapMode);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (GLenum)wrapMode);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLenum)minMagFilter);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLenum)minMagFilter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (s32)wrapMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (s32)wrapMode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (s32)minMagFilter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (s32)minMagFilter);
 
 	glTexImage2D(GL_TEXTURE_2D,
 	             0,

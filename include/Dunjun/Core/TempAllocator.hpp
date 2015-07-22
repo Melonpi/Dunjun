@@ -10,7 +10,6 @@ namespace Dunjun
 // from a local stack buffer with size `Size`.
 // If the memory is used up, it will use the backing allocator (at the moment,
 // that is the default (heap) allocator)
-// TODO(bill): Create and use a Scratch Allocator instead.
 // NOTE(bill): Memory in a TempAllocator does not need to deallocated as it will
 // be upon the destruction of the TempAllocator
 template <usize Size>
@@ -59,7 +58,7 @@ inline TempAllocator<Size>::TempAllocator(Allocator& backing)
 , m_chunkSize{4 * 1024} // 4K
 {
 	m_current = m_begin = &m_buffer[0];
-	m_end = m_begin + Size; // TODO(bill): Is it meant to be Size or Size-1??
+	m_end = m_begin + Size;
 	*(void**)m_begin = nullptr; // Lovely casting
 	m_current += sizeof(void*);
 }

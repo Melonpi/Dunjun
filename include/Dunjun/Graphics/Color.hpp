@@ -1,9 +1,7 @@
 #ifndef DUNJUN_GRAPHICS_COLOR_HPP
 #define DUNJUN_GRAPHICS_COLOR_HPP
 
-#include <Dunjun/Common.hpp>
-
-#include <type_traits>
+#include <Dunjun/Types.hpp>
 
 namespace Dunjun
 {
@@ -25,6 +23,6 @@ struct Color
 	GLOBAL const Color Blue;
 	GLOBAL const Color Magenta;
 };
-}
+} // namespace Dunjun
 
 #endif

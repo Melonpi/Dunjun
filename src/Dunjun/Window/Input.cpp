@@ -201,10 +201,8 @@ void setCursorPosition(const Window& relativeTo, const Vector2& pos)
 // Mouse
 bool isMouseButtonPressed(Mouse button)
 {
-	return (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON((s32)button)) != 0;
+	return (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON((u32)button)) != 0;
 }
-
-// Vector2 getScrollOffset() { return Vector2(g_scrollX, g_scrollY); }
 
 bool isControllerPresent(u32 controllerIndex)
 {
@@ -217,8 +215,7 @@ bool isControllerButtonPressed(u32 controllerIndex, ControllerButton button)
 {
 	SDL_GameController* gc = g_controllerHandles[controllerIndex];
 	if (gc && SDL_GameControllerGetAttached(gc))
-		return SDL_GameControllerGetButton(
-		           gc, (SDL_GameControllerButton)button) != 0;
+		return SDL_GameControllerGetButton(gc, (SDL_GameControllerButton)button) != 0;
 
 	return false;
 }
@@ -234,9 +231,9 @@ f32 getControllerAxis(u32 controllerIndex, ControllerAxis axis)
 			value = -value;
 
 		if (value >= 0)
-			return static_cast<f32>(value) / 32767.0f;
+			return (f32)value / 32767.0f;
 
-		return static_cast<f32>(value) / 32768.0f;
+		return (f32)value / 32768.0f;
 	}
 
 	return 0.0f;

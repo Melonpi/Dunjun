@@ -249,7 +249,7 @@ Matrix4 perspective(const Radian& fovy, f32 aspect, f32 zNear, f32 zFar)
 
 	const f32 tanHalfFovy = Math::tan(0.5f * fovy);
 
-	Matrix4 result = 0.0f * Matrix4::Identity;
+	Matrix4 result = {};
 	result[0][0]   = 1.0f / (aspect * tanHalfFovy);
 	result[1][1]   = 1.0f / (tanHalfFovy);
 	result[2][2]   = -(zFar + zNear) / (zFar - zNear);
@@ -267,7 +267,7 @@ Matrix4 infinitePerspective(const Radian& fovy, f32 aspect, f32 zNear)
 	const f32 bottom = -range;
 	const f32 top    = range;
 
-	Matrix4 result = 0.0f * Matrix4::Identity;
+	Matrix4 result = {};
 
 	result[0][0] = (2.0f * zNear) / (right - left);
 	result[1][1] = (2.0f * zNear) / (top - bottom);
@@ -278,10 +278,9 @@ Matrix4 infinitePerspective(const Radian& fovy, f32 aspect, f32 zNear)
 	return result;
 }
 
-template <>
-Matrix4 lookAt<Matrix4>(const Vector3& eye,
-                        const Vector3& center,
-                        const Vector3& up)
+Matrix4 lookAtMatrix4(const Vector3& eye,
+                      const Vector3& center,
+                      const Vector3& up)
 {
 	const Vector3 f = normalize(center - eye);
 	const Vector3 s = normalize(cross(f, up));
@@ -308,17 +307,16 @@ Matrix4 lookAt<Matrix4>(const Vector3& eye,
 }
 
 // TODO(bill): properly implement quaternionLookAt
-template <>
-Quaternion lookAt<Quaternion>(const Vector3& eye,
-                              const Vector3& center,
-                              const Vector3& up)
+Quaternion lookAtQuaternion(const Vector3& eye,
+                            const Vector3& center,
+                            const Vector3& up)
 {
 	const f32 similar = 0.001f;
 
 	if (length(center - eye) < similar)
-		return Quaternion{0, 0, 0, 1}; // You cannot look at where you are!
+		return Quaternion::Identity; // You cannot look at where you are!
 
-	return matrix4ToQuaternion(lookAt<Matrix4>(eye, center, up));
+	return matrix4ToQuaternion(lookAtMatrix4(eye, center, up));
 
 	// const Vector3 f{normalize(center - eye)};
 	// const Vector3 s{normalize(cross(f, up))};

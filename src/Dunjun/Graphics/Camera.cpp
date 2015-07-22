@@ -7,16 +7,17 @@ namespace Dunjun
 void cameraLookAt(Camera& c, const Vector3& position, const Vector3& up)
 {
 	c.transform.orientation =
-	    conjugate(Math::lookAt<Quaternion>(c.transform.position, position, up));
+	    conjugate(Math::lookAtQuaternion(c.transform.position, position, up));
 }
 
 void offsetOrientation(Quaternion& orientation,
                        const Radian& yaw,
                        const Radian& pitch)
 {
-	const Quaternion yawRot = angleAxis(yaw, {0, 1, 0}); // absolute up
-	const Quaternion pitchRot =
-	    angleAxis(pitch, rightVector(orientation)); // relative right
+	// NOTE(bill): absolute up
+	const Quaternion yawRot = angleAxis(yaw, {0, 1, 0});
+	// NOTE(bill): relative right
+	const Quaternion pitchRot = angleAxis(pitch, rightVector(orientation));
 
 	orientation = yawRot * pitchRot * orientation;
 }
@@ -58,37 +59,33 @@ Matrix4 cameraMatrix(const Camera& c)
 
 Matrix4 cameraProjection(const Camera& c)
 {
-	Matrix4 proj = Matrix4::Identity;
 
 	switch (c.projectionType)
 	{
 	case ProjectionType::Perspective:
 	{
-		proj = Math::perspective(
+		return Math::perspective(
 		    c.fieldOfView, c.viewportAspectRatio, c.nearPlane, c.farPlane);
-		break;
 	}
 	case ProjectionType::InfinitePerspective:
 	{
-		proj = Math::infinitePerspective(
+		return Math::infinitePerspective(
 		    c.fieldOfView, c.viewportAspectRatio, c.nearPlane);
-		break;
 	}
 	case ProjectionType::Orthographic:
 	{
-		f32 distance = 0.5f * (c.farPlane - c.nearPlane);
+		const f32 distance = 0.5f * (c.farPlane - c.nearPlane);
 
-		proj = Math::ortho(-c.orthoScale * c.viewportAspectRatio,
+		return Math::ortho(-c.orthoScale * c.viewportAspectRatio,
 		                   c.orthoScale * c.viewportAspectRatio,
 		                   -c.orthoScale,
 		                   c.orthoScale,
 		                   -distance,
 		                   distance);
-		break;
 	}
 	}
 
-	return proj;
+	return Matrix4::Identity;
 }
 
 Matrix4 cameraView(const Camera& c)

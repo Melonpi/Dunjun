@@ -55,7 +55,7 @@ void MeshData::generateNormals()
 
 Mesh generateMesh(const MeshData& data)
 {
-	Mesh mesh;
+	Mesh mesh = {};
 	mesh.drawType  = data.drawType;
 	mesh.drawCount = (s32)len(data.indices);
 
@@ -81,34 +81,34 @@ Mesh generateMesh(const MeshData& data)
 
 void drawMesh(const Mesh& mesh)
 {
-	glEnableVertexAttribArray((u32)AtrribLocation::Position);
-	glEnableVertexAttribArray((u32)AtrribLocation::TexCoord);
-	glEnableVertexAttribArray((u32)AtrribLocation::Color);
-	glEnableVertexAttribArray((u32)AtrribLocation::Normal);
-	defer(glDisableVertexAttribArray((u32)AtrribLocation::Position));
-	defer(glDisableVertexAttribArray((u32)AtrribLocation::TexCoord));
-	defer(glDisableVertexAttribArray((u32)AtrribLocation::Color));
-	defer(glDisableVertexAttribArray((u32)AtrribLocation::Normal));
+	glEnableVertexAttribArray((u32)AttribLocation::Position);
+	glEnableVertexAttribArray((u32)AttribLocation::TexCoord);
+	glEnableVertexAttribArray((u32)AttribLocation::Color);
+	glEnableVertexAttribArray((u32)AttribLocation::Normal);
+	defer(glDisableVertexAttribArray((u32)AttribLocation::Position));
+	defer(glDisableVertexAttribArray((u32)AttribLocation::TexCoord));
+	defer(glDisableVertexAttribArray((u32)AttribLocation::Color));
+	defer(glDisableVertexAttribArray((u32)AttribLocation::Normal));
 
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
 	defer(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	defer(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
-	glVertexAttribPointer((u32)AtrribLocation::Position,
+	glVertexAttribPointer((u32)AttribLocation::Position,
 	                      3,
 	                      GL_FLOAT,       // Type
 	                      false,          // Normalized?
 	                      sizeof(Vertex), // Stride
 	                      (const void*)(0));
-	glVertexAttribPointer((u32)AtrribLocation::TexCoord,
+	glVertexAttribPointer((u32)AttribLocation::TexCoord,
 	                      2,
 	                      GL_FLOAT,         // Type
 	                      false,            // Normalized?
 	                      sizeof(Vertex),   // Stride
 	                      (const void*)(0 + //
 	                                    sizeof(Vector3)));
-	glVertexAttribPointer((u32)AtrribLocation::Color,
+	glVertexAttribPointer((u32)AttribLocation::Color,
 	                      4,
 	                      GL_UNSIGNED_BYTE,               // 0-255 => 0-1
 	                      true,                           // Normalized?
@@ -116,7 +116,7 @@ void drawMesh(const Mesh& mesh)
 	                      (const void*)(0 +               //
 	                                    sizeof(Vector3) + //
 	                                    sizeof(Vector2)));
-	glVertexAttribPointer((u32)AtrribLocation::Normal,
+	glVertexAttribPointer((u32)AttribLocation::Normal,
 	                      3,
 	                      GL_FLOAT,                       // Type
 	                      false,                          // Normalized?
@@ -126,7 +126,6 @@ void drawMesh(const Mesh& mesh)
 	                                    sizeof(Vector2) + //
 	                                    sizeof(Color)));
 
-	glDrawElements(
-	    (GLenum)mesh.drawType, mesh.drawCount, GL_UNSIGNED_INT, nullptr);
+	glDrawElements((s32)mesh.drawType, mesh.drawCount, GL_UNSIGNED_INT, nullptr);
 }
 } // namespace Dunjun

@@ -20,14 +20,14 @@ usize capacity(const Array<T>& a);
 template <typename T>
 usize append(Array<T>& a, const T& item);
 
-// Removes the last element from the array
-template <typename T>
-void popBack(Array<T>& a);
-
 // Appends items to the array and returns the number of items in the array after
 // the array
 template <typename T>
 usize append(Array<T>& a, const T* items, usize count);
+
+// Removes the last element from the array
+template <typename T>
+void popBack(Array<T>& a);
 
 // Iterators
 template <typename T>

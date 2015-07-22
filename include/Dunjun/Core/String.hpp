@@ -16,10 +16,9 @@ struct String
 	String(char c, Allocator& a = defaultAllocator());
 	String(const char* s, Allocator& a = defaultAllocator());
 	String(const char* s, usize length, Allocator& a = defaultAllocator());
-
 	String(const String& s);
-	String& operator=(const String& s);
 
+	String& operator=(const String& s);
 	String& operator=(const char c);
 	String& operator=(const char* str);
 

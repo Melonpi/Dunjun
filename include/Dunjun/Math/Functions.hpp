@@ -8,7 +8,6 @@
 #include <Dunjun/Math/Types.hpp>
 #include <Dunjun/Math/Angle.hpp>
 
-#include <algorithm>
 #include <cassert>
 
 namespace Dunjun
@@ -72,16 +71,29 @@ s64 abs(s64 x);
 Radian abs(const Radian& x);
 Degree abs(const Degree& x);
 
+
+template <typename T>
+inline const T& min(const T& a, const T& b)
+{
+	return (b < a) ? b : a;
+}
+
+template <typename T>
+inline const T& max(const T& a, const T& b)
+{
+	return (a < b) ? b : a;
+}
+
 template <typename T>
 T clamp(const T& x, const T& lower, const T& upper)
 {
-	return std::max(lower, std::min(x, upper));
+	return Math::max(lower, Math::min(x, upper));
 }
 
 template <typename T>
 inline T kroneckerDelta(const T& i, const T& j)
 {
-	return i == j ? T{1} : T{0};
+	return i == j ? T(1) : T(0);
 }
 
 ////////////////////////////////
@@ -152,18 +164,12 @@ Matrix4 ortho(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar);
 Matrix4 perspective(const Radian& fovy, f32 aspect, f32 zNear, f32 zFar);
 Matrix4 infinitePerspective(const Radian& fovy, f32 aspect, f32 zNear);
 
-template <typename T>
-T lookAt(const Vector3& eye, const Vector3& center, const Vector3& up);
-
-template <>
-Matrix4 lookAt<Matrix4>(const Vector3& eye,
-                        const Vector3& center,
-                        const Vector3& up);
-
-template <>
-Quaternion lookAt<Quaternion>(const Vector3& eye,
-                              const Vector3& center,
-                              const Vector3& up);
+Matrix4 lookAtMatrix4(const Vector3& eye,
+                      const Vector3& center,
+                      const Vector3& up);
+Quaternion lookAtQuaternion(const Vector3& eye,
+                            const Vector3& center,
+                            const Vector3& up);
 } // namespace Math
 } // namespace Dunjun
 

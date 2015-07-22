@@ -75,8 +75,6 @@ bool hasSuffix(const String& s, const String& suffix)
 	       substring(s, len(s) - len(suffix), len(s)) == suffix;
 }
 
-// `join` concatenates the elements of a to create a single string.
-// The separator string sep is placed between elements in the resulting string.
 String join(const Array<String>& a, const String& sep)
 {
 	const ssize aLen = len(a);
@@ -101,43 +99,26 @@ String join(const Array<String>& a, const String& sep)
 	return out;
 }
 
-INTERNAL Array<String> explode(const String& s, ssize n)
+void split(const String& s, const String& sep, Array<String>& out)
 {
-	Array<String> a{defaultAllocator()};
-	if (n == 0)
-		return a;
-
-	ssize l = len(s);
-
-	if (n <= 0 || n > l)
-		n = l;
-
-	resize(a, n);
-
-	for (ssize i = 0; i < n; i++)
-		a[i] = s[i];
-
-	return a;
-}
-
-// Generic split: splits after each instance of sep, including sepSave bytes
-// of sep in the subarrays.
-INTERNAL Array<String>
-genSplit(const String& s, const String& sep, ssize sepSave, ssize n)
-{
-	Array<String> a{defaultAllocator()};
-
-	if (n == 0)
-		return a;
 	if (sep == "")
-		return explode(s, n);
-	if (n < 0)
-		n = count(s, sep) + 1;
+	{
+		const usize n = len(s);
 
-	char c      = sep[0];
+		resize(out, n);
+
+		for (usize i = 0; i < n; i++)
+			out[i] = s[i];
+
+		return;
+	}
+
+	const usize n = count(s, sep) + 1;
+	const char c  = sep[0];
+
 	usize start = 0;
-	ssize na = 0;
-	reserve(a, n);
+	usize na = 0;
+	reserve(out, n);
 
 	const usize lsep = len(sep);
 	const usize ls   = len(s);
@@ -146,23 +127,16 @@ genSplit(const String& s, const String& sep, ssize sepSave, ssize n)
 	{
 		if (s[i] == c && (lsep == 1 || substring(s, i, i + lsep) == sep))
 		{
-			a[na] = substring(s, start, i + sepSave);
+			out[na] = substring(s, start, i);
 			na++;
 			start = i + lsep;
 			i += lsep - 1;
 		}
 	}
 
-	a[na] = substring(s, start, ls);
+	out[na] = substring(s, start, ls);
 
-	resize(a, na + 1);
-
-	return a;
-}
-
-Array<String> split(const String& s, const String& sep)
-{
-	return genSplit(s, sep, 0, -1);
+	resize(out, na + 1);
 }
 
 String toLower(const String& s)
@@ -171,15 +145,45 @@ String toLower(const String& s)
 
 	const usize ls = len(s);
 	for (usize i = 0; i < ls; i++)
-		out[i] = (char)tolower(s[i]);
+		out[i] = toLower(s[i]);
 
 	return out;
 }
 
+char toLower(const char c)
+{
+	if (c >= 'A' && c <= 'Z')
+		return c + 'a' - 'A';
+	return c;
+}
+
 String toTitle(const String& s)
 {
-	// TODO(bill):
-	return s;
+
+	const usize ls = len(s);
+	if (ls == 0)
+		return s;
+
+	String out = s;
+
+	usize i = 0;
+	while (isSpace(out[i]))
+		i++;
+
+	out[i] = toUpper(out[i]);
+	i++;
+
+	// TODO(bill): Only upper the first of words that are a certain length (3-4)
+	// TODO(bill): Always captialize the first and last words
+	for (; i < ls; i++)
+	{
+		// NOTE(bill): If the previous character is a space, then capitalize the
+		// current one
+		if (isSpace(out[i-1]))
+			out[i] = toUpper(out[i]);
+	}
+
+	return out;
 }
 
 String toUpper(const String& s)
@@ -188,9 +192,43 @@ String toUpper(const String& s)
 
 	const usize ls = len(s);
 	for (usize i = 0; i < ls; i++)
-		out[i] = (char)toupper(s[i]);
+		out[i] = toUpper(s[i]);
 
 	return out;
+}
+
+char toUpper(const char c)
+{
+	if (c >= 'a' && c <= 'z')
+		return c + 'A' - 'a';
+
+	return c;
+}
+
+bool isSpace(const char c)
+{
+	const char* whiteSpace = " \t\n\v\f\r";
+	for (usize i = 0; i < 6; i++)
+	{
+		if (c == whiteSpace[i])
+			return true;
+	}	
+	return false;
+}
+
+bool isAlpha(const char c)
+{
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
+
+bool isDigit(const char c)
+{
+	return (c >= '0' && c <= '9');
+}
+
+bool isAlphaNumeric(const char c)
+{
+	return isAlpha(c) || isDigit(c);
 }
 
 String trimLeft(const String& s, const String& cutset)

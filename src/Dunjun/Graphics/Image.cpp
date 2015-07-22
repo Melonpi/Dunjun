@@ -45,7 +45,7 @@ Image loadImageFromMemory(u32 w, u32 h, ImageFormat f, const u8* p)
 	img.height = h;
 	img.format = f;
 
-	u32 imageSize = img.width * img.height * (u32)img.format;
+	const u32 imageSize = img.width * img.height * (u32)img.format;
 
 	Allocator& a = defaultAllocator();
 

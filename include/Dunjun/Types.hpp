@@ -5,9 +5,11 @@
 
 // clang-format off
 
+#include <type_traits>
+#include <memory>
+
 #include <cstddef>
 #include <cstring>
-#include <memory>
 
 #define GLOBAL        static // global variables
 #define INTERNAL      static // internal linkage
@@ -69,8 +71,13 @@ using u32 = unsigned int;
 	#error Unknown bit size
 #endif
 
+static_assert(sizeof(usize) == sizeof(size_t),
+              "`usize` is not the same size as `size_t`");
+static_assert(sizeof(ssize) == sizeof(usize),
+              "`ssize` is not the same size as `usize`");
+
 using uintptr = uintptr_t;
-using intptr = intptr_t;
+using intptr  = intptr_t;
 
 
 // NOTE(bill): Prefer `bool` as it indicates it is an boolean type
@@ -87,7 +94,7 @@ inline s16 f32Tof16(f32 f)
 {
 	s16 fint16;
 	s32 fint32;
-	std::memcpy(&fint32, &f, sizeof(f32));
+	memcpy(&fint32, &f, sizeof(f32));
 	fint16 = ((fint32 & 0x7fffffff) >> 13) - (0x38000000 >> 13);
 	fint16 |= ((fint32 & 0x80000000) >> 16);
 
@@ -100,7 +107,7 @@ inline f32 f16Tof32(s16 fint16)
 	fint32 |= ((fint16 & 0x7fff) << 13) + 0x38000000;
 
 	f32 fRet;
-	std::memcpy(&fRet, &fint32, sizeof(f32));
+	memcpy(&fRet, &fint32, sizeof(f32));
 	return fRet;
 }
 

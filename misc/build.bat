@@ -22,7 +22,7 @@ set includes= ^
 :: Compiler Settings
 :: Debug   = -Od
 :: Release = -O2
-set compilerFlags= -Od -MT -nologo -fp:fast -fp:except- -MP -Gm- -GF- -GR- -Zi -Zo -Oi -WX -W4 -MP -TP -EHsc- -FC
+set compilerFlags= -Od -MT -nologo -fp:fast -fp:except- -Gm- -GF- -GR- -Zi -Zo -Oi -WX -W4 -MP -TP -EHsc- -FC
 set compilerDefines= -DGLEW_STATIC -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE
 set compilerWarnings= -wd4100 -wd4127 -wd4189 -wd4201 -wd4244 -wd4245 -wd4351 -wd4505 -wd4702 -wd4996
 

@@ -81,14 +81,14 @@ ShaderProgram::~ShaderProgram()
 }
 
 b32 ShaderProgram::attachShaderFromFile(ShaderType type,
-                                         const String& filename)
+                                        const String& filename)
 {
 	const String source = shaderSourceFromFile(filename);
 	return attachShaderFromMemory(type, source);
 }
 
 b32 ShaderProgram::attachShaderFromMemory(ShaderType type,
-                                           const String& shaderSource)
+                                          const String& shaderSource)
 {
 	if (!handle)
 		handle = glCreateProgram();

@@ -9,8 +9,7 @@
 
 namespace Dunjun
 {
-class SceneRenderer;
-enum class AtrribLocation : u32
+enum class AttribLocation : u32
 {
 	Position = 0,
 	TexCoord = 1,

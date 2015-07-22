@@ -26,7 +26,9 @@ bool showSimpleMessageBox(MessageBoxType type,
 		break;
 	}
 
-	return SDL_ShowSimpleMessageBox(
-	           flag, cString(title), cString(message), nullptr) == 0;
+	return SDL_ShowSimpleMessageBox(flag,
+	                                cString(title),
+	                                cString(message),
+	                                nullptr) == 0;
 }
 } // namespace Dunjun

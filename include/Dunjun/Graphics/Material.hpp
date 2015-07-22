@@ -6,12 +6,8 @@
 
 namespace Dunjun
 {
-enum class MaterialType : u32
-{
-	Default,
-};
 // TODO(bill): Make PBR style Material
-// TODO(bill): Make POD
+// TODO(bill): Make POD-er
 struct Material
 {
 	/*
@@ -38,7 +34,12 @@ struct Material
 	    - map
 	    - color
 	 */
-	MaterialType type = MaterialType::Default;
+	enum Type : u32
+	{
+		Default,
+	};
+
+	Type type = Material::Default;
 
 	Texture* diffuseMap = nullptr;
 	Color diffuseColor  = Color::White;
