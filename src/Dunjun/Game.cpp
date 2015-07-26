@@ -11,10 +11,13 @@
 #include <Dunjun/Core/HashMap.hpp>
 #include <Dunjun/Core/Murmur.hpp>
 #include <Dunjun/Core/TempAllocator.hpp>
+#include <Dunjun/Core/StringFunctions.hpp>
 
 #include <Dunjun/World.hpp>
 #include <Dunjun/SceneGraph.hpp>
 #include <Dunjun/RenderSystem.hpp>
+
+#include <fstream>
 
 #include <cassert>
 #include <cstdlib>
@@ -48,6 +51,164 @@ GLOBAL Material g_woodMaterial;
 
 namespace Game
 {
+enum ConfigType
+{
+	ConfigType_Unknown,
+
+	ConfigType_Uint,
+	ConfigType_Int,
+	ConfigType_Float,
+	ConfigType_Bool,
+	ConfigType_String,
+};
+
+struct ConfigFile
+{
+	struct Variable
+	{
+		u32 id;
+		ConfigType type;
+	};
+
+	Array<u32> uints;
+	Array<s32> ints;
+	Array<f32> floats;
+	Array<b8>  bools;
+
+	u32 stringCount;
+	String strings[1024];
+
+	HashMap<Variable> map;
+
+	ConfigFile();
+	~ConfigFile() = default;
+};
+
+ConfigFile::ConfigFile()
+: uints{defaultAllocator()}
+, ints{defaultAllocator()}
+, floats{defaultAllocator()}
+, bools{defaultAllocator()}
+, stringCount{0}
+, strings{}
+, map{defaultAllocator()}
+{
+}
+
+bool addUintToConfigFile(ConfigFile& configFile, const String& name, const String& value)
+{
+	u32 u = 1337;
+
+	ConfigFile::Variable v = {};
+	v.type = ConfigType_Uint;
+	v.id = 0;
+
+
+	if (len(configFile.uints) > 0)
+		v.id = len(configFile.uints) - 1;
+
+	// TODO(bill): Check if variable of the same name exists already
+	// as it type may be different
+	set(configFile.map, stringHash(name), v);
+
+	append(configFile.uints, u);
+
+	return true;
+}
+
+bool addIntToConfigFile(ConfigFile& configFile, const String& name, const String& value)
+{
+
+	return true;
+}
+
+bool addFloatToConfigFile(ConfigFile& configFile, const String& name, const String& value)
+{
+
+	return true;
+}
+
+bool addBoolToConfigFile(ConfigFile& configFile, const String& name, const String& value)
+{
+
+	return true;
+}
+
+bool addStringToConfigFile(ConfigFile& configFile, const String& name, const String& value)
+{
+
+	return true;
+}
+
+INTERNAL void configTest()
+{
+	std::ifstream file;
+	file.open("data/settings.fred", std::ios::in | std::ios::binary);
+	if (!file.is_open())
+		panic("Cannot read settings file");
+	defer(file.close());
+
+	ConfigFile configFile{};
+
+	usize lineNum = 0;
+	String line;
+	while (file.good())
+	{
+		defer(lineNum++);
+
+		getline(file, line);
+		line = Strings::trimSpace(line);
+
+		if (len(line) == 0)
+			continue;
+		if (line[0] == '#')
+			continue;
+
+		ssize declarationPos = -1;
+		ssize initializePos  = -1;
+
+		const usize lineLen = len(line);
+		for (usize i = 0; i < lineLen; i++)
+		{
+			if (line[i] == ':' && declarationPos == -1)
+				declarationPos = i;
+			else if (line[i] == '=' && initializePos == -1)
+				initializePos = i;
+		}
+
+		if (declarationPos == -1 || initializePos == -1)
+		{
+			std::cerr << "Error parsing line " << lineNum << "\n";
+			continue;
+		}
+
+		String name  = substring(line, 0, declarationPos);
+		String type  = substring(line, declarationPos+1, initializePos);
+		String value = substring(line, initializePos+1, len(line));
+
+
+		name = Strings::trimSpace(name);
+		type = Strings::toLower(Strings::trimSpace(type));
+		value = Strings::trimSpace(value);
+
+		if (type == "uint")
+			addUintToConfigFile(configFile, name, value);
+		else if (type == "int")
+			addIntToConfigFile(configFile, name, value);
+		else if (type == "float")
+			addFloatToConfigFile(configFile, name, value);
+		else if (type == "bool")
+			addBoolToConfigFile(configFile, name, value);
+		else if (type == "string")
+			addStringToConfigFile(configFile, name, value);
+		else
+		{
+			std::cerr << "Unknown type: " << type << "\n";
+			continue;
+		}
+	}
+}
+
 INTERNAL void loadShaders()
 {
 	g_shaderHolder.insertFromFile("texPass",                     //
@@ -333,6 +494,9 @@ INTERNAL void initWorld()
 void init(int /*argCount*/, char** /*args*/)
 {
 	Memory::init();
+
+	configTest();
+	exit(0);
 
 	u32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK |
 	               SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC;
