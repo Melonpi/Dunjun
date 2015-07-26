@@ -21,12 +21,14 @@
 #include "Dunjun/Math/Vector3.cpp"
 #include "Dunjun/Math/Vector4.cpp"
 
+#include "Dunjun/Core/ConfigFile.cpp"
 #include "Dunjun/Core/Filesystem.cpp"
 #include "Dunjun/Core/Memory.cpp"
 #include "Dunjun/Core/Murmur.cpp"
 #include "Dunjun/Core/OpenGL.cpp"
 #include "Dunjun/Core/String.cpp"
 #include "Dunjun/Core/StringFunctions.cpp"
+#include "Dunjun/Core/Strconv.cpp"
 #include "Dunjun/Core/Time.cpp"
 
 #include "Dunjun/Window/Input.cpp"

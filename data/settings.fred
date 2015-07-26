@@ -9,9 +9,9 @@
 windowWidth:  uint = 854
 windowHeight: uint = 480
 
-fullscreen: bool = false
+fullscreen: bool = false # Comment
 
 var1: int    = -1337
 var2: float  = 1.0234
-var3: string = "Fred Config File"
+var3: string = "Fred Config # Not a comment File" # comment
 
