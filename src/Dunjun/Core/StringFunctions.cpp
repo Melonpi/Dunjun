@@ -212,7 +212,7 @@ bool isSpace(const char c)
 	{
 		if (c == whiteSpace[i])
 			return true;
-	}	
+	}
 	return false;
 }
 

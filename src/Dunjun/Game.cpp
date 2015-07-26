@@ -66,7 +66,7 @@ struct ConfigFile
 {
 	struct Variable
 	{
-		u32 id;
+		u32 index;
 		ConfigType type;
 	};
 
@@ -75,7 +75,7 @@ struct ConfigFile
 	Array<f32> floats;
 	Array<b8>  bools;
 
-	u32 stringCount;
+	u32 stringsLength;
 	String strings[1024];
 
 	HashMap<Variable> map;
@@ -89,53 +89,148 @@ ConfigFile::ConfigFile()
 , ints{defaultAllocator()}
 , floats{defaultAllocator()}
 , bools{defaultAllocator()}
-, stringCount{0}
+, stringsLength{0}
 , strings{}
 , map{defaultAllocator()}
 {
 }
 
+ConfigFile::Variable getConfigFileVariable(const ConfigFile& cf, const String& name)
+{
+	ConfigFile::Variable d = {0, ConfigType_Unknown};
+	ConfigFile::Variable v = get(cf.map, stringHash(name), d);
+	return v;
+}
+
 bool addUintToConfigFile(ConfigFile& configFile, const String& name, const String& value)
 {
-	u32 u = 1337;
+	usize i = 0;
+	if (value[0] == '+')
+		i = 1;
+	for (; i < len(value); i++)
+	{
+		if (!Strings::isDigit(value[i]))
+			return false;
+	}
+
+	// TODO(bill): Better string conversion functions
+	u32 a = atoi(cString(value));
 
 	ConfigFile::Variable v = {};
 	v.type = ConfigType_Uint;
-	v.id = 0;
-
+	v.index = 0;
 
 	if (len(configFile.uints) > 0)
-		v.id = len(configFile.uints) - 1;
+		v.index = len(configFile.uints) - 1;
 
-	// TODO(bill): Check if variable of the same name exists already
-	// as it type may be different
+	if (has(configFile.map, stringHash(name)))
+		return false;
+
 	set(configFile.map, stringHash(name), v);
 
-	append(configFile.uints, u);
+	append(configFile.uints, a);
 
 	return true;
 }
 
 bool addIntToConfigFile(ConfigFile& configFile, const String& name, const String& value)
 {
+	usize i = 0;
+	if (value[0] == '+' || value[0] == '-')
+		i = 1;
+	for (; i < len(value); i++)
+	{
+		if (!Strings::isDigit(value[i]))
+			return false;
+	}
+
+	// TODO(bill): Better string conversion functions
+	s32 a = atoi(cString(value));
+
+	ConfigFile::Variable v = {};
+	v.type = ConfigType_Int;
+	v.index = 0;
+
+	if (len(configFile.ints) > 0)
+		v.index = len(configFile.ints) - 1;
+
+	if (has(configFile.map, stringHash(name)))
+		return false;
+
+	set(configFile.map, stringHash(name), v);
+
+	append(configFile.ints, a);
 
 	return true;
 }
 
 bool addFloatToConfigFile(ConfigFile& configFile, const String& name, const String& value)
 {
+	f32 f;
+
+	if (sscanf(cString(value), "%f", &f) != 1)
+		return false;
+
+	ConfigFile::Variable v = {};
+	v.type = ConfigType_Float;
+	v.index = 0;
+
+	if (len(configFile.floats) > 0)
+		v.index = len(configFile.floats) - 1;
+
+	if (has(configFile.map, stringHash(name)))
+		return false;
+
+	set(configFile.map, stringHash(name), v);
+
+	append(configFile.floats, f);
 
 	return true;
 }
 
 bool addBoolToConfigFile(ConfigFile& configFile, const String& name, const String& value)
 {
+	b8 a;
+	if (value == "false" || value == "FALSE" || value == "0")
+		a = false;
+	else if (value == "true" || value == "TRUE" || value == "1")
+		a = true;
+	else
+		return false;
+
+	ConfigFile::Variable v = {};
+	v.type = ConfigType_Bool;
+	v.index = 0;
+
+	if (len(configFile.bools) > 0)
+		v.index = len(configFile.bools) - 1;
+
+	if (has(configFile.map, stringHash(name)))
+		return false;
+
+	set(configFile.map, stringHash(name), v);
+
+	append(configFile.bools, a);
 
 	return true;
 }
 
 bool addStringToConfigFile(ConfigFile& configFile, const String& name, const String& value)
 {
+	if (value[0] != '\"' && value[len(value)-2] != '\"')
+		return false;
+
+	ConfigFile::Variable v = {};
+	v.type = ConfigType_String;
+	v.index = configFile.stringsLength++;
+
+	if (has(configFile.map, stringHash(name)))
+		return false;
+
+	set(configFile.map, stringHash(name), v);
+
+	// NOTE(bill): Ignore `"` and `"` at the ends
+	configFile.strings[v.index] = substring(value, 1, len(value)-1);
 
 	return true;
 }
@@ -191,7 +286,11 @@ INTERNAL void configTest()
 		type = Strings::toLower(Strings::trimSpace(type));
 		value = Strings::trimSpace(value);
 
-		if (type == "uint")
+		// TODO(bill): handle errors
+
+		if (type == "string")
+			addStringToConfigFile(configFile, name, value);
+		else if (type == "uint")
 			addUintToConfigFile(configFile, name, value);
 		else if (type == "int")
 			addIntToConfigFile(configFile, name, value);
@@ -199,14 +298,22 @@ INTERNAL void configTest()
 			addFloatToConfigFile(configFile, name, value);
 		else if (type == "bool")
 			addBoolToConfigFile(configFile, name, value);
-		else if (type == "string")
-			addStringToConfigFile(configFile, name, value);
 		else
 		{
 			std::cerr << "Unknown type: " << type << "\n";
 			continue;
 		}
 	}
+
+	{
+		auto v = getConfigFileVariable(configFile, "var3");
+		if (v.type == ConfigType_String)
+		{
+			std::cout << configFile.strings[v.index] << "\n";
+		}
+	}
+
+
 }
 
 INTERNAL void loadShaders()

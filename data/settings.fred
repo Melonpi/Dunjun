@@ -14,3 +14,4 @@ fullscreen: bool = false
 var1: int    = -1337
 var2: float  = 1.0234
 var3: string = "Fred Config File"
+
