@@ -16,7 +16,7 @@ class Allocator
 {
 public:
 	// Default memory alignment in bytes
-	GLOBAL const usize DefaultAlign   = 4; // Same as sizeof(u32)
+	GLOBAL const usize DefaultAlign   = sizeof(usize);
 	GLOBAL const usize SizeNotTracked = (usize)(-1);
 
 	Allocator() {}

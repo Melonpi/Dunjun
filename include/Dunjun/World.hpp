@@ -20,11 +20,12 @@ class World
 {
 public:
 	EntitySystem entitySystem;
-	SceneGraph sceneGraph;
-	Camera camera;
-	RenderSystem renderSystem;
 
 	String names[EntitySystem::MaxEntities];
+	SceneGraph sceneGraph;
+	RenderSystem renderSystem;
+
+	Camera camera;
 
 	EntityId player;
 

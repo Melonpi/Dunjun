@@ -3,8 +3,6 @@
 
 #include <Dunjun/Core/String.hpp>
 
-#include <functional>
-
 namespace Dunjun
 {
 namespace Strings

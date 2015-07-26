@@ -9,7 +9,7 @@ namespace Dunjun
 {
 namespace Input
 {
-GLOBAL const usize MaximumControllers{4};
+GLOBAL const u32 MaximumControllers = 4;
 
 GLOBAL SDL_GameController* g_controllerHandles[MaximumControllers] = {};
 GLOBAL SDL_Haptic* g_rumbleHandles[MaximumControllers]             = {};
@@ -33,7 +33,7 @@ void init()
 
 void shutdown()
 {
-	for (usize i = 0; i < MaximumControllers; i++)
+	for (u32 i = 0; i < MaximumControllers; i++)
 	{
 		if (isControllerPresent(i))
 			setControllerVibration(i, 0);

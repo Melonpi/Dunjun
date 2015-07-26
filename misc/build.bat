@@ -4,6 +4,9 @@
 :: Build File for Dunjun ::
 :::::::::::::::::::::::::::
 
+:: hh:mm:ss,cc
+set startTime=%TIME%
+
 ::
 :: Settings
 ::
@@ -22,7 +25,7 @@ set includes= ^
 :: Compiler Settings
 :: Debug   = -Od
 :: Release = -O2
-set compilerFlags= -Od -MT -nologo -fp:fast -fp:except- -Gm- -GF- -GR- -Zi -Zo -Oi -WX -W4 -MP -TP -EHsc- -FC
+set compilerFlags= -Od -MTd -nologo -fp:fast -fp:except- -Gm- -GF- -GR- -Zi -Zo -Oi -WX -W4 -MP -TP -EHsc- -FC
 set compilerDefines= -DGLEW_STATIC -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE
 set compilerWarnings= -wd4100 -wd4127 -wd4189 -wd4201 -wd4244 -wd4245 -wd4351 -wd4505 -wd4702 -wd4996
 
@@ -40,7 +43,7 @@ set libs= ^
 set linkerFlags= ^
 	-incremental:no -opt:ref -OUT:%outExe% ^
 	-PDB:"Dunjun-%random%.pdb" ^
-	-subsystem:CONSOLE
+	-subsystem:CONSOLE -NODEFAULTLIB:LIBCMT
 
 :: Build Directory
 set buildDir= "W:\Dunjun\bin\"
@@ -76,3 +79,37 @@ call cl "W:\Dunjun\src\UnityBuild.cpp" ^
 
 :: Reset current directory
 popd
+
+
+::
+:: Calculate Duration of Build
+::
+
+set endTime=%TIME%
+
+for /F "tokens=1-4 delims=:.," %%a in ("%startTime%") do (
+	set /A "startT=(((%%a*60)+1%%b %% 100)*60+1%%c %% 100)*100+1%%d %% 100"
+)
+
+for /F "tokens=1-4 delims=:.," %%a in ("%endTime%") do (
+	set /A "endT=(((%%a*60)+1%%b %% 100)*60+1%%c %% 100)*100+1%%d %% 100"
+)
+
+set /A elapsed=endT-startT
+
+set /A hh=elapsed/(60*60*100), rest=elapsed%%(60*60*100), mm=rest/(60*100), rest%%=60*100, ss=rest/100, cc=rest%%100
+
+:: Add leading zero
+if %hh% lss 10 set hh=0%hh%
+if %mm% lss 10 set mm=0%mm%
+if %ss% lss 10 set ss=0%ss%
+if %cc% lss 10 set cc=0%cc%
+
+:: Default Formatting
+set duration=%ss%.%cc% s
+
+if %mm% NEQ 00 set duration=%mm%:%ss%.%cc%
+if %hh% NEQ 00 set duration=%hh%:%mm%:%ss%.%cc%
+
+echo.
+echo Elapsed: %duration%

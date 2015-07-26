@@ -5,12 +5,6 @@
 #include <Dunjun/Window.hpp>
 #include <Dunjun/ResourceHolders.hpp>
 
-#include <cassert>
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-
 #include <Dunjun/Core/ContainerTypes.hpp>
 #include <Dunjun/Core/Array.hpp>
 #include <Dunjun/Core/Queue.hpp>
@@ -22,6 +16,9 @@
 #include <Dunjun/SceneGraph.hpp>
 #include <Dunjun/RenderSystem.hpp>
 
+#include <cassert>
+#include <cstdlib>
+
 namespace Dunjun
 {
 namespace
@@ -30,7 +27,6 @@ GLOBAL const Time TimeStep  = seconds(1.0f / 60.0f);
 GLOBAL const u32 FrameLimit = 288;
 
 GLOBAL bool g_running = true;
-} // namespace (anonymous)
 
 GLOBAL Window g_window;
 
@@ -48,6 +44,7 @@ GLOBAL Material g_kittenMaterial;
 GLOBAL Material g_terrainMaterial;
 GLOBAL Material g_stoneMaterial;
 GLOBAL Material g_woodMaterial;
+} // namespace (anonymous)
 
 namespace Game
 {
@@ -413,7 +410,7 @@ void run()
 
 void shutdown()
 {
-	// NOTE(bill): These is no real need to call this as the OS should do this
+	// NOTE(bill): There is no real need to call this as the OS should do this
 	defaultAllocator().makeDelete(g_world);
 	Input::shutdown();
 	g_window.close();
