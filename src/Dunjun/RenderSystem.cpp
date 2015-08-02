@@ -154,7 +154,11 @@ void RenderSystem::geometryPass()
 				shaders.setUniform("u_material.diffuseColor",
 				                   material.diffuseColor);
 				shaders.setUniform("u_material.diffuseMap", (s32)0);
+				shaders.setUniform("u_material.normalMap", (s32)1);
+				assert(material.diffuseMap);
 				setTexture(material.diffuseMap, 0);
+				assert(material.normalMap);
+				setTexture(material.normalMap, 1);
 
 				// TODO(bill): improve performance - set at render time
 				auto node = sceneGraph.getNodeId(entityId);

@@ -41,13 +41,17 @@ GLOBAL Texture g_kittenTexture;
 GLOBAL Texture g_stoneTexture;
 GLOBAL Texture g_woodTexture;
 GLOBAL Texture g_terrainTexture;
+GLOBAL Texture g_brickTexture;
+
+GLOBAL Texture g_defaultNormalTexture;
+GLOBAL Texture g_brickNormalTexture;
 
 GLOBAL Material g_kittenMaterial;
 GLOBAL Material g_terrainMaterial;
 GLOBAL Material g_stoneMaterial;
 GLOBAL Material g_woodMaterial;
+GLOBAL Material g_brickMaterial;
 } // namespace (anonymous)
-
 
 INTERNAL void glInit()
 {
@@ -56,7 +60,6 @@ INTERNAL void glInit()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 }
-
 
 INTERNAL void loadShaders()
 {
@@ -94,17 +97,31 @@ INTERNAL void loadMaterials()
 	g_terrainTexture = loadTextureFromFile("data/textures/terrain.png",
 	                                       TextureFilter::Nearest);
 
+	g_brickTexture = loadTextureFromFile("data/textures/bricks.jpg");
+	g_brickNormalTexture =
+	    loadTextureFromFile("data/textures/bricks_normal.png");
+	g_defaultNormalTexture =
+	    loadTextureFromFile("data/textures/default_normal.jpg");
+
 	g_kittenMaterial            = Material{};
 	g_kittenMaterial.diffuseMap = &g_kittenTexture;
+	g_kittenMaterial.normalMap  = &g_defaultNormalTexture;
 
 	g_terrainMaterial            = Material{};
 	g_terrainMaterial.diffuseMap = &g_terrainTexture;
+	g_terrainMaterial.normalMap  = &g_defaultNormalTexture;
 
 	g_stoneMaterial            = Material{};
 	g_stoneMaterial.diffuseMap = &g_stoneTexture;
+	g_stoneMaterial.normalMap  = &g_defaultNormalTexture;
 
 	g_woodMaterial            = Material{};
 	g_woodMaterial.diffuseMap = &g_woodTexture;
+	g_woodMaterial.normalMap  = &g_defaultNormalTexture;
+
+	g_brickMaterial = Material{};
+	g_brickMaterial.diffuseMap = &g_brickTexture;
+	g_brickMaterial.normalMap = &g_brickNormalTexture;
 }
 
 INTERNAL void loadSpriteAsset()
@@ -132,9 +149,9 @@ INTERNAL void loadSpriteAsset()
 
 		reserve(meshData.vertices, 4);
 		append(meshData.vertices, Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}});
-		append(meshData.vertices, Vertex{{+0.5f, -0.5f, 0.0f}, {8.0f, 0.0f}});
-		append(meshData.vertices, Vertex{{+0.5f, +0.5f, 0.0f}, {8.0f, 8.0f}});
-		append(meshData.vertices, Vertex{{-0.5f, +0.5f, 0.0f}, {0.0f, 8.0f}});
+		append(meshData.vertices, Vertex{{+0.5f, -0.5f, 0.0f}, {2.0f, 0.0f}});
+		append(meshData.vertices, Vertex{{+0.5f, +0.5f, 0.0f}, {2.0f, 2.0f}});
+		append(meshData.vertices, Vertex{{-0.5f, +0.5f, 0.0f}, {0.0f, 2.0f}});
 
 		reserve(meshData.indices, 6);
 		meshData.addFace(0, 1, 2).addFace(2, 3, 0);
@@ -189,6 +206,17 @@ INTERNAL void update(Time dt)
 		pos.z  = a * Math::sin(Radian{wt});
 
 		sg.setLocalPosition(node, pos);
+	}
+
+	{
+		Camera& c = g_world->camera;
+		f32 wt = 0.25f * Time::now().asSeconds();
+		f32 a  = 1.0f;
+		c.transform.position.x = a * Math::sin(Radian{wt});
+		c.transform.position.z = a * Math::cos(Radian{wt});
+		c.transform.position.y = 0.1f;
+
+		cameraLookAt(c, {0, 0, 0});
 	}
 }
 
@@ -306,7 +334,7 @@ INTERNAL void initWorld()
 	{
 		rs.addComponent(crate, {g_meshHolder.get("sprite"), g_kittenMaterial});
 		rs.addComponent(player, {g_meshHolder.get("sprite"), g_kittenMaterial});
-		rs.addComponent(surface, {g_meshHolder.get("wall"), g_woodMaterial});
+		rs.addComponent(surface, {g_meshHolder.get("wall"), g_brickMaterial});
 		rs.addComponent(wall0, {g_meshHolder.get("wall"), g_stoneMaterial});
 		rs.addComponent(wall1, {g_meshHolder.get("wall"), g_stoneMaterial});
 		rs.addComponent(wall2, {g_meshHolder.get("wall"), g_stoneMaterial});
@@ -318,7 +346,7 @@ INTERNAL void initWorld()
 		// append(rs.directionalLights, dlight);
 
 		auto r = Random{1337};
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			PointLight pl;
 			pl.position.x = r.getFloat(-4, 4);
@@ -368,9 +396,9 @@ INTERNAL void init(int /*argCount*/, char** /*args*/)
 	auto cf = loadConfigFileFromFile("data/settings.fred");
 
 	{
-		VideoMode vm = {};
-		vm.width = getUintFromConfigFile(cf, "Window.width", 854);
-		vm.height = getUintFromConfigFile(cf, "Window.height", 480);
+		VideoMode vm    = {};
+		vm.width        = getUintFromConfigFile(cf, "Window.width", 854);
+		vm.height       = getUintFromConfigFile(cf, "Window.height", 480);
 		vm.bitsPerPixel = getUintFromConfigFile(cf, "Window.bitsPerPixel", 24);
 		printf("%u x %u x %u\n", vm.width, vm.height, vm.bitsPerPixel);
 
@@ -449,7 +477,6 @@ int main(int argCount, char** args)
 
 		g_window.display();
 	}
-
 
 	return 0;
 }

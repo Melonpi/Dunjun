@@ -41,8 +41,11 @@ struct Material
 
 	Type type = Material::Default;
 
+	// TODO(bill): remove pointers and use IDs
 	Texture* diffuseMap = nullptr;
 	Color diffuseColor  = Color::White;
+
+	Texture* normalMap = nullptr;
 
 	Color specularColor  = Color::White;
 	f32 specularExponent = 80.0f;

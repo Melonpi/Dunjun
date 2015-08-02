@@ -39,18 +39,31 @@ void MeshData::generateNormals()
 		Vertex& v1 = vertices[indices[i + 1]];
 		Vertex& v2 = vertices[indices[i + 2]];
 
-		const Vector3 a = v1.position - v0.position;
-		const Vector3 b = v2.position - v1.position;
+		const Vector3 pos0 = v1.position - v0.position;
+		const Vector3 pos1 = v2.position - v1.position;
 
-		const Vector3 normal = normalize(cross(a, b));
+		const Vector2 st0 = v1.texCoord - v0.texCoord;
+		const Vector2 st1 = v2.texCoord - v1.texCoord;
+
+		const Vector3 normal = normalize(cross(pos0, pos1));
+
+		const f32 c = 1.0f / (st0.x * st1.y - st0.y * st1.x);
+		const Vector3 tangent = normalize((pos0 * st1.y - pos1 * st1.y) * c);
 
 		v0.normal += normal;
+		v0.tangent += tangent;
 		v1.normal += normal;
+		v1.tangent += tangent;
 		v2.normal += normal;
+		v2.tangent += tangent;
 	}
+
 	usize lv = len(vertices);
 	for (usize i = 0; i < lv; i++)
+	{
 		vertices[i].normal = normalize(vertices[i].normal);
+		vertices[i].tangent = normalize(vertices[i].tangent);
+	}
 }
 
 Mesh generateMesh(const MeshData& data)
@@ -85,10 +98,12 @@ void drawMesh(const Mesh& mesh)
 	glEnableVertexAttribArray((u32)AttribLocation::TexCoord);
 	glEnableVertexAttribArray((u32)AttribLocation::Color);
 	glEnableVertexAttribArray((u32)AttribLocation::Normal);
+	glEnableVertexAttribArray((u32)AttribLocation::Tangent);
 	defer(glDisableVertexAttribArray((u32)AttribLocation::Position));
 	defer(glDisableVertexAttribArray((u32)AttribLocation::TexCoord));
 	defer(glDisableVertexAttribArray((u32)AttribLocation::Color));
 	defer(glDisableVertexAttribArray((u32)AttribLocation::Normal));
+	defer(glDisableVertexAttribArray((u32)AttribLocation::Tangent));
 
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
@@ -125,6 +140,16 @@ void drawMesh(const Mesh& mesh)
 	                                    sizeof(Vector3) + //
 	                                    sizeof(Vector2) + //
 	                                    sizeof(Color)));
+	glVertexAttribPointer((u32)AttribLocation::Tangent,
+	                      3,
+	                      GL_FLOAT,                       // Type
+	                      false,                          // Normalized?
+	                      sizeof(Vertex),                 // Stride
+	                      (const void*)(0 +               //
+	                                    sizeof(Vector3) + //
+	                                    sizeof(Vector2) + //
+	                                    sizeof(Color)   + //
+	                                    sizeof(Vector3)));
 
 	glDrawElements((s32)mesh.drawType, mesh.drawCount, GL_UNSIGNED_INT, nullptr);
 }
