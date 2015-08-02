@@ -1,5 +1,4 @@
 #include <Dunjun/Config.hpp>
-#include <Dunjun/Game.hpp>
 
 #include <Dunjun/Core.hpp>
 #include <Dunjun/Window.hpp>
@@ -22,8 +21,8 @@
 #include <cassert>
 #include <cstdlib>
 
-namespace Dunjun
-{
+using namespace Dunjun; // TODO(bill): DO NOT USE THIS IN PRODUCTION
+
 namespace
 {
 GLOBAL const Time TimeStep  = seconds(1.0f / 60.0f);
@@ -49,20 +48,15 @@ GLOBAL Material g_stoneMaterial;
 GLOBAL Material g_woodMaterial;
 } // namespace (anonymous)
 
-namespace Game
-{
-INTERNAL void configTest()
-{
-	auto cf = loadConfigFileFromFile("data/settings.fred");
 
-	{
-		auto v = getConfigFileVariable(cf, "var3");
-		if (v.type == ConfigType_String)
-		{
-			std::cout << cf.strings[v.index] << "\n";
-		}
-	}
+INTERNAL void glInit()
+{
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 }
+
 
 INTERNAL void loadShaders()
 {
@@ -345,12 +339,21 @@ INTERNAL void initWorld()
 	glInit();
 }
 
-void init(int /*argCount*/, char** /*args*/)
+INTERNAL void shutdown()
+{
+	// NOTE(bill): There is no real need to call this as the OS should do this
+	defaultAllocator().makeDelete(g_world);
+	Input::shutdown();
+	g_window.close();
+	SDL_Quit();
+	Memory::shutdown();
+
+	exit(EXIT_SUCCESS);
+}
+
+INTERNAL void init(int /*argCount*/, char** /*args*/)
 {
 	Memory::init();
-
-	configTest();
-	exit(0);
 
 	u32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK |
 	               SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC;
@@ -362,9 +365,21 @@ void init(int /*argCount*/, char** /*args*/)
 		exit(EXIT_FAILURE);
 	}
 
-	g_window.create({854, 480, 24}, "Dunjun");
-	// g_window.setFramerateLimit(FrameLimit);
-	// g_window.setVerticalSyncEnabled(true);
+	auto cf = loadConfigFileFromFile("data/settings.fred");
+
+	{
+		VideoMode vm = {};
+		vm.width = getUintFromConfigFile(cf, "Window.width", 854);
+		vm.height = getUintFromConfigFile(cf, "Window.height", 480);
+		vm.bitsPerPixel = getUintFromConfigFile(cf, "Window.bitsPerPixel", 24);
+		printf("%u x %u x %u\n", vm.width, vm.height, vm.bitsPerPixel);
+
+		String title = getStringFromConfigFile(cf, "Window.title", "Dunjun");
+
+		g_window.create(vm, title);
+		// g_window.setFramerateLimit(FrameLimit);
+		// g_window.setVerticalSyncEnabled(true);
+	}
 
 	glewInit();
 
@@ -383,8 +398,18 @@ void init(int /*argCount*/, char** /*args*/)
 	initWorld();
 }
 
-void run()
+// NOTE(bill): Ignore SDL main
+#undef main
+int main(int argCount, char** args)
 {
+	using namespace Dunjun;
+
+	init(argCount, args);
+
+	// NOTE(bill): Only enable if you need to destroy everything
+	// E.g. check for memory leaks else where in the code
+	// defer(shutdown());
+
 	TickCounter tc;
 
 	Time accumulator;
@@ -424,26 +449,7 @@ void run()
 
 		g_window.display();
 	}
-}
 
-void shutdown()
-{
-	// NOTE(bill): There is no real need to call this as the OS should do this
-	defaultAllocator().makeDelete(g_world);
-	Input::shutdown();
-	g_window.close();
-	SDL_Quit();
-	Memory::shutdown();
 
-	exit(EXIT_SUCCESS);
+	return 0;
 }
-
-void glInit()
-{
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-}
-} // namespace Game
-} // namespace Dunjun

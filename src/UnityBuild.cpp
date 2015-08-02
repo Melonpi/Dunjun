@@ -37,11 +37,10 @@
 
 #include "Dunjun/Common.cpp"
 #include "Dunjun/ResourceHolders.cpp"
-#include "Dunjun/Game.cpp"
 
 #include "Dunjun/Entity.cpp"
 #include "Dunjun/World.cpp"
 #include "Dunjun/SceneGraph.cpp"
 #include "Dunjun/RenderSystem.cpp"
 
-#include "main.cpp"
+#include "Game.cpp"

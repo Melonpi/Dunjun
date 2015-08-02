@@ -16,6 +16,8 @@ enum ConfigType
 	ConfigType_Float,
 	ConfigType_Bool,
 	ConfigType_String,
+
+	// TODO(bill): implement other type
 };
 
 struct ConfigFile
@@ -35,12 +37,15 @@ struct ConfigFile
 	String strings[1024];
 
 	HashMap<Variable> map;
+	// TODO(bill): store variable names with there hash
 
 	ConfigFile();
 	~ConfigFile() = default;
 };
 
 ConfigFile loadConfigFileFromFile(const String& filepath);
+
+// TODO(bill): void saveConfigFileToFile(const ConfigFile& cf, const String& filepath);
 
 ConfigFile::Variable getConfigFileVariable(const ConfigFile& cf,
                                            const String& name);
@@ -63,6 +68,28 @@ bool addBoolToConfigFile(ConfigFile& configFile,
 bool addStringToConfigFile(ConfigFile& configFile,
                            const String& name,
                            const String& value);
+
+
+
+u32 getUintFromConfigFile(const ConfigFile& cf,
+                          const String& name,
+                          const u32& defaultValue);
+
+s32 getIntFromConfigFile(const ConfigFile& cf,
+                         const String& name,
+                         const s32& defaultValue);
+
+f32 getFloatFromConfigFile(const ConfigFile& cf,
+                           const String& name,
+                           const f32& defaultValue);
+
+b8 getBoolFromConfigFile(const ConfigFile& cf,
+                         const String& name,
+                         const b8& defaultValue);
+
+String getStringFromConfigFile(const ConfigFile& cf,
+                               const String& name,
+                               const String& defaultValue);
 
 } // namespace Dunjun
 

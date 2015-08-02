@@ -57,7 +57,7 @@ String& String::operator=(const char* str)
 
 usize len(const String& str) { return len(str.data); }
 
-usize capacity(const String& str) { return capacity(str.data); }
+usize cap(const String& str) { return cap(str.data); }
 
 usize append(String& str, char c) { return append(str.data, c); }
 

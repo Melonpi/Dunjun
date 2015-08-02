@@ -43,7 +43,8 @@ set libs= ^
 set linkerFlags= ^
 	-incremental:no -opt:ref -OUT:%outExe% ^
 	-PDB:"Dunjun-%random%.pdb" ^
-	-subsystem:CONSOLE -NODEFAULTLIB:LIBCMT
+	-subsystem:CONSOLE -NODEFAULTLIB:LIBCMT ^
+	-machine:%platform%
 
 :: Build Directory
 set buildDir= "W:\Dunjun\bin\"

@@ -13,7 +13,7 @@ usize len(const Array<T>& a);
 
 // Maximum number of items the array can hold
 template <typename T>
-usize capacity(const Array<T>& a);
+usize cap(const Array<T>& a);
 
 // Appends an item to the array and returns the number of items in the array
 // after the append
@@ -68,7 +68,7 @@ void resize(Array<T>& a, usize length);
 
 // Sets the capacity of the array
 template <typename T>
-void setCapacity(Array<T>& a, usize capacity);
+void setCap(Array<T>& a, usize capacity);
 
 // Reserves space in the array for at least capacity items
 template <typename T>
@@ -119,7 +119,7 @@ inline usize len(const Array<T>& a)
 }
 
 template <typename T>
-inline usize capacity(const Array<T>& a)
+inline usize cap(const Array<T>& a)
 {
 	return a.capacity;
 }
@@ -185,7 +185,7 @@ inline void clear(Array<T>& a)
 template <typename T>
 inline void shrinkToFit(Array<T>& a)
 {
-	setCapacity(a, a.length);
+	setCap(a, a.length);
 }
 
 template <typename T>
@@ -197,7 +197,7 @@ inline void resize(Array<T>& a, usize length)
 }
 
 template <typename T>
-inline void setCapacity(Array<T>& a, usize capacity)
+inline void setCap(Array<T>& a, usize capacity)
 {
 	if (capacity == a.capacity)
 		return;
@@ -220,7 +220,7 @@ template <typename T>
 inline void reserve(Array<T>& a, usize capacity)
 {
 	if (capacity > a.capacity)
-		setCapacity(a, capacity);
+		setCap(a, capacity);
 }
 
 template <typename T>
@@ -229,7 +229,7 @@ inline void grow(Array<T>& a, usize minCapacity)
 	usize capacity = 2 * a.capacity + 2;
 	if (capacity < minCapacity)
 		capacity = minCapacity;
-	setCapacity(a, capacity);
+	setCap(a, capacity);
 }
 
 ////////////////
@@ -259,7 +259,7 @@ inline Array<T>::Array(const Array& other)
 , data{nullptr}
 {
 	const usize num = other.length;
-	setCapacity(*this, num);
+	setCap(*this, num);
 	memcpy(data, other.data, num * sizeof(T));
 	length = num;
 }

@@ -83,7 +83,7 @@ void clear(Queue<T>& q);
 
 // Sets the capacity of the queue
 template <typename T>
-void setCapacity(Queue<T>& q, usize capacity);
+void setCap(Queue<T>& q, usize capacity);
 
 // Reserves space in the queue for at least capacity items
 template <typename T>
@@ -255,7 +255,7 @@ inline void clear(Queue<T>& q)
 }
 
 template <typename T>
-inline void setCapacity(Queue<T>& q, usize capacity)
+inline void setCap(Queue<T>& q, usize capacity)
 {
 	const usize oldLength = len(q.data);
 
@@ -275,7 +275,7 @@ template <typename T>
 inline void reserve(Queue<T>& q, usize capacity)
 {
 	if (capacity > q.length)
-		setCapacity(q, capacity);
+		setCap(q, capacity);
 }
 
 template <typename T>
@@ -285,7 +285,7 @@ inline void grow(Queue<T>& q, usize minCapacity)
 	if (newCapacity < minCapacity)
 		newCapacity = minCapacity;
 
-	setCapacity(q, newCapacity);
+	setCap(q, newCapacity);
 }
 
 ////////////////

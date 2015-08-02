@@ -31,7 +31,7 @@ struct String
 ////////////////////////////////////////////////////////////////////////////////
 
 usize len(const String& s);
-usize capacity(const String& s);
+usize cap(const String& s);
 
 usize append(String& s, char c);
 usize append(String& s, const char* cStr);

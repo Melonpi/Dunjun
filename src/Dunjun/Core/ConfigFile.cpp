@@ -49,6 +49,7 @@ ConfigFile loadConfigFileFromFile(const String& filepath)
 
 	usize lineNum = 0;
 	String line;
+	String sectionName = "";
 	while (file.good())
 	{
 		defer(lineNum++);
@@ -60,6 +61,12 @@ ConfigFile loadConfigFileFromFile(const String& filepath)
 			continue;
 		if (line[0] == '#')
 			continue;
+
+		if (line[0] == '[') // Section
+		{
+			sectionName = Strings::trim(line, "[]");
+		}
+
 
 		ssize declarationPos = -1;
 		ssize initializePos  = -1;
@@ -84,9 +91,12 @@ ConfigFile loadConfigFileFromFile(const String& filepath)
 		String value = substring(line, initializePos + 1, len(line));
 
 		name  = Strings::trimSpace(name);
-		type  = Strings::toLower(Strings::trimSpace(type));
+		type  = Strings::trimSpace(type);
 		value = removeConfigFileComment(value);
 		value = Strings::trimSpace(value);
+
+		if (sectionName != "")
+			name = sectionName + "." + name; // Append section prefix
 
 		// TODO(bill): handle errors
 
@@ -136,7 +146,7 @@ bool addUintToConfigFile(ConfigFile& configFile,
 	v.index                = 0;
 
 	if (len(configFile.uints) > 0)
-		v.index = len(configFile.uints) - 1;
+		v.index = len(configFile.uints);
 
 	if (has(configFile.map, stringHash(name)))
 	{
@@ -170,7 +180,7 @@ bool addIntToConfigFile(ConfigFile& configFile,
 	v.index                = 0;
 
 	if (len(configFile.ints) > 0)
-		v.index = len(configFile.ints) - 1;
+		v.index = len(configFile.ints);
 
 	if (has(configFile.map, stringHash(name)))
 	{
@@ -204,7 +214,7 @@ bool addFloatToConfigFile(ConfigFile& configFile,
 	v.index                = 0;
 
 	if (len(configFile.floats) > 0)
-		v.index = len(configFile.floats) - 1;
+		v.index = len(configFile.floats);
 
 	if (has(configFile.map, stringHash(name)))
 	{
@@ -238,7 +248,7 @@ bool addBoolToConfigFile(ConfigFile& configFile,
 	v.index                = 0;
 
 	if (len(configFile.bools) > 0)
-		v.index = len(configFile.bools) - 1;
+		v.index = len(configFile.bools);
 
 	if (has(configFile.map, stringHash(name)))
 	{
@@ -284,4 +294,56 @@ bool addStringToConfigFile(ConfigFile& configFile,
 
 	return true;
 }
+
+u32 getUintFromConfigFile(const ConfigFile& cf,
+                          const String& name,
+                          const u32& defaultValue)
+{
+	auto v = getConfigFileVariable(cf, name);
+	printf("%d - %d\n", v.index, v.type);
+	if (v.type == ConfigType_Uint)
+		return cf.uints[v.index];
+	return defaultValue;
+}
+
+s32 getIntFromConfigFile(const ConfigFile& cf,
+                         const String& name,
+                         const s32& defaultValue)
+{
+	auto v = getConfigFileVariable(cf, name);
+	if (v.type == ConfigType_Int)
+		return cf.ints[v.index];
+	return defaultValue;
+}
+
+f32 getFloatFromConfigFile(const ConfigFile& cf,
+                           const String& name,
+                           const f32& defaultValue)
+{
+	auto v = getConfigFileVariable(cf, name);
+	if (v.type == ConfigType_Float)
+		return cf.floats[v.index];
+	return defaultValue;
+}
+
+b8 getBoolFromConfigFile(const ConfigFile& cf,
+                         const String& name,
+                         const b8& defaultValue)
+{
+	auto v = getConfigFileVariable(cf, name);
+	if (v.type == ConfigType_Bool)
+		return cf.bools[v.index];
+	return defaultValue;
+}
+
+String getStringFromConfigFile(const ConfigFile& cf,
+                               const String& name,
+                               const String& defaultValue)
+{
+	auto v = getConfigFileVariable(cf, name);
+	if (v.type == ConfigType_String)
+		return cf.strings[v.index];
+	return defaultValue;
+}
+
 } // namespace Dunjun

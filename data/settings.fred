@@ -1,17 +1,7 @@
-# Settings File
-# Types:
-# uint
-# int
-# float
-# bool
-# string
+name: string = "Ginger Bill"
 
-windowWidth:  uint = 854
-windowHeight: uint = 480
-
+[Window]
+width:  uint = 1280
+height: uint = 720
+title: string = "Fred"
 fullscreen: bool = false # Comment
-
-var1: int    = -1337
-var2: float  = 1.0234
-var3: string = "Fred Config # Not a comment File" # comment
-
