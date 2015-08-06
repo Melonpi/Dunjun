@@ -12,6 +12,8 @@
 #include <Dunjun/Core/TempAllocator.hpp>
 #include <Dunjun/Core/ConfigFile.hpp>
 
+#include <Dunjun/Math/Rect.hpp>
+
 #include <Dunjun/World.hpp>
 #include <Dunjun/SceneGraph.hpp>
 #include <Dunjun/RenderSystem.hpp>
@@ -55,8 +57,8 @@ GLOBAL Material g_brickMaterial;
 
 INTERNAL void glInit()
 {
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+	// glEnable(GL_CULL_FACE);
+	// glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 }
@@ -181,13 +183,11 @@ INTERNAL void loadSpriteAsset()
 
 INTERNAL void update(Time dt)
 {
-	g_world->update(dt);
-
 	SceneGraph& sg = g_world->sceneGraph;
 
 	{
-		auto node   = sg.getNodeId(0); // crate
-		Vector3 pos = sg.getGlobalPosition(node);
+		auto node = sg.getNodeId(0); // crate
+		auto pos  = sg.getGlobalPosition(node);
 
 		f32 wt = 3.0f * Time::now().asSeconds();
 		f32 a  = 0.5f;
@@ -197,21 +197,24 @@ INTERNAL void update(Time dt)
 	}
 
 	{
-		auto node   = sg.getNodeId(g_world->player);
-		Vector3 pos = sg.getLocalPosition(node);
+		auto node = sg.getNodeId(g_world->player);
+		auto pos  = sg.getLocalPosition(node);
+		auto ori  = sg.getGlobalOrientation(node);
 
 		f32 wt = 1.0f * Time::now().asSeconds();
 		f32 a  = 2.0f;
 		pos.x  = a * Math::cos(Radian{wt});
 		pos.z  = a * Math::sin(Radian{wt});
+		ori    = angleAxis(Radian{3*wt}, {0, 1, 0});
 
 		sg.setLocalPosition(node, pos);
+		sg.setGlobalOrientation(node, ori);
 	}
 
 	{
 		Camera& c = g_world->camera;
 		f32 wt = 0.25f * Time::now().asSeconds();
-		f32 a  = 1.0f;
+		f32 a  = 3.0f;
 		c.transform.position.x = a * Math::sin(Radian{wt});
 		c.transform.position.z = a * Math::cos(Radian{wt});
 		c.transform.position.y = 0.1f;
@@ -219,6 +222,8 @@ INTERNAL void update(Time dt)
 		cameraLookAt(c, {0, 0, 0});
 	}
 }
+
+GLOBAL const Texture* g_currentOutputTexture = nullptr;
 
 INTERNAL void handleEvents()
 {
@@ -258,6 +263,38 @@ INTERNAL void handleEvents()
 				exit(EXIT_SUCCESS);
 				break;
 			}
+
+			case Input::Key::Numpad1:
+			{
+				g_currentOutputTexture = &g_world->renderSystem.outTexture.colorTexture;
+				break;
+			}
+			case Input::Key::Numpad2:
+			{
+				g_currentOutputTexture = &g_world->renderSystem.gbuffer.textures[GBuffer::Diffuse];
+				break;
+			}
+			case Input::Key::Numpad3:
+			{
+				g_currentOutputTexture = &g_world->renderSystem.gbuffer.textures[GBuffer::Specular];
+				break;
+			}
+			case Input::Key::Numpad4:
+			{
+				g_currentOutputTexture = &g_world->renderSystem.gbuffer.textures[GBuffer::Normal];
+				break;
+			}
+			case Input::Key::Numpad5:
+			{
+				g_currentOutputTexture = &g_world->renderSystem.gbuffer.textures[GBuffer::Depth];
+				break;
+			}
+			case Input::Key::Numpad6:
+			{
+				g_currentOutputTexture = &g_world->renderSystem.lbuffer.colorTexture;
+				break;
+			}
+
 			default:
 				break;
 			}
@@ -266,25 +303,105 @@ INTERNAL void handleEvents()
 		default:
 			break;
 		}
-
-		g_world->handleEvent(event);
 	}
+}
+
+INTERNAL Vector2 absoluteSize(const Window& window, f32 x, f32 y)
+{
+	const auto size = g_window.getSize();
+	return {x / (f32)size.width, y / (f32)size.height};
+}
+
+INTERNAL Vector2 absolutePosition(const Window& window, f32 x, f32 y)
+{
+	const auto size = g_window.getSize();
+	const f32 px = (2.0f * x / (f32)size.width) - 1.0f;
+	const f32 py = (2.0f * y / (f32)size.height) - 1.0f;
+	return {px, py};
+}
+
+INTERNAL void drawSprite(const Window& w, const Rect& r, ShaderProgram& shaders, const Texture* tex)
+{
+	shaders.setUniform("u_scale", absoluteSize(w, r.width, r.height));
+	shaders.setUniform("u_position", absolutePosition(w, r.x, r.y));
+
+	shaders.setUniform("u_tex", 0);
+	bindTexture(tex, 0);
+
+	drawMesh(g_meshHolder.get("quad"));
+}
+
+
+INTERNAL void renderUi()
+{
+	ShaderProgram& shaders = g_shaderHolder.get("texPass");
+	shaders.use();
+	defer(shaders.stopUsing());
+	glDisable(GL_DEPTH_TEST);
+
+	const auto size = g_window.getSize();
+	const f32 aspect = size.aspectRatio();
+
+	auto r = Rect{};
+	r.x = 50 * aspect;
+	r.y = 50 +  100 * (GBuffer::Count);
+	r.width = 100 * aspect;
+	r.height = 100;
+
+	int i = 0;
+	for (; i < GBuffer::Count; i++)
+	{
+		drawSprite(g_window, r,
+		           shaders, &g_world->renderSystem.gbuffer.textures[i]);
+		r.y -= 100;
+	}
+	drawSprite(g_window, r,
+	           shaders, &g_world->renderSystem.lbuffer.colorTexture);
+
+
 }
 
 INTERNAL void render()
 {
-	g_world->renderSystem.fbSize.x = g_window.getSize().width;
-	g_world->renderSystem.fbSize.y = g_window.getSize().height;
+	RenderSystem& rs = g_world->renderSystem;
+	if (g_currentOutputTexture == nullptr)
+		g_currentOutputTexture = &rs.outTexture.colorTexture;
 
-	glViewport(0, 0, g_window.getSize().width, g_window.getSize().height);
+	const auto size = g_window.getSize();
+	// rs.fbSize.x = 50 * size.aspectRatio();// size.width;
+	// rs.fbSize.y = 50;// size.height;
+	rs.fbSize.x = size.width;
+	rs.fbSize.y = size.height;
+
+
+	rs.resetAllPointers();
+	g_world->camera.viewportAspectRatio = rs.fbSize.x / rs.fbSize.y;
+	rs.camera        = &g_world->camera;
+	rs.render(); // Same as below
+
+	glViewport(0, 0, size.width, size.height);
 	glClearColor(0.5, 0.69, 1.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	g_world->render();
+	ShaderProgram& shaders = g_shaderHolder.get("texPass");
+	shaders.use();
+	defer(shaders.stopUsing());
+	glDisable(GL_DEPTH_TEST);
+
+
+	drawSprite(g_window, Rect{size.width/2, size.height/2, size.width, size.height},
+	           shaders, g_currentOutputTexture);
+
+	renderUi();
 }
 
 INTERNAL void initWorld()
 {
+	g_world->camera.transform.position = {0, 1, 3};
+	cameraLookAt(g_world->camera, {0, 0, 0});
+	g_world->camera.fieldOfView    = Degree{90};
+	g_world->camera.projectionType = ProjectionType::Perspective;
+
 	auto& es = g_world->entitySystem;
 	auto& sg = g_world->sceneGraph;
 	auto& rs = g_world->renderSystem;
@@ -388,8 +505,7 @@ INTERNAL void init(int /*argCount*/, char** /*args*/)
 
 	if (SDL_Init(sdlFlags) != 0)
 	{
-		std::cerr << "SDL Failed to initialize. Error: " << SDL_GetError()
-		          << "\n";
+		fprintf(stderr, "SDL Failed to initialize. Error: %s\n", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
 
@@ -405,7 +521,7 @@ INTERNAL void init(int /*argCount*/, char** /*args*/)
 		String title = getStringFromConfigFile(cf, "Window.title", "Dunjun");
 
 		g_window.create(vm, title);
-		// g_window.setFramerateLimit(FrameLimit);
+		g_window.setFramerateLimit(FrameLimit);
 		// g_window.setVerticalSyncEnabled(true);
 	}
 

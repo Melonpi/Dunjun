@@ -16,7 +16,7 @@
 #include "Dunjun/Math/Functions.cpp"
 #include "Dunjun/Math/Matrix4.cpp"
 #include "Dunjun/Math/Quaternion.cpp"
-#include "Dunjun/Math/Rectangle.cpp"
+#include "Dunjun/Math/Rect.cpp"
 #include "Dunjun/Math/Vector2.cpp"
 #include "Dunjun/Math/Vector3.cpp"
 #include "Dunjun/Math/Vector4.cpp"

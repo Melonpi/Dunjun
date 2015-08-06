@@ -38,7 +38,9 @@ Window::Window(VideoMode mode,
 : m_impl{nullptr}
 , m_glContext{}
 , m_frameTimeLimit{Time::Zero}
+, m_clock{}
 {
+	m_clock.startTime = Time::now();
 	create(mode, title, style, settings);
 }
 
@@ -217,8 +219,7 @@ void Window::display()
 {
 	SDL_GL_SwapWindow(m_impl);
 
-	if ((m_frameTimeLimit != Time::Zero) &&
-	    (m_frameTimeLimit > m_clock.getElapsedTime()))
+	if (m_frameTimeLimit != Time::Zero)
 	{
 		Time::sleep(m_frameTimeLimit - m_clock.getElapsedTime());
 		m_clock.restart();

@@ -13,7 +13,7 @@
 
 #include <Dunjun/Math/Functions.hpp>
 
-#include <Dunjun/Math/Rectangle.hpp>
+#include <Dunjun/Math/Rect.hpp>
 #include <Dunjun/Math/Random.hpp>
 
 #endif

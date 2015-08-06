@@ -67,6 +67,8 @@ Time Time::now()
 
 void Time::sleep(Time time)
 {
+	if (time.asMicroseconds() <= 0) // NOTE(bill): Cannot sleep for -ve time
+		return;
 #if defined(DUNJUN_COMPILER_MSVC)
 	// Get the supported timer resolutions on this system
 	TIMECAPS tc;

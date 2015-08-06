@@ -1,10 +1,10 @@
-#include <Dunjun/Math/Rectangle.hpp>
+#include <Dunjun/Math/Rect.hpp>
 
 #include <Dunjun/Math/Functions.hpp>
 
 namespace Dunjun
 {
-bool contains(const Rectangle& a, const Vector2& point)
+bool contains(const Rect& a, const Vector2& point)
 {
 	// TODO(bill): compare similar due to floating point arithmetic
 	const f32 minX = Math::min(a.x, a.x + a.width);
@@ -16,13 +16,13 @@ bool contains(const Rectangle& a, const Vector2& point)
 	       (point.y < maxY);
 }
 
-bool intersects(const Rectangle& a, const Rectangle& b)
+bool intersects(const Rect& a, const Rect& b)
 {
-	Rectangle intersection;
+	Rect intersection;
 	return intersects(a, b, intersection);
 }
 
-bool intersects(const Rectangle& a, const Rectangle& b, Rectangle& intersection)
+bool intersects(const Rect& a, const Rect& b, Rect& intersection)
 {
 	const f32 r1MinX = Math::min(a.x, a.x + a.width);
 	const f32 r1MaxX = Math::max(a.x, a.x + a.width);
@@ -60,14 +60,14 @@ bool intersects(const Rectangle& a, const Rectangle& b, Rectangle& intersection)
 	}
 }
 
-bool operator==(const Rectangle& left, const Rectangle& right)
+bool operator==(const Rect& left, const Rect& right)
 {
 	// TODO(bill): compare similar due to floating point arithmetic
 	return (left.x == right.x) && (left.y == right.y) &&
 	       (left.width == right.width) && (left.height == right.height);
 }
 
-bool operator!=(const Rectangle& left, const Rectangle& right)
+bool operator!=(const Rect& left, const Rect& right)
 {
 	return !(left == right);
 }

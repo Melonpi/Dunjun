@@ -129,6 +129,7 @@ void RenderSystem::render()
 void RenderSystem::geometryPass()
 {
 	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
 
 	ShaderProgram& shaders = g_shaderHolder.get("geometryPass");
 
@@ -328,8 +329,11 @@ void RenderSystem::lightPass()
 
 void RenderSystem::outPass()
 {
-	createRenderTexture(
-	    outTexture, gbuffer.width, gbuffer.height, RenderTexture::Color);
+	createRenderTexture(outTexture,
+	                    gbuffer.width,
+	                    gbuffer.height,
+	                    RenderTexture::Color,
+	                    TextureFilter::Nearest);
 
 	bindTexture(nullptr, 0);
 	bindTexture(nullptr, 1);

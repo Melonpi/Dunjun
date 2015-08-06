@@ -32,10 +32,6 @@ public:
 	World();
 	~World() = default;
 
-	void handleEvent(const Event& event);
-	void update(Time dt);
-	void render();
-
 private:
 	World(const World&) = delete;
 	World& operator=(const World&) = delete;
