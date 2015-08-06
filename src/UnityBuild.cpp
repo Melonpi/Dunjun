@@ -23,6 +23,7 @@
 
 #include "Dunjun/Core/ConfigFile.cpp"
 #include "Dunjun/Core/Filesystem.cpp"
+#include "Dunjun/Core/Logger.cpp"
 #include "Dunjun/Core/Memory.cpp"
 #include "Dunjun/Core/Murmur.cpp"
 #include "Dunjun/Core/OpenGL.cpp"

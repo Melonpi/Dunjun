@@ -5,6 +5,7 @@
 #include <Dunjun/ResourceHolders.hpp>
 
 #include <Dunjun/Core/ContainerTypes.hpp>
+#include <Dunjun/Core/Logger.hpp>
 #include <Dunjun/Core/Array.hpp>
 #include <Dunjun/Core/Queue.hpp>
 #include <Dunjun/Core/HashMap.hpp>
@@ -53,12 +54,14 @@ GLOBAL Material g_terrainMaterial;
 GLOBAL Material g_stoneMaterial;
 GLOBAL Material g_woodMaterial;
 GLOBAL Material g_brickMaterial;
+
+GLOBAL Logger g_logger;
 } // namespace (anonymous)
 
 INTERNAL void glInit()
 {
-	// glEnable(GL_CULL_FACE);
-	// glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 }
@@ -255,6 +258,8 @@ INTERNAL void handleEvents()
 		}
 		case Event::KeyPressed:
 		{
+			logPrintf(g_logger,
+			          "Event::KeyPressed == %d\n", event.key.code);
 			switch (event.key.code)
 			{
 			case Input::Key::Escape:
@@ -306,31 +311,33 @@ INTERNAL void handleEvents()
 	}
 }
 
-INTERNAL Vector2 absoluteSize(const Window& window, f32 x, f32 y)
+INTERNAL Vector2 absoluteSizeInPixels(const Window& window, f32 x, f32 y)
 {
 	const auto size = g_window.getSize();
 	return {x / (f32)size.width, y / (f32)size.height};
 }
 
-INTERNAL Vector2 absolutePosition(const Window& window, f32 x, f32 y)
+INTERNAL Vector2 absolutePositionInPixels(const Window& window, f32 x, f32 y)
 {
 	const auto size = g_window.getSize();
-	const f32 px = (2.0f * x / (f32)size.width) - 1.0f;
-	const f32 py = (2.0f * y / (f32)size.height) - 1.0f;
+	const f32 px    = (2.0f * x / (f32)size.width) - 1.0f;
+	const f32 py    = (2.0f * y / (f32)size.height) - 1.0f;
 	return {px, py};
 }
 
-INTERNAL void drawSprite(const Window& w, const Rect& r, ShaderProgram& shaders, const Texture* tex)
+INTERNAL void drawSprite(const Window& w,
+                         const Rect& r,
+                         ShaderProgram& shaders,
+                         const Texture* tex)
 {
-	shaders.setUniform("u_scale", absoluteSize(w, r.width, r.height));
-	shaders.setUniform("u_position", absolutePosition(w, r.x, r.y));
+	shaders.setUniform("u_scale", absoluteSizeInPixels(w, r.width, r.height));
+	shaders.setUniform("u_position", absolutePositionInPixels(w, r.x, r.y));
 
 	shaders.setUniform("u_tex", 0);
 	bindTexture(tex, 0);
 
 	drawMesh(g_meshHolder.get("quad"));
 }
-
 
 INTERNAL void renderUi()
 {
@@ -348,8 +355,7 @@ INTERNAL void renderUi()
 	r.width = 100 * aspect;
 	r.height = 100;
 
-	int i = 0;
-	for (; i < GBuffer::Count; i++)
+	for (int i = 0; i < GBuffer::Count; i++)
 	{
 		drawSprite(g_window, r,
 		           shaders, &g_world->renderSystem.gbuffer.textures[i]);
@@ -357,8 +363,6 @@ INTERNAL void renderUi()
 	}
 	drawSprite(g_window, r,
 	           shaders, &g_world->renderSystem.lbuffer.colorTexture);
-
-
 }
 
 INTERNAL void render()
@@ -388,11 +392,10 @@ INTERNAL void render()
 	defer(shaders.stopUsing());
 	glDisable(GL_DEPTH_TEST);
 
-
 	drawSprite(g_window, Rect{size.width/2, size.height/2, size.width, size.height},
 	           shaders, g_currentOutputTexture);
 
-	renderUi();
+	// renderUi();
 }
 
 INTERNAL void initWorld()
@@ -499,6 +502,11 @@ INTERNAL void shutdown()
 INTERNAL void init(int /*argCount*/, char** /*args*/)
 {
 	Memory::init();
+
+	g_logger = {};
+	g_logger.file = stdout;
+	g_logger.prefix = "[INFO]";
+	g_logger.flags = LogFlag_Date | LogFlag_Time;
 
 	u32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK |
 	               SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC;
