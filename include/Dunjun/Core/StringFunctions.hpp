@@ -22,10 +22,12 @@ bool hasSuffix(const String& s, const String& suffix);
 
 // `join` concatenates the elements of a to create a single string
 // The separator string sep is placed between elements in the resulting string
+// TODO(bill): Use Array<String> instead of Array<char*>
 String join(const Array<char*>& array, const String& sep);
 
 // `split` splits s into all substrings separated by sep and sets the `out`
 // array to the substrings between those separators
+// TODO(bill): Use Array<String> instead of Array<char*>
 void split(const String& s, const String& sep, Array<char*>& out);
 
 // Deallocates all the strings in an Array<char*>

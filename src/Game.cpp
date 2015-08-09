@@ -124,9 +124,9 @@ INTERNAL void loadMaterials()
 	g_woodMaterial.diffuseMap = &g_woodTexture;
 	g_woodMaterial.normalMap  = &g_defaultNormalTexture;
 
-	g_brickMaterial = Material{};
+	g_brickMaterial            = Material{};
 	g_brickMaterial.diffuseMap = &g_brickTexture;
-	g_brickMaterial.normalMap = &g_brickNormalTexture;
+	g_brickMaterial.normalMap  = &g_brickNormalTexture;
 }
 
 INTERNAL void loadSpriteAsset()
@@ -208,16 +208,16 @@ INTERNAL void update(Time dt)
 		f32 a  = 2.0f;
 		pos.x  = a * Math::cos(Radian{wt});
 		pos.z  = a * Math::sin(Radian{wt});
-		ori    = angleAxis(Radian{3*wt}, {0, 1, 0});
+		ori    = angleAxis(Radian{3 * wt}, {0, 1, 0});
 
 		sg.setLocalPosition(node, pos);
 		sg.setGlobalOrientation(node, ori);
 	}
 
 	{
-		Camera& c = g_world->camera;
-		f32 wt = 0.25f * Time::now().asSeconds();
-		f32 a  = 3.0f;
+		Camera& c              = g_world->camera;
+		f32 wt                 = 0.25f * Time::now().asSeconds();
+		f32 a                  = 3.0f;
 		c.transform.position.x = a * Math::sin(Radian{wt});
 		c.transform.position.z = a * Math::cos(Radian{wt});
 		c.transform.position.y = 0.1f;
@@ -261,8 +261,7 @@ INTERNAL void handleEvents()
 			if (event.key.code == Input::Key::Unknown)
 				break;
 
-			logPrintf(g_logger,
-			          "Event::KeyPressed == %d\n", event.key.code);
+			logPrintf(g_logger, "Event::KeyPressed == %d\n", event.key.code);
 			switch (event.key.code)
 			{
 			case Input::Key::Escape:
@@ -274,32 +273,38 @@ INTERNAL void handleEvents()
 
 			case Input::Key::Numpad1:
 			{
-				g_currentOutputTexture = &g_world->renderSystem.outTexture.colorTexture;
+				g_currentOutputTexture =
+				    &g_world->renderSystem.outTexture.colorTexture;
 				break;
 			}
 			case Input::Key::Numpad2:
 			{
-				g_currentOutputTexture = &g_world->renderSystem.gbuffer.textures[GBuffer::Diffuse];
+				g_currentOutputTexture =
+				    &g_world->renderSystem.gbuffer.textures[GBuffer::Diffuse];
 				break;
 			}
 			case Input::Key::Numpad3:
 			{
-				g_currentOutputTexture = &g_world->renderSystem.gbuffer.textures[GBuffer::Specular];
+				g_currentOutputTexture =
+				    &g_world->renderSystem.gbuffer.textures[GBuffer::Specular];
 				break;
 			}
 			case Input::Key::Numpad4:
 			{
-				g_currentOutputTexture = &g_world->renderSystem.gbuffer.textures[GBuffer::Normal];
+				g_currentOutputTexture =
+				    &g_world->renderSystem.gbuffer.textures[GBuffer::Normal];
 				break;
 			}
 			case Input::Key::Numpad5:
 			{
-				g_currentOutputTexture = &g_world->renderSystem.gbuffer.textures[GBuffer::Depth];
+				g_currentOutputTexture =
+				    &g_world->renderSystem.gbuffer.textures[GBuffer::Depth];
 				break;
 			}
 			case Input::Key::Numpad6:
 			{
-				g_currentOutputTexture = &g_world->renderSystem.lbuffer.colorTexture;
+				g_currentOutputTexture =
+				    &g_world->renderSystem.lbuffer.colorTexture;
 				break;
 			}
 
@@ -349,23 +354,23 @@ INTERNAL void renderUi()
 	defer(shaders.stopUsing());
 	glDisable(GL_DEPTH_TEST);
 
-	const auto size = g_window.getSize();
+	const auto size  = g_window.getSize();
 	const f32 aspect = size.aspectRatio();
 
-	auto r = Rect{};
-	r.x = 50 * aspect;
-	r.y = 50 +  100 * (GBuffer::Count);
-	r.width = 100 * aspect;
+	auto r   = Rect{};
+	r.x      = 50 * aspect;
+	r.y      = 50 + 100 * (GBuffer::Count);
+	r.width  = 100 * aspect;
 	r.height = 100;
 
 	for (int i = 0; i < GBuffer::Count; i++)
 	{
-		drawSprite(g_window, r,
-		           shaders, &g_world->renderSystem.gbuffer.textures[i]);
+		drawSprite(
+		    g_window, r, shaders, &g_world->renderSystem.gbuffer.textures[i]);
 		r.y -= 100;
 	}
-	drawSprite(g_window, r,
-	           shaders, &g_world->renderSystem.lbuffer.colorTexture);
+	drawSprite(
+	    g_window, r, shaders, &g_world->renderSystem.lbuffer.colorTexture);
 }
 
 INTERNAL void render()
@@ -380,10 +385,9 @@ INTERNAL void render()
 	rs.fbSize.x = size.width;
 	rs.fbSize.y = size.height;
 
-
 	rs.resetAllPointers();
 	g_world->camera.viewportAspectRatio = rs.fbSize.x / rs.fbSize.y;
-	rs.camera        = &g_world->camera;
+	rs.camera = &g_world->camera;
 	rs.render(); // Same as below
 
 	glViewport(0, 0, size.width, size.height);
@@ -395,8 +399,10 @@ INTERNAL void render()
 	defer(shaders.stopUsing());
 	glDisable(GL_DEPTH_TEST);
 
-	drawSprite(g_window, Rect{size.width/2, size.height/2, size.width, size.height},
-	           shaders, g_currentOutputTexture);
+	drawSprite(g_window,
+	           Rect{size.width / 2, size.height / 2, size.width, size.height},
+	           shaders,
+	           g_currentOutputTexture);
 
 	// renderUi();
 }
@@ -506,24 +512,28 @@ INTERNAL void init(int /*argCount*/, char** /*args*/)
 {
 	Memory::init();
 
-	Array<char*> testArray{defaultAllocator()};
-	String testString = "Hello.I.Want.To.Split.This";
+	{
+		Array<char*> testArray{defaultAllocator()};
+		defer(Strings::deallocateCStringArray(testArray));
+		String testString = "Hello.I.Want.To.Split.This";
 
-	Strings::split(testString, ".", testArray);
-	for (int i = 0; i < len(testArray); i++)
-		std::cout << testArray[i] << std::endl;
+		Strings::split(testString, ".", testArray);
+		for (int i = 0; i < len(testArray); i++)
+			std::cout << testArray[i] << std::endl;
+	}
 
-	g_logger = {};
-	g_logger.file = stdout;
+	g_logger        = {};
+	g_logger.file   = stdout;
 	g_logger.prefix = "[INFO]";
-	g_logger.flags = LogFlag_Date | LogFlag_Time;
+	g_logger.flags  = LogFlag_Date | LogFlag_Time;
 
 	u32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK |
 	               SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC;
 
 	if (SDL_Init(sdlFlags) != 0)
 	{
-		fprintf(stderr, "SDL Failed to initialize. Error: %s\n", SDL_GetError());
+		fprintf(
+		    stderr, "SDL Failed to initialize. Error: %s\n", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
 
