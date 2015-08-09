@@ -98,6 +98,13 @@ inline usize len(const char* str)
 	return 0;
 }
 
+inline usize len(char* str)
+{
+	if (str)
+		return strlen(str);
+	return 0;
+}
+
 template <typename T>
 inline usize len(const T& t)
 {

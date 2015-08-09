@@ -13,7 +13,7 @@ namespace Dunjun
 template <typename T>
 struct Array
 {
-	Allocator* allocator;
+	Allocator& allocator;
 	usize length;
 	usize capacity;
 	T* data;

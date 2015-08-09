@@ -258,6 +258,9 @@ INTERNAL void handleEvents()
 		}
 		case Event::KeyPressed:
 		{
+			if (event.key.code == Input::Key::Unknown)
+				break;
+
 			logPrintf(g_logger,
 			          "Event::KeyPressed == %d\n", event.key.code);
 			switch (event.key.code)
@@ -502,6 +505,13 @@ INTERNAL void shutdown()
 INTERNAL void init(int /*argCount*/, char** /*args*/)
 {
 	Memory::init();
+
+	Array<char*> testArray{defaultAllocator()};
+	String testString = "Hello.I.Want.To.Split.This";
+
+	Strings::split(testString, ".", testArray);
+	for (int i = 0; i < len(testArray); i++)
+		std::cout << testArray[i] << std::endl;
 
 	g_logger = {};
 	g_logger.file = stdout;

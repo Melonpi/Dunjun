@@ -109,7 +109,7 @@ String substring(const String& s, usize begin, usize end)
 	if (end > len(s))
 		end = len(s);
 
-	String out = "";
+	String out{s.data.allocator};
 	usize l = end - begin;
 	reserve(out, l);
 

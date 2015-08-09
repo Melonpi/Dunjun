@@ -64,7 +64,8 @@ ConfigFile loadConfigFileFromFile(const String& filepath)
 
 		if (line[0] == '[') // Section
 		{
-			sectionName = Strings::trim(line, "[]");
+			sectionName = Strings::trimSpace(Strings::trim(line, "[]"));
+			continue; // Go to the next line
 		}
 
 
@@ -83,6 +84,7 @@ ConfigFile loadConfigFileFromFile(const String& filepath)
 		if (declarationPos == -1 || initializePos == -1)
 		{
 			fprintf(stderr, "Error parsing line %d\n", lineNum);
+			fprintf(stderr, "%s\n", cString(line));
 			continue;
 		}
 

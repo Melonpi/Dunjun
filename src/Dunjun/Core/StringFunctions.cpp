@@ -75,7 +75,16 @@ bool hasSuffix(const String& s, const String& suffix)
 	       substring(s, len(s) - len(suffix), len(s)) == suffix;
 }
 
-String join(const Array<String>& a, const String& sep)
+INTERNAL char* copyStringToCString(const String& s, Allocator& a)
+{
+	const char* cStr = cString(s);
+	const usize l    = len(s) + 1;
+	char* out = (char*)a.allocate(l);
+	memcpy(out, cStr, l);
+	return out;
+}
+
+String join(const Array<char*>& a, const String& sep)
 {
 	const ssize aLen = len(a);
 	if (aLen == 0)
@@ -99,8 +108,10 @@ String join(const Array<String>& a, const String& sep)
 	return out;
 }
 
-void split(const String& s, const String& sep, Array<String>& out)
+void split(const String& s, const String& sep, Array<char*>& out)
 {
+	Allocator& a = out.allocator;
+
 	if (sep == "")
 	{
 		const usize n = len(s);
@@ -108,7 +119,7 @@ void split(const String& s, const String& sep, Array<String>& out)
 		resize(out, n);
 
 		for (usize i = 0; i < n; i++)
-			out[i] = s[i];
+			out[i] = copyStringToCString(s[i], a);
 
 		return;
 	}
@@ -118,7 +129,7 @@ void split(const String& s, const String& sep, Array<String>& out)
 
 	usize start = 0;
 	usize na = 0;
-	reserve(out, n);
+	resize(out, n);
 
 	const usize lsep = len(sep);
 	const usize ls   = len(s);
@@ -127,16 +138,23 @@ void split(const String& s, const String& sep, Array<String>& out)
 	{
 		if (s[i] == c && (lsep == 1 || substring(s, i, i + lsep) == sep))
 		{
-			out[na] = substring(s, start, i);
+			out[na] = copyStringToCString(substring(s, start, i), a);
 			na++;
 			start = i + lsep;
 			i += lsep - 1;
 		}
 	}
 
-	out[na] = substring(s, start, ls);
+	out[na] = copyStringToCString(substring(s, start, ls), a);
 
 	resize(out, na + 1);
+}
+
+void deallocateCStringArray(Array<char*>& array)
+{
+	Allocator& a = array.allocator;
+	for (char* s : array)
+		a.deallocate(s);
 }
 
 String toLower(const String& s)
@@ -179,7 +197,7 @@ String toTitle(const String& s)
 	{
 		// NOTE(bill): If the previous character is a space, then capitalize the
 		// current one
-		if (isSpace(out[i-1]))
+		if (isSpace(out[i - 1]))
 			out[i] = toUpper(out[i]);
 	}
 
@@ -221,15 +239,9 @@ bool isAlpha(const char c)
 	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
-bool isDigit(const char c)
-{
-	return (c >= '0' && c <= '9');
-}
+bool isDigit(const char c) { return (c >= '0' && c <= '9'); }
 
-bool isAlphaNumeric(const char c)
-{
-	return isAlpha(c) || isDigit(c);
-}
+bool isAlphaNumeric(const char c) { return isAlpha(c) || isDigit(c); }
 
 String trimLeft(const String& s, const String& cutset)
 {
@@ -239,7 +251,7 @@ String trimLeft(const String& s, const String& cutset)
 	if (len(s) == 0)
 		return s;
 	ssize pos = -1;
-	bool t = false;
+	bool t    = false;
 
 	for (ssize i = 0; i < slen; i++)
 	{
@@ -247,7 +259,7 @@ String trimLeft(const String& s, const String& cutset)
 		{
 			if (s[i] == cutset[j])
 			{
-				t = true;
+				t   = true;
 				pos = i;
 			}
 		}
@@ -257,7 +269,7 @@ String trimLeft(const String& s, const String& cutset)
 	}
 
 	if (pos != -1)
-		return substring(s, pos+1, slen);
+		return substring(s, pos + 1, slen);
 	return s;
 }
 
@@ -269,7 +281,7 @@ String trimRight(const String& s, const String& cutset)
 	if (slen == 0)
 		return s;
 	ssize pos = -1;
-	bool t = false;
+	bool t    = false;
 
 	for (usize i = slen - 1; i >= 0; i--)
 	{
@@ -277,7 +289,7 @@ String trimRight(const String& s, const String& cutset)
 		{
 			if (s[i] == cutset[j])
 			{
-				t = true;
+				t   = true;
 				pos = i;
 			}
 		}

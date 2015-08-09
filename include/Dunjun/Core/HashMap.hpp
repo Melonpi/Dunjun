@@ -223,7 +223,7 @@ usize findOrMake(HashMap<T>& h, u64 key)
 template <typename T>
 void rehash(HashMap<T>& h, usize newCapacity)
 {
-	HashMap<T> nh = *h.hashes.allocator;
+	HashMap<T> nh{h.hashes.allocator};
 	resize(nh.hashes, newCapacity);
 	const usize oldLength = len(h.data);
 	reserve(nh.data, oldLength);
@@ -237,7 +237,7 @@ void rehash(HashMap<T>& h, usize newCapacity)
 		MultiHashMap::insert(nh, e.key, e.value);
 	}
 
-	HashMap<T> empty = *h.hashes.allocator;
+	HashMap<T> empty{h.hashes.allocator};
 	h.~HashMap<T>();
 
 	memcpy(&h, &nh, sizeof(HashMap<T>));

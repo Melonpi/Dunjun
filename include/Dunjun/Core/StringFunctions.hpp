@@ -22,11 +22,14 @@ bool hasSuffix(const String& s, const String& suffix);
 
 // `join` concatenates the elements of a to create a single string
 // The separator string sep is placed between elements in the resulting string
-String join(const Array<String>& array, const String& sep);
+String join(const Array<char*>& array, const String& sep);
 
 // `split` splits s into all substrings separated by sep and sets the `out`
 // array to the substrings between those separators
-void split(const String& s, const String& sep, Array<String>& out);
+void split(const String& s, const String& sep, Array<char*>& out);
+
+// Deallocates all the strings in an Array<char*>
+void deallocateCStringArray(Array<char*>& array);
 
 // `toLower` returns a lower case version of s
 String toLower(const String& s);

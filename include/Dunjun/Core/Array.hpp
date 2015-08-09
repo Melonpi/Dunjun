@@ -208,10 +208,10 @@ inline void setCap(Array<T>& a, usize capacity)
 	T* data = nullptr;
 	if (capacity > 0)
 	{
-		data = (T*)a.allocator->allocate(capacity * sizeof(T), alignof(T));
+		data = (T*)a.allocator.allocate(capacity * sizeof(T), alignof(T));
 		memcpy(data, a.data, a.length * sizeof(T));
 	}
-	a.allocator->deallocate(a.data);
+	a.allocator.deallocate(a.data);
 	a.data     = data;
 	a.capacity = capacity;
 }
@@ -238,7 +238,7 @@ inline void grow(Array<T>& a, usize minCapacity)
 
 template <typename T>
 inline Array<T>::Array(Allocator& a)
-: allocator{&a}
+: allocator{a}
 , length{0}
 , capacity{0}
 , data{nullptr}
@@ -248,7 +248,7 @@ inline Array<T>::Array(Allocator& a)
 template <typename T>
 inline Array<T>::~Array()
 {
-	allocator->deallocate(data);
+	allocator.deallocate(data);
 }
 
 template <typename T>
