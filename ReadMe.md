@@ -1,4 +1,15 @@
 # Dunjun
+
+## Update
+This project has been halted and most likely will _not_ continue.
+
+I have had to stop the project for a few reasons:
+* Lack of time
+* Not fun to create anymore
+* I didn't program the way I wanted to program from the start (C/C-styled C++)
+
+## Description
+
 This project will be documenting and demonstrating the development of making a game from scratch<sup>1</sup>! Every step of the game development process and every line of code will be explained thoroughly.
 
 The game will be a 3D based game. More will be revealed about the game as the project persists.
